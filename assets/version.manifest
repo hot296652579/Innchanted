@@ -1,0 +1,7 @@
+{
+  "packageUrl": "http://192.168.1.43:8080/",
+  "remoteManifestUrl": "http://192.168.1.43:8080/project.manifest",
+  "remoteVersionUrl": "http://192.168.1.43:8080/version.manifest",
+  "version": "1.0.3",
+  "engineVersion": "3.8.6"
+}

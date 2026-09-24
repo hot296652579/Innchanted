@@ -1,0 +1,790 @@
+{
+  "packageUrl": "http://192.168.1.43:8080/",
+  "remoteManifestUrl": "http://192.168.1.43:8080/project.manifest",
+  "remoteVersionUrl": "http://192.168.1.43:8080/version.manifest",
+  "version": "1.0.3",
+  "engineVersion": "3.8.6",
+  "assets": {
+    "application.js": {
+      "md5": "e56639acc2fadbe3cdd20ed959694c80"
+    },
+    "assets/audio/cc.config.json": {
+      "md5": "667c6e53477dbe34ea198fa9b17236bb"
+    },
+    "assets/audio/import/e6/e6a03600-27bf-4a7d-b4de-4f4b03a063b5.json": {
+      "md5": "e67088269e1fb070d11207a74310fa9c"
+    },
+    "assets/audio/index.js": {
+      "md5": "cd4a08198f9d0687c4fd4140c8d2ec15"
+    },
+    "assets/audio/native/e6/e6a03600-27bf-4a7d-b4de-4f4b03a063b5.mp3": {
+      "md5": "4a501b97e2c9a80ea6fa3f16f45a922f"
+    },
+    "assets/common/cc.config.json": {
+      "md5": "dab327ac02fd3655cb6b5e678a932f81"
+    },
+    "assets/common/import/03/03b10bb74.json": {
+      "md5": "d9c3ba4f3d8234d4ec4293e6954ccbf9"
+    },
+    "assets/common/import/04/0421e4bcb.json": {
+      "md5": "da5f14c18fe232c3d9295a276aeae2bf"
+    },
+    "assets/common/import/09/095ed75b-362e-429e-a724-34ee10d4b65c.json": {
+      "md5": "065a20ffa4787add59d16be97aafd399"
+    },
+    "assets/common/import/0c/0c2ba2cfe.json": {
+      "md5": "ab796dfcdb8c08c2ae4b6a2ef43f0eca"
+    },
+    "assets/common/import/0c/0c7c861df.json": {
+      "md5": "69e143f7dbeb265e47cabbeba3b48175"
+    },
+    "assets/common/import/0c/0cb0b725-d28f-404f-beaa-c0d8db769a7f.json": {
+      "md5": "a253314ec7107d95345d7fc89b8d7bb5"
+    },
+    "assets/common/import/0c/0cb0b725-d28f-404f-beaa-c0d8db769a7f@f9941.json": {
+      "md5": "f13ff03b83a8f4ed019f863149fc9baa"
+    },
+    "assets/common/import/13/13b10bb74.json": {
+      "md5": "ecf2a3368f0bbb512a4d651fb4d8dcae"
+    },
+    "assets/common/import/1c/1c2ba2cfe.json": {
+      "md5": "a561269ef3783be21c49063b54f48617"
+    },
+    "assets/common/import/1c/1c7c861df.json": {
+      "md5": "63dd0044ec138b69c2a0991867b1474e"
+    },
+    "assets/common/import/25/2529c858-e4de-41ab-bfde-34e91359dde6.json": {
+      "md5": "a253314ec7107d95345d7fc89b8d7bb5"
+    },
+    "assets/common/import/25/2529c858-e4de-41ab-bfde-34e91359dde6@f9941.json": {
+      "md5": "90462bf07a7060cdbb8fe48db040fd4c"
+    },
+    "assets/common/import/26/26dee9f8-3104-471c-88d9-e828f2e8c1c2.json": {
+      "md5": "a253314ec7107d95345d7fc89b8d7bb5"
+    },
+    "assets/common/import/26/26dee9f8-3104-471c-88d9-e828f2e8c1c2@f9941.json": {
+      "md5": "601b19f027f08b8a26cbf29628bc07c4"
+    },
+    "assets/common/import/3d/3dacb55c-828c-49ff-8fd9-0c0e12089a07.json": {
+      "md5": "a253314ec7107d95345d7fc89b8d7bb5"
+    },
+    "assets/common/import/3d/3dacb55c-828c-49ff-8fd9-0c0e12089a07@f9941.json": {
+      "md5": "88007a52bbe029ee980573d8b34e820b"
+    },
+    "assets/common/import/5e/5e84cc35-f969-43b8-9984-d35bd56e2960.json": {
+      "md5": "a253314ec7107d95345d7fc89b8d7bb5"
+    },
+    "assets/common/import/5e/5e84cc35-f969-43b8-9984-d35bd56e2960@f9941.json": {
+      "md5": "b8ef8f02cbbefeaa63b91292951e0d25"
+    },
+    "assets/common/import/7b/7bb617e7-04c8-41ed-a015-b5aa3c2ad6c1.json": {
+      "md5": "a253314ec7107d95345d7fc89b8d7bb5"
+    },
+    "assets/common/import/7b/7bb617e7-04c8-41ed-a015-b5aa3c2ad6c1@f9941.json": {
+      "md5": "8e69b45f9597b3f7505b5219f2077d40"
+    },
+    "assets/common/import/7f/7f710cdf-943a-4d75-9cde-1bc474e390c2.json": {
+      "md5": "a253314ec7107d95345d7fc89b8d7bb5"
+    },
+    "assets/common/import/7f/7f710cdf-943a-4d75-9cde-1bc474e390c2@f9941.json": {
+      "md5": "ab0f50de763ef03d1097e16a9ebcac8f"
+    },
+    "assets/common/import/9d/9dd4593c-2e6c-4834-b9bf-1a5c0cc267f4.json": {
+      "md5": "a253314ec7107d95345d7fc89b8d7bb5"
+    },
+    "assets/common/import/9d/9dd4593c-2e6c-4834-b9bf-1a5c0cc267f4@f9941.json": {
+      "md5": "33669a0a793f9e201d6c73493f4dd9ff"
+    },
+    "assets/common/import/af/af974f0f-e169-4436-9d0c-ed7977307722.json": {
+      "md5": "c16a8f853c64bf39777846c27bfac37d"
+    },
+    "assets/common/import/af/af974f0f-e169-4436-9d0c-ed7977307722@f9941.json": {
+      "md5": "8b7b3d87c45e138bf46324b45fea06f9"
+    },
+    "assets/common/import/c1/c103868e-5653-422c-9086-441fdf7e8107.json": {
+      "md5": "a253314ec7107d95345d7fc89b8d7bb5"
+    },
+    "assets/common/import/c1/c103868e-5653-422c-9086-441fdf7e8107@f9941.json": {
+      "md5": "a84a2ea24422abc67ef73474322d0a5e"
+    },
+    "assets/common/import/de/dec8dad1-2b94-49e5-88aa-3a88574c047f.json": {
+      "md5": "a253314ec7107d95345d7fc89b8d7bb5"
+    },
+    "assets/common/import/de/dec8dad1-2b94-49e5-88aa-3a88574c047f@f9941.json": {
+      "md5": "c2570d47e176668253e7a3bb51962c1b"
+    },
+    "assets/common/import/fb/fbb02ff6-c7f8-4dbd-88fd-5ac79fc9b514.json": {
+      "md5": "a253314ec7107d95345d7fc89b8d7bb5"
+    },
+    "assets/common/import/fb/fbb02ff6-c7f8-4dbd-88fd-5ac79fc9b514@f9941.json": {
+      "md5": "bfdb947cb2cf914930d1f5213c818d3a"
+    },
+    "assets/common/index.js": {
+      "md5": "7792f60d6c4dd534909044977853c767"
+    },
+    "assets/common/native/09/095ed75b-362e-429e-a724-34ee10d4b65c.mp3": {
+      "md5": "767dd393e4597590ac4ac72958762c40"
+    },
+    "assets/common/native/0c/0cb0b725-d28f-404f-beaa-c0d8db769a7f.png": {
+      "md5": "b4bfcd5d926852fc086fe32ebca7a7d7"
+    },
+    "assets/common/native/13/13b10bb74.png": {
+      "md5": "8b232768489977b092efeb5f74a9201e"
+    },
+    "assets/common/native/1c/1c2ba2cfe.png": {
+      "md5": "cd5748d08564711cba6e668c7a0193f7"
+    },
+    "assets/common/native/1c/1c7c861df.png": {
+      "md5": "cda856a77d7de52cf37b64a4ecfcf6c0"
+    },
+    "assets/common/native/25/2529c858-e4de-41ab-bfde-34e91359dde6.png": {
+      "md5": "53ee254391d2419f3ddf6b1135e1b7c3"
+    },
+    "assets/common/native/26/26dee9f8-3104-471c-88d9-e828f2e8c1c2.png": {
+      "md5": "7fd72e0070f62130abf64d07f1ccc7c6"
+    },
+    "assets/common/native/3d/3dacb55c-828c-49ff-8fd9-0c0e12089a07.png": {
+      "md5": "33d14c6a84fa616d7c390152c77e2000"
+    },
+    "assets/common/native/5e/5e84cc35-f969-43b8-9984-d35bd56e2960.png": {
+      "md5": "5841f57c44bcd05727e9b69831bcf234"
+    },
+    "assets/common/native/7b/7bb617e7-04c8-41ed-a015-b5aa3c2ad6c1.png": {
+      "md5": "976405bc0af84f39d81d5777b564afb5"
+    },
+    "assets/common/native/7f/7f710cdf-943a-4d75-9cde-1bc474e390c2.png": {
+      "md5": "4e92c25b90111acc7525ef394914874d"
+    },
+    "assets/common/native/9d/9dd4593c-2e6c-4834-b9bf-1a5c0cc267f4.png": {
+      "md5": "20d907b4c06fa16c83193f7c3d4b00a7"
+    },
+    "assets/common/native/af/af974f0f-e169-4436-9d0c-ed7977307722.jpg": {
+      "md5": "593f3e699be4d761c1ef7a2c4be48f13"
+    },
+    "assets/common/native/c1/c103868e-5653-422c-9086-441fdf7e8107.png": {
+      "md5": "b8d5a378b597d432aeb76008df02d5ec"
+    },
+    "assets/common/native/de/dec8dad1-2b94-49e5-88aa-3a88574c047f.png": {
+      "md5": "51fbf9996a5a383440afbd040b916183"
+    },
+    "assets/common/native/fb/fbb02ff6-c7f8-4dbd-88fd-5ac79fc9b514.png": {
+      "md5": "13dfede94ac508eb709cf597a3b20424"
+    },
+    "assets/game/cc.config.json": {
+      "md5": "8f4c5acbaa6ff555b9b28f6c82bc7f13"
+    },
+    "assets/game/import/02/0238856b-98e1-430e-9c2e-2042212a83c2.json": {
+      "md5": "a253314ec7107d95345d7fc89b8d7bb5"
+    },
+    "assets/game/import/02/0238856b-98e1-430e-9c2e-2042212a83c2@f9941.json": {
+      "md5": "89c6bbbf746445d8853ab1b2461b7582"
+    },
+    "assets/game/import/02/02bf92e35.json": {
+      "md5": "204a9cf9beb0fa99c575a3e9551872f8"
+    },
+    "assets/game/import/03/0322c7f3d.json": {
+      "md5": "ba2c80c79a29e41937a6746c84f0ebab"
+    },
+    "assets/game/import/03/037939e9-8f8a-4bb4-aa58-f1a33dc63dea.json": {
+      "md5": "3fa3d05ecac60603024eafd963631f46"
+    },
+    "assets/game/import/06/063ef82cd.json": {
+      "md5": "c100413807ca25290aa0aafdf6c1917d"
+    },
+    "assets/game/import/06/06c8c78fc.json": {
+      "md5": "10d2b3bb6d1246f554910e8f258c5cca"
+    },
+    "assets/game/import/06/06d9a4b6e.json": {
+      "md5": "72ab23811cf0184182cd6722cd8335d5"
+    },
+    "assets/game/import/07/07b97bb99.json": {
+      "md5": "00cae0fe1488067d2f330c325b93d0d4"
+    },
+    "assets/game/import/07/07c986b97.json": {
+      "md5": "41051f6702dadce08696167f58cc81b7"
+    },
+    "assets/game/import/09/09de466e-b461-4be6-aa6b-703b7ae2e298.json": {
+      "md5": "7f67ef1292c46bfa4a2b0a05a04bfb59"
+    },
+    "assets/game/import/0a/0a189013-c505-45ed-adb4-3d7c832aeb85.json": {
+      "md5": "a253314ec7107d95345d7fc89b8d7bb5"
+    },
+    "assets/game/import/0a/0a189013-c505-45ed-adb4-3d7c832aeb85@f9941.json": {
+      "md5": "0f58b593541ddd083c7cb7a074172832"
+    },
+    "assets/game/import/0a/0a2d3236e.json": {
+      "md5": "546c12ed25ae34324c561d88008c7428"
+    },
+    "assets/game/import/0b/0b6fac768.json": {
+      "md5": "89b11475204837c14836aeaf91c5aa64"
+    },
+    "assets/game/import/0b/0bc954cc0.json": {
+      "md5": "36dcb605becb85c5b3bfbeff1e04fab9"
+    },
+    "assets/game/import/0b/0bfdfe023.json": {
+      "md5": "83beff6aeb4094810a492a2021c11aa7"
+    },
+    "assets/game/import/0d/0d888abb-fd49-440d-818f-afb78e475605.json": {
+      "md5": "a253314ec7107d95345d7fc89b8d7bb5"
+    },
+    "assets/game/import/0e/0e32f7062.json": {
+      "md5": "f9c3e872aa0c927f4ac0e533737c8c01"
+    },
+    "assets/game/import/0e/0e561b235.json": {
+      "md5": "f2a9d799d9be31903150650a0608853d"
+    },
+    "assets/game/import/0f/0f3b05b47.json": {
+      "md5": "b588c824e6f6121f05f69efd89341497"
+    },
+    "assets/game/import/0f/0ff730d60.json": {
+      "md5": "e6440e5f0ece330f824f3a511db76763"
+    },
+    "assets/game/import/10/105ecb01-cbad-4518-88d0-03a1a9ea76cb.json": {
+      "md5": "a253314ec7107d95345d7fc89b8d7bb5"
+    },
+    "assets/game/import/10/105ecb01-cbad-4518-88d0-03a1a9ea76cb@f9941.json": {
+      "md5": "a7ecd42e6296a5b61e8c4beaeae2d3b2"
+    },
+    "assets/game/import/10/10b75c33-dc4a-44fe-8e2f-9cd0b11d572c.json": {
+      "md5": "a253314ec7107d95345d7fc89b8d7bb5"
+    },
+    "assets/game/import/11/1107be01-6ed0-4420-824a-af6f2ae28312.json": {
+      "md5": "a253314ec7107d95345d7fc89b8d7bb5"
+    },
+    "assets/game/import/1b/1b72c144-f37b-4873-9a36-f54ce5e9486f.json": {
+      "md5": "a253314ec7107d95345d7fc89b8d7bb5"
+    },
+    "assets/game/import/1b/1b72c144-f37b-4873-9a36-f54ce5e9486f@f9941.json": {
+      "md5": "a0122464f005597773f6895bcf646185"
+    },
+    "assets/game/import/1c/1cce7df8-3fb9-4206-b74e-3471d4ee2597.json": {
+      "md5": "a253314ec7107d95345d7fc89b8d7bb5"
+    },
+    "assets/game/import/1f/1f73dd43-70dd-4d54-a7f6-6e3bada9b6d9.json": {
+      "md5": "a253314ec7107d95345d7fc89b8d7bb5"
+    },
+    "assets/game/import/20/20835ba4-6145-4fbc-a58a-051ce700aa3e.json": {
+      "md5": "a253314ec7107d95345d7fc89b8d7bb5"
+    },
+    "assets/game/import/25/253860c9-b307-4665-aaf1-6cf99d6ba5a3.json": {
+      "md5": "a253314ec7107d95345d7fc89b8d7bb5"
+    },
+    "assets/game/import/25/253860c9-b307-4665-aaf1-6cf99d6ba5a3@f9941.json": {
+      "md5": "b58b24a88dd59b9b318f554c575fe906"
+    },
+    "assets/game/import/2e/2ef3a490-28ff-449a-b64b-54bc39d3e3c1.json": {
+      "md5": "a253314ec7107d95345d7fc89b8d7bb5"
+    },
+    "assets/game/import/33/33dd3f2c-634c-4151-8234-1ed476c114e2.json": {
+      "md5": "a253314ec7107d95345d7fc89b8d7bb5"
+    },
+    "assets/game/import/43/431dbd49-17e1-4b73-9824-739312f15555.json": {
+      "md5": "a253314ec7107d95345d7fc89b8d7bb5"
+    },
+    "assets/game/import/45/456091c0-2dfd-44a5-8471-273ef906b899.json": {
+      "md5": "a253314ec7107d95345d7fc89b8d7bb5"
+    },
+    "assets/game/import/47/473e12bd-d36d-4744-bfd7-f0aa809a6282.json": {
+      "md5": "a253314ec7107d95345d7fc89b8d7bb5"
+    },
+    "assets/game/import/4b/4ba04bb9-8845-4097-aad5-bad394666e99.json": {
+      "md5": "96c05d8a237eaa5838813991d0dba923"
+    },
+    "assets/game/import/50/50063d91-7723-4c07-90c1-9e1a98dc5200.json": {
+      "md5": "78825aef523599fafba75e7270262529"
+    },
+    "assets/game/import/50/50257327-1024-4991-b37e-bb7b2b52946e.json": {
+      "md5": "a253314ec7107d95345d7fc89b8d7bb5"
+    },
+    "assets/game/import/54/544e49d6-3f05-4fa8-9a9e-091f98fc2ce8.json": {
+      "md5": "a253314ec7107d95345d7fc89b8d7bb5"
+    },
+    "assets/game/import/57/57520716-48c8-4a19-8acf-41c9f8777fb0.json": {
+      "md5": "a253314ec7107d95345d7fc89b8d7bb5"
+    },
+    "assets/game/import/59/59eaa739-0f29-4b64-8ded-80ece9574013.json": {
+      "md5": "a253314ec7107d95345d7fc89b8d7bb5"
+    },
+    "assets/game/import/5f/5febda40-5d38-4cff-9c7c-d38132152b87.json": {
+      "md5": "a253314ec7107d95345d7fc89b8d7bb5"
+    },
+    "assets/game/import/62/62ca4348-15fb-4d81-a059-c766adc8c1a1.json": {
+      "md5": "ae1ac9c4a72897173ef23aad1b7fb805"
+    },
+    "assets/game/import/6a/6a5dddd2-47a8-4dcb-9561-c0a3e8f68669.json": {
+      "md5": "a4170a5e097d2eed0482aeb9f8300dbe"
+    },
+    "assets/game/import/6b/6b1184ec-3c91-49c2-9a36-25ae2ed8149e.json": {
+      "md5": "428df6628896cd2f471db17c29ef8488"
+    },
+    "assets/game/import/7b/7b74751e-46a5-49d6-b8df-e0748f24fca8.json": {
+      "md5": "a253314ec7107d95345d7fc89b8d7bb5"
+    },
+    "assets/game/import/7b/7be41f00-7790-417c-a4ea-47442a23a9c2.json": {
+      "md5": "a253314ec7107d95345d7fc89b8d7bb5"
+    },
+    "assets/game/import/7c/7c03dab7-f531-4e3c-aa96-454d8ae885fe.json": {
+      "md5": "a253314ec7107d95345d7fc89b8d7bb5"
+    },
+    "assets/game/import/7f/7fed4102-bd96-42c3-87e1-504e9b9f9a91.json": {
+      "md5": "a253314ec7107d95345d7fc89b8d7bb5"
+    },
+    "assets/game/import/7f/7fed4102-bd96-42c3-87e1-504e9b9f9a91@f9941.json": {
+      "md5": "e19ff51fa6ed174a52a4ab8aa2f88f1e"
+    },
+    "assets/game/import/82/8244e4f7-a802-41e1-a3d5-e46efac53f9e.json": {
+      "md5": "a253314ec7107d95345d7fc89b8d7bb5"
+    },
+    "assets/game/import/82/82a84d52-57a8-4b35-97c2-fc52d9ed49c6.json": {
+      "md5": "a253314ec7107d95345d7fc89b8d7bb5"
+    },
+    "assets/game/import/8b/8bbfa34f-70f3-4a5c-91c3-528bdf2b50f1.json": {
+      "md5": "a253314ec7107d95345d7fc89b8d7bb5"
+    },
+    "assets/game/import/8c/8c64e24d-8f15-4346-bbd5-4fb3c3541588.json": {
+      "md5": "a253314ec7107d95345d7fc89b8d7bb5"
+    },
+    "assets/game/import/8f/8f6a80ba-45dd-4b83-b3fd-370665b161de.json": {
+      "md5": "a253314ec7107d95345d7fc89b8d7bb5"
+    },
+    "assets/game/import/90/90d759c6-8299-4e64-b5f5-569e5b1a0d5d.json": {
+      "md5": "a253314ec7107d95345d7fc89b8d7bb5"
+    },
+    "assets/game/import/92/924d28c2-0699-4324-9587-fb00696a7237.json": {
+      "md5": "a253314ec7107d95345d7fc89b8d7bb5"
+    },
+    "assets/game/import/92/92d2696f-4fcc-4c90-9d6f-57123a16e133.json": {
+      "md5": "a253314ec7107d95345d7fc89b8d7bb5"
+    },
+    "assets/game/import/92/92d2696f-4fcc-4c90-9d6f-57123a16e133@f9941.json": {
+      "md5": "95160abbb037ada9103ac977156b64d8"
+    },
+    "assets/game/import/95/951249e0-9f16-456d-8b85-a6ca954da16b.json": {
+      "md5": "a253314ec7107d95345d7fc89b8d7bb5"
+    },
+    "assets/game/import/9a/9a828f66-538c-469c-b361-55e6039e62e9.json": {
+      "md5": "a253314ec7107d95345d7fc89b8d7bb5"
+    },
+    "assets/game/import/9d/9d1b1ec4-da38-491f-b7c2-77b841fb3eb2.json": {
+      "md5": "a253314ec7107d95345d7fc89b8d7bb5"
+    },
+    "assets/game/import/a1/a178bfcc-2333-4ec7-ba9d-69d2bc21bd88.json": {
+      "md5": "a253314ec7107d95345d7fc89b8d7bb5"
+    },
+    "assets/game/import/a6/a6d59298-4a7e-4fe9-809e-24fa62cd42a4.json": {
+      "md5": "a253314ec7107d95345d7fc89b8d7bb5"
+    },
+    "assets/game/import/ae/ae58b755-4f03-4326-bfe6-64ac6ddd7253.json": {
+      "md5": "0f65d53ff80cbb3781c1acff5792d602"
+    },
+    "assets/game/import/af/afe9c616-e1ec-4d89-b3e3-ffcddb99bfcd.json": {
+      "md5": "a253314ec7107d95345d7fc89b8d7bb5"
+    },
+    "assets/game/import/bb/bbf85ed2-e81d-4cfb-b6ac-63f409a2b8c3.json": {
+      "md5": "a253314ec7107d95345d7fc89b8d7bb5"
+    },
+    "assets/game/import/bf/bfd37144-d928-4bbe-88ae-8bf16e63c45a.json": {
+      "md5": "a253314ec7107d95345d7fc89b8d7bb5"
+    },
+    "assets/game/import/c7/c77b1d37-880b-4853-b016-a82db77649cf.json": {
+      "md5": "a253314ec7107d95345d7fc89b8d7bb5"
+    },
+    "assets/game/import/d9/d9524f6d-9fbb-4396-b264-cd7575cbd504.json": {
+      "md5": "a253314ec7107d95345d7fc89b8d7bb5"
+    },
+    "assets/game/import/e1/e1b7337f-dbfa-413e-a1c7-780bc554a907.json": {
+      "md5": "a253314ec7107d95345d7fc89b8d7bb5"
+    },
+    "assets/game/import/e8/e84c95e6-190b-4902-8c5a-9e135b675fdd.json": {
+      "md5": "b88fac10c9afa30a17c88e2d98288e3f"
+    },
+    "assets/game/import/f2/f2cf7498-1ac3-4752-9b68-04b92cfadcbe.json": {
+      "md5": "a253314ec7107d95345d7fc89b8d7bb5"
+    },
+    "assets/game/import/f4/f4aa9427-0854-4801-b447-66d4c672d8a6.json": {
+      "md5": "b9efedec2dda963841bb8a4c56a5c877"
+    },
+    "assets/game/import/f7/f7deb1e4-7c95-48bf-a1e5-bb8e79096142.json": {
+      "md5": "a253314ec7107d95345d7fc89b8d7bb5"
+    },
+    "assets/game/import/f7/f7deb1e4-7c95-48bf-a1e5-bb8e79096142@f9941.json": {
+      "md5": "f00465cb3c822bbfc6e50714d68b3dee"
+    },
+    "assets/game/import/ff/fff170d8-c359-48d5-8052-c2dbe3d9cefd.json": {
+      "md5": "a253314ec7107d95345d7fc89b8d7bb5"
+    },
+    "assets/game/index.js": {
+      "md5": "131d837eaea4a6273e16f22a8f66a2a6"
+    },
+    "assets/game/native/02/0238856b-98e1-430e-9c2e-2042212a83c2.png": {
+      "md5": "6849963be73101ec9b42f6d7e6d54c64"
+    },
+    "assets/game/native/03/037939e9-8f8a-4bb4-aa58-f1a33dc63dea.mp3": {
+      "md5": "1790c07fc5fd1dcfa0f51df6a76d2da6"
+    },
+    "assets/game/native/0a/0a189013-c505-45ed-adb4-3d7c832aeb85.png": {
+      "md5": "f8c03d2970465b5a60c5a477b418d843"
+    },
+    "assets/game/native/0d/0d888abb-fd49-440d-818f-afb78e475605.png": {
+      "md5": "160e8d93e1a1574175da59a8dedc64b9"
+    },
+    "assets/game/native/10/105ecb01-cbad-4518-88d0-03a1a9ea76cb.png": {
+      "md5": "0b53ed57c0cd26a930b07a8b8fdf046b"
+    },
+    "assets/game/native/10/10b75c33-dc4a-44fe-8e2f-9cd0b11d572c.png": {
+      "md5": "d97075f9d5fc20d55eb74a8c3e196d00"
+    },
+    "assets/game/native/11/1107be01-6ed0-4420-824a-af6f2ae28312.png": {
+      "md5": "1ad10cac77a683c90117152b89b6ccc8"
+    },
+    "assets/game/native/1b/1b72c144-f37b-4873-9a36-f54ce5e9486f.png": {
+      "md5": "14eda450ec0c3b3077b35785ceb57c3d"
+    },
+    "assets/game/native/1c/1cce7df8-3fb9-4206-b74e-3471d4ee2597.png": {
+      "md5": "4f80611e019899a118a02c7b1bc4f618"
+    },
+    "assets/game/native/1f/1f73dd43-70dd-4d54-a7f6-6e3bada9b6d9.png": {
+      "md5": "15ef19a6ae15bfcbec927476defae850"
+    },
+    "assets/game/native/20/20835ba4-6145-4fbc-a58a-051ce700aa3e.png": {
+      "md5": "90cf45d059d0408bec327f66eae5764c"
+    },
+    "assets/game/native/25/253860c9-b307-4665-aaf1-6cf99d6ba5a3.png": {
+      "md5": "559c09cb6255a31d14b97bed58973808"
+    },
+    "assets/game/native/2e/2ef3a490-28ff-449a-b64b-54bc39d3e3c1.png": {
+      "md5": "80afe20f85e608217aa584baece5a93b"
+    },
+    "assets/game/native/33/33dd3f2c-634c-4151-8234-1ed476c114e2.png": {
+      "md5": "937a7b00ee798c80bb557f10fa86ff2b"
+    },
+    "assets/game/native/43/431dbd49-17e1-4b73-9824-739312f15555.png": {
+      "md5": "cfc333b37a6b63cc87b5f0850a74be33"
+    },
+    "assets/game/native/45/456091c0-2dfd-44a5-8471-273ef906b899.png": {
+      "md5": "d02d5a7630c331e2d77849e64fea99b8"
+    },
+    "assets/game/native/47/473e12bd-d36d-4744-bfd7-f0aa809a6282.png": {
+      "md5": "453eacb7da3c0ec6670974cb77bbd790"
+    },
+    "assets/game/native/4b/4ba04bb9-8845-4097-aad5-bad394666e99.mp3": {
+      "md5": "ab9320d8edb78d0c8b40d6bb952b4a9a"
+    },
+    "assets/game/native/50/50257327-1024-4991-b37e-bb7b2b52946e.png": {
+      "md5": "a61e06ab43bd5e0aa5ea7a0a3ef2737b"
+    },
+    "assets/game/native/54/544e49d6-3f05-4fa8-9a9e-091f98fc2ce8.png": {
+      "md5": "83fcc9912e01ae5411c357651fb8b1cf"
+    },
+    "assets/game/native/57/57520716-48c8-4a19-8acf-41c9f8777fb0.png": {
+      "md5": "6d3cf6c6ee7dbfbab63c2bbd2d135ad5"
+    },
+    "assets/game/native/59/59eaa739-0f29-4b64-8ded-80ece9574013.png": {
+      "md5": "bab157a087b62825a99b8e272dd1be07"
+    },
+    "assets/game/native/5f/5febda40-5d38-4cff-9c7c-d38132152b87.png": {
+      "md5": "ff59fe7db270a525cb407cc48e8b8016"
+    },
+    "assets/game/native/7b/7b74751e-46a5-49d6-b8df-e0748f24fca8.png": {
+      "md5": "80a54427c0d56fafa5248614ea3d161a"
+    },
+    "assets/game/native/7b/7be41f00-7790-417c-a4ea-47442a23a9c2.png": {
+      "md5": "b21e4cbcb6a1b6642ecec343613d1151"
+    },
+    "assets/game/native/7c/7c03dab7-f531-4e3c-aa96-454d8ae885fe.png": {
+      "md5": "d955beb2f965fcc9dc460aaa31414abc"
+    },
+    "assets/game/native/7f/7fed4102-bd96-42c3-87e1-504e9b9f9a91.png": {
+      "md5": "a33ce6a6b1486935c8cdf1e5028126f2"
+    },
+    "assets/game/native/82/8244e4f7-a802-41e1-a3d5-e46efac53f9e.png": {
+      "md5": "021cb473fbc398b42c372e54eb33ac48"
+    },
+    "assets/game/native/82/82a84d52-57a8-4b35-97c2-fc52d9ed49c6.png": {
+      "md5": "6849963be73101ec9b42f6d7e6d54c64"
+    },
+    "assets/game/native/8b/8bbfa34f-70f3-4a5c-91c3-528bdf2b50f1.png": {
+      "md5": "147eb4f85319d4d851006e76d6d7ce98"
+    },
+    "assets/game/native/8c/8c64e24d-8f15-4346-bbd5-4fb3c3541588.png": {
+      "md5": "0ebc2f99f983cbc889cf372c4616699e"
+    },
+    "assets/game/native/8f/8f6a80ba-45dd-4b83-b3fd-370665b161de.png": {
+      "md5": "b9d438658c52b792f7dcb8fce9c4ee1a"
+    },
+    "assets/game/native/90/90d759c6-8299-4e64-b5f5-569e5b1a0d5d.png": {
+      "md5": "b55a652b88bc669bb5cb87e947997b32"
+    },
+    "assets/game/native/92/924d28c2-0699-4324-9587-fb00696a7237.png": {
+      "md5": "250660e7d9ab0b75223cac75d324d4bd"
+    },
+    "assets/game/native/92/92d2696f-4fcc-4c90-9d6f-57123a16e133.png": {
+      "md5": "b21e4cbcb6a1b6642ecec343613d1151"
+    },
+    "assets/game/native/95/951249e0-9f16-456d-8b85-a6ca954da16b.png": {
+      "md5": "c06a93f5f1a8a1c6edc4fd8b52e96cbf"
+    },
+    "assets/game/native/9a/9a828f66-538c-469c-b361-55e6039e62e9.png": {
+      "md5": "b28ed1fc5c9c522949060259693af250"
+    },
+    "assets/game/native/9d/9d1b1ec4-da38-491f-b7c2-77b841fb3eb2.png": {
+      "md5": "f8c03d2970465b5a60c5a477b418d843"
+    },
+    "assets/game/native/a1/a178bfcc-2333-4ec7-ba9d-69d2bc21bd88.png": {
+      "md5": "e5424a7305f811982965800a8363efbc"
+    },
+    "assets/game/native/a6/a6d59298-4a7e-4fe9-809e-24fa62cd42a4.png": {
+      "md5": "0b53ed57c0cd26a930b07a8b8fdf046b"
+    },
+    "assets/game/native/ae/ae58b755-4f03-4326-bfe6-64ac6ddd7253.mp3": {
+      "md5": "d36c95d087f6fd8a46956c9c8e159832"
+    },
+    "assets/game/native/af/afe9c616-e1ec-4d89-b3e3-ffcddb99bfcd.png": {
+      "md5": "d0dd38feee88f6da8d44e09f21ec65e4"
+    },
+    "assets/game/native/bb/bbf85ed2-e81d-4cfb-b6ac-63f409a2b8c3.png": {
+      "md5": "82bb105a237a115898ee4695d8000a63"
+    },
+    "assets/game/native/bf/bfd37144-d928-4bbe-88ae-8bf16e63c45a.png": {
+      "md5": "30f89cd1610b8fc0dbd7990337e9a22f"
+    },
+    "assets/game/native/c7/c77b1d37-880b-4853-b016-a82db77649cf.png": {
+      "md5": "c91d5eedef6d7ba0b1da4451f4170305"
+    },
+    "assets/game/native/d9/d9524f6d-9fbb-4396-b264-cd7575cbd504.png": {
+      "md5": "b1bc73104b6a8b784cbbd00e26f9c571"
+    },
+    "assets/game/native/e1/e1b7337f-dbfa-413e-a1c7-780bc554a907.png": {
+      "md5": "2463adda014892bbf85b0c36bb38db82"
+    },
+    "assets/game/native/f2/f2cf7498-1ac3-4752-9b68-04b92cfadcbe.png": {
+      "md5": "1ae9394807634e78a19968fb003a6ff0"
+    },
+    "assets/game/native/f7/f7deb1e4-7c95-48bf-a1e5-bb8e79096142.png": {
+      "md5": "160e8d93e1a1574175da59a8dedc64b9"
+    },
+    "assets/game/native/ff/fff170d8-c359-48d5-8052-c2dbe3d9cefd.png": {
+      "md5": "48284bcc665b5dadc0d9a7c9c4a0295a"
+    },
+    "assets/internal/cc.config.json": {
+      "md5": "6b232e5c1e60eacb53201ee644c96d09"
+    },
+    "assets/internal/import/06/06585a170.json": {
+      "md5": "c06710857fd7f811dc5cf997ad4a3d1b"
+    },
+    "assets/internal/index.js": {
+      "md5": "485ec411d67c319c19f92a77040401f2"
+    },
+    "assets/main/cc.config.json": {
+      "md5": "3f37c228a37094b62448548e204ee08e"
+    },
+    "assets/main/import/a5/a5901b50-9030-47f2-88b3-084af3508b1a.json": {
+      "md5": "59d458a3f97e2f54467b60079f9c97f8"
+    },
+    "assets/main/import/ba/ba21476f-2866-4f81-9c4d-6e359316e448.json": {
+      "md5": "8bce784945efd554512e8520ec9caccb"
+    },
+    "assets/main/import/fd/fd8ec536-a354-4a17-9c74-4f3883c378c8.json": {
+      "md5": "731f44a39ce9377ee6de8ba34edaf039"
+    },
+    "assets/main/index.js": {
+      "md5": "ac619b824667dbcee64576e81136c23f"
+    },
+    "assets/resources/cc.config.json": {
+      "md5": "bf839f885a7d8e20930c84a6e1852456"
+    },
+    "assets/resources/import/05/05785c451.json": {
+      "md5": "01c94c5aa19d83491abc1e2ea81597b9"
+    },
+    "assets/resources/import/07/074ab2e22.json": {
+      "md5": "233858f00f73050372754836587dca88"
+    },
+    "assets/resources/import/0f/0f9c3a2ff.json": {
+      "md5": "03743b6dde21bfd9e7edc98f72bd5de2"
+    },
+    "assets/resources/import/12/12e4a390-7a49-483b-912f-382f91324198.json": {
+      "md5": "a253314ec7107d95345d7fc89b8d7bb5"
+    },
+    "assets/resources/import/24/24a704da-2867-446d-8d1a-5e920c75e09d.json": {
+      "md5": "a253314ec7107d95345d7fc89b8d7bb5"
+    },
+    "assets/resources/import/73/73ce38c9-4075-4d78-941c-622ed6ae3089.json": {
+      "md5": "a253314ec7107d95345d7fc89b8d7bb5"
+    },
+    "assets/resources/import/73/73ce38c9-4075-4d78-941c-622ed6ae3089@f9941.json": {
+      "md5": "2703e387bad9d7522f5bccb54a4235e7"
+    },
+    "assets/resources/import/7d/7d8f9b89-4fd1-4c9f-a3ab-38ec7cded7ca.json": {
+      "md5": "a253314ec7107d95345d7fc89b8d7bb5"
+    },
+    "assets/resources/import/9f/9fd900dd-221b-4f89-8f2c-fba34243c835.json": {
+      "md5": "a253314ec7107d95345d7fc89b8d7bb5"
+    },
+    "assets/resources/index.js": {
+      "md5": "0888b4dbae126e3c066a3abbb640f59b"
+    },
+    "assets/resources/native/12/12e4a390-7a49-483b-912f-382f91324198.png": {
+      "md5": "0383d03d7da6593098ee751bf320259f"
+    },
+    "assets/resources/native/24/24a704da-2867-446d-8d1a-5e920c75e09d.png": {
+      "md5": "a4b5953dffeb145b4b70072d91c4052b"
+    },
+    "assets/resources/native/69/69076f84-d869-4ee0-be3d-eb58e4708742.manifest": {
+      "md5": "5cf86eb8c3ca39d8c49d2c3b12cf79c8"
+    },
+    "assets/resources/native/73/73ce38c9-4075-4d78-941c-622ed6ae3089.png": {
+      "md5": "51fbf9996a5a383440afbd040b916183"
+    },
+    "assets/resources/native/7d/7d8f9b89-4fd1-4c9f-a3ab-38ec7cded7ca.png": {
+      "md5": "cea68f0d7cba38440224f6f74531e2d8"
+    },
+    "assets/resources/native/9f/9fd900dd-221b-4f89-8f2c-fba34243c835.png": {
+      "md5": "d1118d133683bb4227d5e60c79c846b7"
+    },
+    "assets/ui/cc.config.json": {
+      "md5": "5f9217db71d69d11e9c66d03ec596f16"
+    },
+    "assets/ui/import/05/056fd9be5.json": {
+      "md5": "0d97f9549e69cfae18c838b403de0d5d"
+    },
+    "assets/ui/import/0b/0bb089cd1.json": {
+      "md5": "28054d481c7bfa94564c4b1bf9f58c65"
+    },
+    "assets/ui/import/0b/0bb2c50bf.json": {
+      "md5": "d008bb9f921aa612e66792ed071f5439"
+    },
+    "assets/ui/import/0c/0c2ba2cfe.json": {
+      "md5": "ab796dfcdb8c08c2ae4b6a2ef43f0eca"
+    },
+    "assets/ui/import/0c/0c7c861df.json": {
+      "md5": "69e143f7dbeb265e47cabbeba3b48175"
+    },
+    "assets/ui/import/0e/0e167ad31.json": {
+      "md5": "f07e2b134793c73c27dd726b25b7d2a1"
+    },
+    "assets/ui/import/0f/0fa6df6f5.json": {
+      "md5": "3ac0232eb01f0eb043f9f5d73ce9f75c"
+    },
+    "assets/ui/import/11/11bdc4b0-64a8-4eb7-a2a7-9fb9e233e977.json": {
+      "md5": "a253314ec7107d95345d7fc89b8d7bb5"
+    },
+    "assets/ui/import/15/158e7e52-3220-4cd7-9694-713e0e6e8278.json": {
+      "md5": "a253314ec7107d95345d7fc89b8d7bb5"
+    },
+    "assets/ui/import/1c/1c2ba2cfe.json": {
+      "md5": "a561269ef3783be21c49063b54f48617"
+    },
+    "assets/ui/import/1c/1c7c861df.json": {
+      "md5": "63dd0044ec138b69c2a0991867b1474e"
+    },
+    "assets/ui/import/20/20835ba4-6145-4fbc-a58a-051ce700aa3e.json": {
+      "md5": "a253314ec7107d95345d7fc89b8d7bb5"
+    },
+    "assets/ui/import/2e/2e8f53b4-7e75-4527-872c-5d2abcf85577.json": {
+      "md5": "c16a8f853c64bf39777846c27bfac37d"
+    },
+    "assets/ui/import/2e/2e8f53b4-7e75-4527-872c-5d2abcf85577@f9941.json": {
+      "md5": "571e465faba02f706290d5a1ea40220b"
+    },
+    "assets/ui/import/54/544e49d6-3f05-4fa8-9a9e-091f98fc2ce8.json": {
+      "md5": "a253314ec7107d95345d7fc89b8d7bb5"
+    },
+    "assets/ui/import/57/575501cc-5a0c-4776-b41b-5595c38ca529.json": {
+      "md5": "a253314ec7107d95345d7fc89b8d7bb5"
+    },
+    "assets/ui/import/57/575501cc-5a0c-4776-b41b-5595c38ca529@f9941.json": {
+      "md5": "f50d080db732009fb161ffe6b0e4b05e"
+    },
+    "assets/ui/import/5e/5ed80025-fb4a-444a-a01f-402fb9795e84.json": {
+      "md5": "53e98e82551990a0e026b3aa6bdea2a8"
+    },
+    "assets/ui/import/88/885370c4-e7b9-4b1d-9f23-2ceb0ca345eb.json": {
+      "md5": "a253314ec7107d95345d7fc89b8d7bb5"
+    },
+    "assets/ui/import/95/951249e0-9f16-456d-8b85-a6ca954da16b.json": {
+      "md5": "a253314ec7107d95345d7fc89b8d7bb5"
+    },
+    "assets/ui/import/9b/9ba23c31-5940-44af-a3d5-7006e2e55a42.json": {
+      "md5": "e876e026e8abc5add95c7a9910317139"
+    },
+    "assets/ui/import/a0/a0375901-ef22-4899-83b2-b4de271aa2d7.json": {
+      "md5": "a253314ec7107d95345d7fc89b8d7bb5"
+    },
+    "assets/ui/import/af/afc47931-f066-46b0-90be-9fe61f213428.json": {
+      "md5": "a253314ec7107d95345d7fc89b8d7bb5"
+    },
+    "assets/ui/import/ff/ffb88a8f-af62-48f4-8f1d-3cb606443a43.json": {
+      "md5": "a253314ec7107d95345d7fc89b8d7bb5"
+    },
+    "assets/ui/index.js": {
+      "md5": "5af638f3d9b00ae7b1c55c3ae95fe830"
+    },
+    "assets/ui/native/11/11bdc4b0-64a8-4eb7-a2a7-9fb9e233e977.png": {
+      "md5": "65417fcd98e2307e1c7ca1a7ca031f06"
+    },
+    "assets/ui/native/15/158e7e52-3220-4cd7-9694-713e0e6e8278.png": {
+      "md5": "7661ea4222634cfda42c2cee9224dc32"
+    },
+    "assets/ui/native/1c/1c2ba2cfe.png": {
+      "md5": "cd5748d08564711cba6e668c7a0193f7"
+    },
+    "assets/ui/native/1c/1c7c861df.png": {
+      "md5": "cda856a77d7de52cf37b64a4ecfcf6c0"
+    },
+    "assets/ui/native/20/20835ba4-6145-4fbc-a58a-051ce700aa3e.png": {
+      "md5": "90cf45d059d0408bec327f66eae5764c"
+    },
+    "assets/ui/native/2e/2e8f53b4-7e75-4527-872c-5d2abcf85577.jpg": {
+      "md5": "4d5ef36edf0101be12a41ca888e42468"
+    },
+    "assets/ui/native/54/544e49d6-3f05-4fa8-9a9e-091f98fc2ce8.png": {
+      "md5": "83fcc9912e01ae5411c357651fb8b1cf"
+    },
+    "assets/ui/native/57/575501cc-5a0c-4776-b41b-5595c38ca529.png": {
+      "md5": "933d1ba2319e3319b7d6032dd393359c"
+    },
+    "assets/ui/native/88/885370c4-e7b9-4b1d-9f23-2ceb0ca345eb.png": {
+      "md5": "31859227e6ca736c2234859417a40762"
+    },
+    "assets/ui/native/95/951249e0-9f16-456d-8b85-a6ca954da16b.png": {
+      "md5": "c06a93f5f1a8a1c6edc4fd8b52e96cbf"
+    },
+    "assets/ui/native/a0/a0375901-ef22-4899-83b2-b4de271aa2d7.png": {
+      "md5": "dd43fcfdfafdb6b0a6f2dcdac13fac2a"
+    },
+    "assets/ui/native/af/afc47931-f066-46b0-90be-9fe61f213428.png": {
+      "md5": "d55c2eb11156ee03fcc4549419c7f61b"
+    },
+    "assets/ui/native/ff/ffb88a8f-af62-48f4-8f1d-3cb606443a43.png": {
+      "md5": "6d707a7a357fe9eb17dce608a8255e7d"
+    },
+    "jsb-adapter/engine-adapter.js": {
+      "md5": "d7c197e587a97d0240e760508b009865"
+    },
+    "jsb-adapter/web-adapter.js": {
+      "md5": "2ab62c17fde76578b00670430e4a09bf"
+    },
+    "main.js": {
+      "md5": "e3167153cd7edbda3a1b2550fb24194a"
+    },
+    "src/chunks/bundle.js": {
+      "md5": "5090af38add59c9ee667e7aa7630e033"
+    },
+    "src/cocos-js/cc.js": {
+      "md5": "2b73eb923056ca6eddef8cbc89ff6f5a"
+    },
+    "src/effect.bin": {
+      "md5": "4f2f1c1f24379fb11eeff163fb321177"
+    },
+    "src/import-map.json": {
+      "md5": "fc840d99cbb3732367a93c054d1200d4"
+    },
+    "src/settings.json": {
+      "md5": "7cb9a85459a378b495f6bfc266ec2d68"
+    },
+    "src/system.bundle.js": {
+      "md5": "f45da0108c6bc0747a05f0f669023838"
+    }
+  },
+  "searchPaths": []
+}
