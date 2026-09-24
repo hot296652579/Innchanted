@@ -4,7 +4,6 @@ import { BundlesEnum } from 'db://assets/define/BundlesEnum';
 import AudioPlayer from 'db://assets/framework/resource/AudioPlayer';
 import BaseWindow from 'db://assets/framework/ui/BaseWindow';
 import { UILayerType } from 'db://assets/framework/ui/UILayer';
-import { BattleManager } from '../battle/BattleManager';
 const { ccclass, property } = _decorator;
 
 //动画名
@@ -38,6 +37,5 @@ export class WinWnd extends BaseWindow {
 
     private onBtnNextClick(): void {
         this.closeWindow();
-        BattleManager.getInstance().nextLevel();
     }
 }
