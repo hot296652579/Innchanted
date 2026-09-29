@@ -1,0 +1,157 @@
+{
+  "ver": "2.3.14",
+  "importer": "fbx",
+  "imported": true,
+  "uuid": "62e563e8-96be-4594-8c3e-1478a67fc20a",
+  "files": [
+    "__original-animation-0.bin"
+  ],
+  "subMetas": {
+    "530fd": {
+      "importer": "gltf-mesh",
+      "uuid": "62e563e8-96be-4594-8c3e-1478a67fc20a@530fd",
+      "displayName": "",
+      "id": "530fd",
+      "name": "PrototypePete_body.mesh",
+      "userData": {
+        "gltfIndex": 0,
+        "triangleCount": 4879
+      },
+      "ver": "1.1.1",
+      "imported": true,
+      "files": [
+        ".bin",
+        ".json"
+      ],
+      "subMetas": {}
+    },
+    "792ef": {
+      "importer": "gltf-animation",
+      "uuid": "62e563e8-96be-4594-8c3e-1478a67fc20a@792ef",
+      "displayName": "",
+      "id": "792ef",
+      "name": "KayKit Animated Character|Shoot(2h)Bow.animation",
+      "userData": {
+        "gltfIndex": 0,
+        "wrapMode": 2,
+        "sample": 30,
+        "span": {
+          "from": 0,
+          "to": 1
+        },
+        "events": []
+      },
+      "ver": "1.0.18",
+      "imported": true,
+      "files": [
+        ".bin"
+      ],
+      "subMetas": {}
+    },
+    "438fe": {
+      "importer": "gltf-skeleton",
+      "uuid": "62e563e8-96be-4594-8c3e-1478a67fc20a@438fe",
+      "displayName": "",
+      "id": "438fe",
+      "name": "UnnamedSkeleton.skeleton",
+      "userData": {
+        "gltfIndex": 0,
+        "jointsLength": 6
+      },
+      "ver": "1.0.1",
+      "imported": true,
+      "files": [
+        ".json"
+      ],
+      "subMetas": {}
+    },
+    "88cf9": {
+      "importer": "gltf-material",
+      "uuid": "62e563e8-96be-4594-8c3e-1478a67fc20a@88cf9",
+      "displayName": "",
+      "id": "88cf9",
+      "name": "PrototypePete.material",
+      "userData": {
+        "gltfIndex": 0
+      },
+      "ver": "1.0.14",
+      "imported": true,
+      "files": [
+        ".json"
+      ],
+      "subMetas": {}
+    },
+    "662cb": {
+      "importer": "gltf-scene",
+      "uuid": "62e563e8-96be-4594-8c3e-1478a67fc20a@662cb",
+      "displayName": "",
+      "id": "662cb",
+      "name": "Shoot(2h)Bow.prefab",
+      "userData": {
+        "gltfIndex": 0
+      },
+      "ver": "1.0.14",
+      "imported": true,
+      "files": [
+        ".json"
+      ],
+      "subMetas": {}
+    }
+  },
+  "userData": {
+    "imageMetas": [],
+    "fbx": {
+      "smartMaterialEnabled": true,
+      "matchMeshNames": false
+    },
+    "animationImportSettings": [
+      {
+        "name": "KayKit Animated Character|Shoot(2h)Bow",
+        "duration": 1,
+        "fps": 30,
+        "splits": [
+          {
+            "name": "KayKit Animated Character|Shoot(2h)Bow",
+            "from": 0,
+            "to": 1,
+            "wrapMode": 2,
+            "previousId": "792ef"
+          }
+        ]
+      }
+    ],
+    "assetFinder": {
+      "meshes": [
+        "62e563e8-96be-4594-8c3e-1478a67fc20a@530fd"
+      ],
+      "skeletons": [
+        "62e563e8-96be-4594-8c3e-1478a67fc20a@438fe"
+      ],
+      "textures": [],
+      "materials": [
+        "62e563e8-96be-4594-8c3e-1478a67fc20a@88cf9"
+      ],
+      "scenes": [
+        "62e563e8-96be-4594-8c3e-1478a67fc20a@662cb"
+      ]
+    },
+    "lods": {
+      "enable": false,
+      "hasBuiltinLOD": false,
+      "options": [
+        {
+          "screenRatio": 0.25,
+          "faceCount": 1
+        },
+        {
+          "screenRatio": 0.125,
+          "faceCount": 0.25
+        },
+        {
+          "screenRatio": 0.01,
+          "faceCount": 0.1
+        }
+      ]
+    }
+  }
+}

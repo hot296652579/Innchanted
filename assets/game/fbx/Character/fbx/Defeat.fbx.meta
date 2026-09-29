@@ -1,0 +1,157 @@
+{
+  "ver": "2.3.14",
+  "importer": "fbx",
+  "imported": true,
+  "uuid": "7d4e4707-02f1-49cc-92ba-d27804f28b15",
+  "files": [
+    "__original-animation-0.bin"
+  ],
+  "subMetas": {
+    "28439": {
+      "importer": "gltf-scene",
+      "uuid": "7d4e4707-02f1-49cc-92ba-d27804f28b15@28439",
+      "displayName": "",
+      "id": "28439",
+      "name": "Defeat.prefab",
+      "userData": {
+        "gltfIndex": 0
+      },
+      "ver": "1.0.14",
+      "imported": true,
+      "files": [
+        ".json"
+      ],
+      "subMetas": {}
+    },
+    "530fd": {
+      "importer": "gltf-mesh",
+      "uuid": "7d4e4707-02f1-49cc-92ba-d27804f28b15@530fd",
+      "displayName": "",
+      "id": "530fd",
+      "name": "PrototypePete_body.mesh",
+      "userData": {
+        "gltfIndex": 0,
+        "triangleCount": 4879
+      },
+      "ver": "1.1.1",
+      "imported": true,
+      "files": [
+        ".bin",
+        ".json"
+      ],
+      "subMetas": {}
+    },
+    "93ddf": {
+      "importer": "gltf-animation",
+      "uuid": "7d4e4707-02f1-49cc-92ba-d27804f28b15@93ddf",
+      "displayName": "",
+      "id": "93ddf",
+      "name": "KayKit Animated Character|Defeat.animation",
+      "userData": {
+        "gltfIndex": 0,
+        "wrapMode": 2,
+        "sample": 30,
+        "span": {
+          "from": 0,
+          "to": 0.7666666507720947
+        },
+        "events": []
+      },
+      "ver": "1.0.18",
+      "imported": true,
+      "files": [
+        ".bin"
+      ],
+      "subMetas": {}
+    },
+    "438fe": {
+      "importer": "gltf-skeleton",
+      "uuid": "7d4e4707-02f1-49cc-92ba-d27804f28b15@438fe",
+      "displayName": "",
+      "id": "438fe",
+      "name": "UnnamedSkeleton.skeleton",
+      "userData": {
+        "gltfIndex": 0,
+        "jointsLength": 6
+      },
+      "ver": "1.0.1",
+      "imported": true,
+      "files": [
+        ".json"
+      ],
+      "subMetas": {}
+    },
+    "88cf9": {
+      "importer": "gltf-material",
+      "uuid": "7d4e4707-02f1-49cc-92ba-d27804f28b15@88cf9",
+      "displayName": "",
+      "id": "88cf9",
+      "name": "PrototypePete.material",
+      "userData": {
+        "gltfIndex": 0
+      },
+      "ver": "1.0.14",
+      "imported": true,
+      "files": [
+        ".json"
+      ],
+      "subMetas": {}
+    }
+  },
+  "userData": {
+    "imageMetas": [],
+    "fbx": {
+      "smartMaterialEnabled": true,
+      "matchMeshNames": false
+    },
+    "animationImportSettings": [
+      {
+        "name": "KayKit Animated Character|Defeat",
+        "duration": 0.7666666507720947,
+        "fps": 30,
+        "splits": [
+          {
+            "name": "KayKit Animated Character|Defeat",
+            "from": 0,
+            "to": 0.7666666507720947,
+            "wrapMode": 2,
+            "previousId": "93ddf"
+          }
+        ]
+      }
+    ],
+    "assetFinder": {
+      "meshes": [
+        "7d4e4707-02f1-49cc-92ba-d27804f28b15@530fd"
+      ],
+      "skeletons": [
+        "7d4e4707-02f1-49cc-92ba-d27804f28b15@438fe"
+      ],
+      "textures": [],
+      "materials": [
+        "7d4e4707-02f1-49cc-92ba-d27804f28b15@88cf9"
+      ],
+      "scenes": [
+        "7d4e4707-02f1-49cc-92ba-d27804f28b15@28439"
+      ]
+    },
+    "lods": {
+      "enable": false,
+      "hasBuiltinLOD": false,
+      "options": [
+        {
+          "screenRatio": 0.25,
+          "faceCount": 1
+        },
+        {
+          "screenRatio": 0.125,
+          "faceCount": 0.25
+        },
+        {
+          "screenRatio": 0.01,
+          "faceCount": 0.1
+        }
+      ]
+    }
+  }
+}

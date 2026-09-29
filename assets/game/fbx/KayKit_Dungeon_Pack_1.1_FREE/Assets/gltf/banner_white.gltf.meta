@@ -1,0 +1,123 @@
+{
+  "ver": "2.3.14",
+  "importer": "gltf",
+  "imported": true,
+  "uuid": "d7a85a6a-d41f-4efa-9bb6-799cd3821872",
+  "files": [],
+  "subMetas": {
+    "56ba4": {
+      "importer": "gltf-mesh",
+      "uuid": "d7a85a6a-d41f-4efa-9bb6-799cd3821872@56ba4",
+      "displayName": "",
+      "id": "56ba4",
+      "name": "banner_white.mesh",
+      "userData": {
+        "gltfIndex": 0,
+        "triangleCount": 97
+      },
+      "ver": "1.1.1",
+      "imported": true,
+      "files": [
+        ".bin",
+        ".json"
+      ],
+      "subMetas": {}
+    },
+    "e39f7": {
+      "importer": "texture",
+      "uuid": "d7a85a6a-d41f-4efa-9bb6-799cd3821872@e39f7",
+      "displayName": "",
+      "id": "e39f7",
+      "name": "UnnamedTexture.texture",
+      "userData": {
+        "wrapModeS": "repeat",
+        "wrapModeT": "repeat",
+        "minfilter": "linear",
+        "magfilter": "linear",
+        "mipfilter": "linear",
+        "anisotropy": 0,
+        "isUuid": false,
+        "imageUuidOrDatabaseUri": "db://assets/game/fbx/KayKit_Dungeon_Pack_1.1_FREE/Assets/gltf/dungeon_texture.png"
+      },
+      "ver": "1.0.22",
+      "imported": true,
+      "files": [
+        ".json"
+      ],
+      "subMetas": {}
+    },
+    "5b641": {
+      "importer": "gltf-material",
+      "uuid": "d7a85a6a-d41f-4efa-9bb6-799cd3821872@5b641",
+      "displayName": "",
+      "id": "5b641",
+      "name": "texture.material",
+      "userData": {
+        "gltfIndex": 0
+      },
+      "ver": "1.0.14",
+      "imported": true,
+      "files": [
+        ".json"
+      ],
+      "subMetas": {}
+    },
+    "b3d06": {
+      "importer": "gltf-scene",
+      "uuid": "d7a85a6a-d41f-4efa-9bb6-799cd3821872@b3d06",
+      "displayName": "",
+      "id": "b3d06",
+      "name": "banner_white.prefab",
+      "userData": {
+        "gltfIndex": 0
+      },
+      "ver": "1.0.14",
+      "imported": true,
+      "files": [
+        ".json"
+      ],
+      "subMetas": {}
+    }
+  },
+  "userData": {
+    "imageMetas": [
+      {
+        "name": "dungeon_texture",
+        "uri": "db://assets/game/fbx/KayKit_Dungeon_Pack_1.1_FREE/Assets/gltf/dungeon_texture.png"
+      }
+    ],
+    "lods": {
+      "enable": false,
+      "hasBuiltinLOD": false,
+      "options": [
+        {
+          "screenRatio": 0.25,
+          "faceCount": 1
+        },
+        {
+          "screenRatio": 0.125,
+          "faceCount": 0.25
+        },
+        {
+          "screenRatio": 0.01,
+          "faceCount": 0.1
+        }
+      ]
+    },
+    "assetFinder": {
+      "meshes": [
+        "d7a85a6a-d41f-4efa-9bb6-799cd3821872@56ba4"
+      ],
+      "skeletons": [],
+      "textures": [
+        "d7a85a6a-d41f-4efa-9bb6-799cd3821872@e39f7"
+      ],
+      "materials": [
+        "d7a85a6a-d41f-4efa-9bb6-799cd3821872@5b641"
+      ],
+      "scenes": [
+        "d7a85a6a-d41f-4efa-9bb6-799cd3821872@b3d06"
+      ]
+    }
+  }
+}

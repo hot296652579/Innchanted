@@ -1,0 +1,157 @@
+{
+  "ver": "2.3.14",
+  "importer": "fbx",
+  "imported": true,
+  "uuid": "b9389ca4-5505-4358-af8d-85b356f8c92b",
+  "files": [
+    "__original-animation-0.bin"
+  ],
+  "subMetas": {
+    "530fd": {
+      "importer": "gltf-mesh",
+      "uuid": "b9389ca4-5505-4358-af8d-85b356f8c92b@530fd",
+      "displayName": "",
+      "id": "530fd",
+      "name": "PrototypePete_body.mesh",
+      "userData": {
+        "gltfIndex": 0,
+        "triangleCount": 4879
+      },
+      "ver": "1.1.1",
+      "imported": true,
+      "files": [
+        ".bin",
+        ".json"
+      ],
+      "subMetas": {}
+    },
+    "7b43d": {
+      "importer": "gltf-animation",
+      "uuid": "b9389ca4-5505-4358-af8d-85b356f8c92b@7b43d",
+      "displayName": "",
+      "id": "7b43d",
+      "name": "KayKit Animated Character|Climbing.animation",
+      "userData": {
+        "gltfIndex": 0,
+        "wrapMode": 2,
+        "sample": 30,
+        "span": {
+          "from": 0,
+          "to": 1.600000023841858
+        },
+        "events": []
+      },
+      "ver": "1.0.18",
+      "imported": true,
+      "files": [
+        ".bin"
+      ],
+      "subMetas": {}
+    },
+    "438fe": {
+      "importer": "gltf-skeleton",
+      "uuid": "b9389ca4-5505-4358-af8d-85b356f8c92b@438fe",
+      "displayName": "",
+      "id": "438fe",
+      "name": "UnnamedSkeleton.skeleton",
+      "userData": {
+        "gltfIndex": 0,
+        "jointsLength": 6
+      },
+      "ver": "1.0.1",
+      "imported": true,
+      "files": [
+        ".json"
+      ],
+      "subMetas": {}
+    },
+    "88cf9": {
+      "importer": "gltf-material",
+      "uuid": "b9389ca4-5505-4358-af8d-85b356f8c92b@88cf9",
+      "displayName": "",
+      "id": "88cf9",
+      "name": "PrototypePete.material",
+      "userData": {
+        "gltfIndex": 0
+      },
+      "ver": "1.0.14",
+      "imported": true,
+      "files": [
+        ".json"
+      ],
+      "subMetas": {}
+    },
+    "ba9bd": {
+      "importer": "gltf-scene",
+      "uuid": "b9389ca4-5505-4358-af8d-85b356f8c92b@ba9bd",
+      "displayName": "",
+      "id": "ba9bd",
+      "name": "Climbing.prefab",
+      "userData": {
+        "gltfIndex": 0
+      },
+      "ver": "1.0.14",
+      "imported": true,
+      "files": [
+        ".json"
+      ],
+      "subMetas": {}
+    }
+  },
+  "userData": {
+    "imageMetas": [],
+    "fbx": {
+      "smartMaterialEnabled": true,
+      "matchMeshNames": false
+    },
+    "animationImportSettings": [
+      {
+        "name": "KayKit Animated Character|Climbing",
+        "duration": 1.600000023841858,
+        "fps": 30,
+        "splits": [
+          {
+            "name": "KayKit Animated Character|Climbing",
+            "from": 0,
+            "to": 1.600000023841858,
+            "wrapMode": 2,
+            "previousId": "7b43d"
+          }
+        ]
+      }
+    ],
+    "assetFinder": {
+      "meshes": [
+        "b9389ca4-5505-4358-af8d-85b356f8c92b@530fd"
+      ],
+      "skeletons": [
+        "b9389ca4-5505-4358-af8d-85b356f8c92b@438fe"
+      ],
+      "textures": [],
+      "materials": [
+        "b9389ca4-5505-4358-af8d-85b356f8c92b@88cf9"
+      ],
+      "scenes": [
+        "b9389ca4-5505-4358-af8d-85b356f8c92b@ba9bd"
+      ]
+    },
+    "lods": {
+      "enable": false,
+      "hasBuiltinLOD": false,
+      "options": [
+        {
+          "screenRatio": 0.25,
+          "faceCount": 1
+        },
+        {
+          "screenRatio": 0.125,
+          "faceCount": 0.25
+        },
+        {
+          "screenRatio": 0.01,
+          "faceCount": 0.1
+        }
+      ]
+    }
+  }
+}

@@ -1,0 +1,142 @@
+{
+  "ver": "2.3.14",
+  "importer": "gltf",
+  "imported": true,
+  "uuid": "fddefb45-deeb-4b29-8c33-b15e45f72f1e",
+  "files": [],
+  "subMetas": {
+    "f884c": {
+      "importer": "gltf-mesh",
+      "uuid": "fddefb45-deeb-4b29-8c33-b15e45f72f1e@f884c",
+      "displayName": "",
+      "id": "f884c",
+      "name": "chest_lid.mesh",
+      "userData": {
+        "gltfIndex": 0,
+        "triangleCount": 462
+      },
+      "ver": "1.1.1",
+      "imported": true,
+      "files": [
+        ".bin",
+        ".json"
+      ],
+      "subMetas": {}
+    },
+    "aad6e": {
+      "importer": "gltf-mesh",
+      "uuid": "fddefb45-deeb-4b29-8c33-b15e45f72f1e@aad6e",
+      "displayName": "",
+      "id": "aad6e",
+      "name": "chest.mesh",
+      "userData": {
+        "gltfIndex": 1,
+        "triangleCount": 266
+      },
+      "ver": "1.1.1",
+      "imported": true,
+      "files": [
+        ".bin",
+        ".json"
+      ],
+      "subMetas": {}
+    },
+    "e39f7": {
+      "importer": "texture",
+      "uuid": "fddefb45-deeb-4b29-8c33-b15e45f72f1e@e39f7",
+      "displayName": "",
+      "id": "e39f7",
+      "name": "UnnamedTexture.texture",
+      "userData": {
+        "wrapModeS": "repeat",
+        "wrapModeT": "repeat",
+        "minfilter": "linear",
+        "magfilter": "linear",
+        "mipfilter": "linear",
+        "anisotropy": 0,
+        "isUuid": false,
+        "imageUuidOrDatabaseUri": "db://assets/game/fbx/KayKit_Dungeon_Pack_1.1_FREE/Assets/gltf/dungeon_texture.png"
+      },
+      "ver": "1.0.22",
+      "imported": true,
+      "files": [
+        ".json"
+      ],
+      "subMetas": {}
+    },
+    "5b641": {
+      "importer": "gltf-material",
+      "uuid": "fddefb45-deeb-4b29-8c33-b15e45f72f1e@5b641",
+      "displayName": "",
+      "id": "5b641",
+      "name": "texture.material",
+      "userData": {
+        "gltfIndex": 0
+      },
+      "ver": "1.0.14",
+      "imported": true,
+      "files": [
+        ".json"
+      ],
+      "subMetas": {}
+    },
+    "a19ff": {
+      "importer": "gltf-scene",
+      "uuid": "fddefb45-deeb-4b29-8c33-b15e45f72f1e@a19ff",
+      "displayName": "",
+      "id": "a19ff",
+      "name": "chest.prefab",
+      "userData": {
+        "gltfIndex": 0
+      },
+      "ver": "1.0.14",
+      "imported": true,
+      "files": [
+        ".json"
+      ],
+      "subMetas": {}
+    }
+  },
+  "userData": {
+    "imageMetas": [
+      {
+        "name": "dungeon_texture",
+        "uri": "db://assets/game/fbx/KayKit_Dungeon_Pack_1.1_FREE/Assets/gltf/dungeon_texture.png"
+      }
+    ],
+    "lods": {
+      "enable": false,
+      "hasBuiltinLOD": false,
+      "options": [
+        {
+          "screenRatio": 0.25,
+          "faceCount": 1
+        },
+        {
+          "screenRatio": 0.125,
+          "faceCount": 0.25
+        },
+        {
+          "screenRatio": 0.01,
+          "faceCount": 0.1
+        }
+      ]
+    },
+    "assetFinder": {
+      "meshes": [
+        "fddefb45-deeb-4b29-8c33-b15e45f72f1e@f884c",
+        "fddefb45-deeb-4b29-8c33-b15e45f72f1e@aad6e"
+      ],
+      "skeletons": [],
+      "textures": [
+        "fddefb45-deeb-4b29-8c33-b15e45f72f1e@e39f7"
+      ],
+      "materials": [
+        "fddefb45-deeb-4b29-8c33-b15e45f72f1e@5b641"
+      ],
+      "scenes": [
+        "fddefb45-deeb-4b29-8c33-b15e45f72f1e@a19ff"
+      ]
+    }
+  }
+}

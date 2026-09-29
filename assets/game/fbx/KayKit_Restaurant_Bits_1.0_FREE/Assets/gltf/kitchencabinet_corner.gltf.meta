@@ -1,0 +1,123 @@
+{
+  "ver": "2.3.14",
+  "importer": "gltf",
+  "imported": true,
+  "uuid": "823e94c1-661f-4ea4-b9da-b6bc5d1efc07",
+  "files": [],
+  "subMetas": {
+    "b9434": {
+      "importer": "gltf-mesh",
+      "uuid": "823e94c1-661f-4ea4-b9da-b6bc5d1efc07@b9434",
+      "displayName": "",
+      "id": "b9434",
+      "name": "Cube.223.mesh",
+      "userData": {
+        "gltfIndex": 0,
+        "triangleCount": 172
+      },
+      "ver": "1.1.1",
+      "imported": true,
+      "files": [
+        ".bin",
+        ".json"
+      ],
+      "subMetas": {}
+    },
+    "e39f7": {
+      "importer": "texture",
+      "uuid": "823e94c1-661f-4ea4-b9da-b6bc5d1efc07@e39f7",
+      "displayName": "",
+      "id": "e39f7",
+      "name": "UnnamedTexture.texture",
+      "userData": {
+        "wrapModeS": "repeat",
+        "wrapModeT": "repeat",
+        "minfilter": "linear",
+        "magfilter": "linear",
+        "mipfilter": "linear",
+        "anisotropy": 0,
+        "isUuid": false,
+        "imageUuidOrDatabaseUri": "db://assets/game/fbx/KayKit_Restaurant_Bits_1.0_FREE/Assets/gltf/restaurantbits_texture.png"
+      },
+      "ver": "1.0.22",
+      "imported": true,
+      "files": [
+        ".json"
+      ],
+      "subMetas": {}
+    },
+    "da25f": {
+      "importer": "gltf-material",
+      "uuid": "823e94c1-661f-4ea4-b9da-b6bc5d1efc07@da25f",
+      "displayName": "",
+      "id": "da25f",
+      "name": "restaurant.material",
+      "userData": {
+        "gltfIndex": 0
+      },
+      "ver": "1.0.14",
+      "imported": true,
+      "files": [
+        ".json"
+      ],
+      "subMetas": {}
+    },
+    "79cf7": {
+      "importer": "gltf-scene",
+      "uuid": "823e94c1-661f-4ea4-b9da-b6bc5d1efc07@79cf7",
+      "displayName": "",
+      "id": "79cf7",
+      "name": "kitchencabinet_corner.prefab",
+      "userData": {
+        "gltfIndex": 0
+      },
+      "ver": "1.0.14",
+      "imported": true,
+      "files": [
+        ".json"
+      ],
+      "subMetas": {}
+    }
+  },
+  "userData": {
+    "imageMetas": [
+      {
+        "name": "restaurantbits_texture",
+        "uri": "db://assets/game/fbx/KayKit_Restaurant_Bits_1.0_FREE/Assets/gltf/restaurantbits_texture.png"
+      }
+    ],
+    "lods": {
+      "enable": false,
+      "hasBuiltinLOD": false,
+      "options": [
+        {
+          "screenRatio": 0.25,
+          "faceCount": 1
+        },
+        {
+          "screenRatio": 0.125,
+          "faceCount": 0.25
+        },
+        {
+          "screenRatio": 0.01,
+          "faceCount": 0.1
+        }
+      ]
+    },
+    "assetFinder": {
+      "meshes": [
+        "823e94c1-661f-4ea4-b9da-b6bc5d1efc07@b9434"
+      ],
+      "skeletons": [],
+      "textures": [
+        "823e94c1-661f-4ea4-b9da-b6bc5d1efc07@e39f7"
+      ],
+      "materials": [
+        "823e94c1-661f-4ea4-b9da-b6bc5d1efc07@da25f"
+      ],
+      "scenes": [
+        "823e94c1-661f-4ea4-b9da-b6bc5d1efc07@79cf7"
+      ]
+    }
+  }
+}

@@ -1,0 +1,145 @@
+{
+  "ver": "2.3.14",
+  "importer": "fbx",
+  "imported": true,
+  "uuid": "c38aac01-abb3-437e-ae94-4a038f85f513",
+  "files": [],
+  "subMetas": {
+    "619bc": {
+      "importer": "gltf-mesh",
+      "uuid": "c38aac01-abb3-437e-ae94-4a038f85f513@619bc",
+      "displayName": "",
+      "id": "619bc",
+      "name": "wall_doorway_scaffold.mesh",
+      "userData": {
+        "gltfIndex": 0,
+        "triangleCount": 530
+      },
+      "ver": "1.1.1",
+      "imported": true,
+      "files": [
+        ".bin",
+        ".json"
+      ],
+      "subMetas": {}
+    },
+    "e0059": {
+      "importer": "gltf-mesh",
+      "uuid": "c38aac01-abb3-437e-ae94-4a038f85f513@e0059",
+      "displayName": "",
+      "id": "e0059",
+      "name": "wall_doorway_scaffold_door.mesh",
+      "userData": {
+        "gltfIndex": 1,
+        "triangleCount": 620
+      },
+      "ver": "1.1.1",
+      "imported": true,
+      "files": [
+        ".bin",
+        ".json"
+      ],
+      "subMetas": {}
+    },
+    "7d6ab": {
+      "importer": "texture",
+      "uuid": "c38aac01-abb3-437e-ae94-4a038f85f513@7d6ab",
+      "displayName": "",
+      "id": "7d6ab",
+      "name": "base_color_texture.texture",
+      "userData": {
+        "wrapModeS": "repeat",
+        "wrapModeT": "repeat",
+        "minfilter": "linear",
+        "magfilter": "linear",
+        "mipfilter": "none",
+        "anisotropy": 0,
+        "isUuid": false,
+        "imageUuidOrDatabaseUri": "db://assets/game/fbx/KayKit_Dungeon_Pack_1.1_FREE/Assets/fbx/dungeon_texture.png"
+      },
+      "ver": "1.0.22",
+      "imported": true,
+      "files": [
+        ".json"
+      ],
+      "subMetas": {}
+    },
+    "5b641": {
+      "importer": "gltf-material",
+      "uuid": "c38aac01-abb3-437e-ae94-4a038f85f513@5b641",
+      "displayName": "",
+      "id": "5b641",
+      "name": "texture.material",
+      "userData": {
+        "gltfIndex": 0
+      },
+      "ver": "1.0.14",
+      "imported": true,
+      "files": [
+        ".json"
+      ],
+      "subMetas": {}
+    },
+    "4dd77": {
+      "importer": "gltf-scene",
+      "uuid": "c38aac01-abb3-437e-ae94-4a038f85f513@4dd77",
+      "displayName": "",
+      "id": "4dd77",
+      "name": "wall_doorway_scaffold.prefab",
+      "userData": {
+        "gltfIndex": 0
+      },
+      "ver": "1.0.14",
+      "imported": true,
+      "files": [
+        ".json"
+      ],
+      "subMetas": {}
+    }
+  },
+  "userData": {
+    "imageMetas": [
+      {
+        "name": "base_color_texture",
+        "uri": "db://assets/game/fbx/KayKit_Dungeon_Pack_1.1_FREE/Assets/fbx/dungeon_texture.png"
+      }
+    ],
+    "fbx": {
+      "smartMaterialEnabled": true
+    },
+    "lods": {
+      "enable": false,
+      "hasBuiltinLOD": false,
+      "options": [
+        {
+          "screenRatio": 0.25,
+          "faceCount": 1
+        },
+        {
+          "screenRatio": 0.125,
+          "faceCount": 0.25
+        },
+        {
+          "screenRatio": 0.01,
+          "faceCount": 0.1
+        }
+      ]
+    },
+    "assetFinder": {
+      "meshes": [
+        "c38aac01-abb3-437e-ae94-4a038f85f513@619bc",
+        "c38aac01-abb3-437e-ae94-4a038f85f513@e0059"
+      ],
+      "skeletons": [],
+      "textures": [
+        "c38aac01-abb3-437e-ae94-4a038f85f513@7d6ab"
+      ],
+      "materials": [
+        "c38aac01-abb3-437e-ae94-4a038f85f513@5b641"
+      ],
+      "scenes": [
+        "c38aac01-abb3-437e-ae94-4a038f85f513@4dd77"
+      ]
+    }
+  }
+}

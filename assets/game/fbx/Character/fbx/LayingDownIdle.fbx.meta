@@ -1,0 +1,157 @@
+{
+  "ver": "2.3.14",
+  "importer": "fbx",
+  "imported": true,
+  "uuid": "2d1498b9-2fc3-4538-9921-db8e6f77edd1",
+  "files": [
+    "__original-animation-0.bin"
+  ],
+  "subMetas": {
+    "52782": {
+      "importer": "gltf-scene",
+      "uuid": "2d1498b9-2fc3-4538-9921-db8e6f77edd1@52782",
+      "displayName": "",
+      "id": "52782",
+      "name": "LayingDownIdle.prefab",
+      "userData": {
+        "gltfIndex": 0
+      },
+      "ver": "1.0.14",
+      "imported": true,
+      "files": [
+        ".json"
+      ],
+      "subMetas": {}
+    },
+    "530fd": {
+      "importer": "gltf-mesh",
+      "uuid": "2d1498b9-2fc3-4538-9921-db8e6f77edd1@530fd",
+      "displayName": "",
+      "id": "530fd",
+      "name": "PrototypePete_body.mesh",
+      "userData": {
+        "gltfIndex": 0,
+        "triangleCount": 4879
+      },
+      "ver": "1.1.1",
+      "imported": true,
+      "files": [
+        ".bin",
+        ".json"
+      ],
+      "subMetas": {}
+    },
+    "b2b1c": {
+      "importer": "gltf-animation",
+      "uuid": "2d1498b9-2fc3-4538-9921-db8e6f77edd1@b2b1c",
+      "displayName": "",
+      "id": "b2b1c",
+      "name": "KayKit Animated Character|LayingDownIdle.animation",
+      "userData": {
+        "gltfIndex": 0,
+        "wrapMode": 2,
+        "sample": 30,
+        "span": {
+          "from": 0,
+          "to": 1.3333333730697632
+        },
+        "events": []
+      },
+      "ver": "1.0.18",
+      "imported": true,
+      "files": [
+        ".bin"
+      ],
+      "subMetas": {}
+    },
+    "438fe": {
+      "importer": "gltf-skeleton",
+      "uuid": "2d1498b9-2fc3-4538-9921-db8e6f77edd1@438fe",
+      "displayName": "",
+      "id": "438fe",
+      "name": "UnnamedSkeleton.skeleton",
+      "userData": {
+        "gltfIndex": 0,
+        "jointsLength": 6
+      },
+      "ver": "1.0.1",
+      "imported": true,
+      "files": [
+        ".json"
+      ],
+      "subMetas": {}
+    },
+    "88cf9": {
+      "importer": "gltf-material",
+      "uuid": "2d1498b9-2fc3-4538-9921-db8e6f77edd1@88cf9",
+      "displayName": "",
+      "id": "88cf9",
+      "name": "PrototypePete.material",
+      "userData": {
+        "gltfIndex": 0
+      },
+      "ver": "1.0.14",
+      "imported": true,
+      "files": [
+        ".json"
+      ],
+      "subMetas": {}
+    }
+  },
+  "userData": {
+    "imageMetas": [],
+    "fbx": {
+      "smartMaterialEnabled": true,
+      "matchMeshNames": false
+    },
+    "animationImportSettings": [
+      {
+        "name": "KayKit Animated Character|LayingDownIdle",
+        "duration": 1.3333333730697632,
+        "fps": 30,
+        "splits": [
+          {
+            "name": "KayKit Animated Character|LayingDownIdle",
+            "from": 0,
+            "to": 1.3333333730697632,
+            "wrapMode": 2,
+            "previousId": "b2b1c"
+          }
+        ]
+      }
+    ],
+    "assetFinder": {
+      "meshes": [
+        "2d1498b9-2fc3-4538-9921-db8e6f77edd1@530fd"
+      ],
+      "skeletons": [
+        "2d1498b9-2fc3-4538-9921-db8e6f77edd1@438fe"
+      ],
+      "textures": [],
+      "materials": [
+        "2d1498b9-2fc3-4538-9921-db8e6f77edd1@88cf9"
+      ],
+      "scenes": [
+        "2d1498b9-2fc3-4538-9921-db8e6f77edd1@52782"
+      ]
+    },
+    "lods": {
+      "enable": false,
+      "hasBuiltinLOD": false,
+      "options": [
+        {
+          "screenRatio": 0.25,
+          "faceCount": 1
+        },
+        {
+          "screenRatio": 0.125,
+          "faceCount": 0.25
+        },
+        {
+          "screenRatio": 0.01,
+          "faceCount": 0.1
+        }
+      ]
+    }
+  }
+}

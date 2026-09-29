@@ -1,0 +1,157 @@
+{
+  "ver": "2.3.14",
+  "importer": "fbx",
+  "imported": true,
+  "uuid": "84d58acb-f37a-492f-9d74-afc6e7cc41a5",
+  "files": [
+    "__original-animation-0.bin"
+  ],
+  "subMetas": {
+    "530fd": {
+      "importer": "gltf-mesh",
+      "uuid": "84d58acb-f37a-492f-9d74-afc6e7cc41a5@530fd",
+      "displayName": "",
+      "id": "530fd",
+      "name": "PrototypePete_body.mesh",
+      "userData": {
+        "gltfIndex": 0,
+        "triangleCount": 4879
+      },
+      "ver": "1.1.1",
+      "imported": true,
+      "files": [
+        ".bin",
+        ".json"
+      ],
+      "subMetas": {}
+    },
+    "595cf": {
+      "importer": "gltf-animation",
+      "uuid": "84d58acb-f37a-492f-9d74-afc6e7cc41a5@595cf",
+      "displayName": "",
+      "id": "595cf",
+      "name": "KayKit Animated Character|DashLeft.animation",
+      "userData": {
+        "gltfIndex": 0,
+        "wrapMode": 2,
+        "sample": 30,
+        "span": {
+          "from": 0,
+          "to": 1
+        },
+        "events": []
+      },
+      "ver": "1.0.18",
+      "imported": true,
+      "files": [
+        ".bin"
+      ],
+      "subMetas": {}
+    },
+    "438fe": {
+      "importer": "gltf-skeleton",
+      "uuid": "84d58acb-f37a-492f-9d74-afc6e7cc41a5@438fe",
+      "displayName": "",
+      "id": "438fe",
+      "name": "UnnamedSkeleton.skeleton",
+      "userData": {
+        "gltfIndex": 0,
+        "jointsLength": 6
+      },
+      "ver": "1.0.1",
+      "imported": true,
+      "files": [
+        ".json"
+      ],
+      "subMetas": {}
+    },
+    "88cf9": {
+      "importer": "gltf-material",
+      "uuid": "84d58acb-f37a-492f-9d74-afc6e7cc41a5@88cf9",
+      "displayName": "",
+      "id": "88cf9",
+      "name": "PrototypePete.material",
+      "userData": {
+        "gltfIndex": 0
+      },
+      "ver": "1.0.14",
+      "imported": true,
+      "files": [
+        ".json"
+      ],
+      "subMetas": {}
+    },
+    "fe219": {
+      "importer": "gltf-scene",
+      "uuid": "84d58acb-f37a-492f-9d74-afc6e7cc41a5@fe219",
+      "displayName": "",
+      "id": "fe219",
+      "name": "DashLeft.prefab",
+      "userData": {
+        "gltfIndex": 0
+      },
+      "ver": "1.0.14",
+      "imported": true,
+      "files": [
+        ".json"
+      ],
+      "subMetas": {}
+    }
+  },
+  "userData": {
+    "imageMetas": [],
+    "fbx": {
+      "smartMaterialEnabled": true,
+      "matchMeshNames": false
+    },
+    "animationImportSettings": [
+      {
+        "name": "KayKit Animated Character|DashLeft",
+        "duration": 1,
+        "fps": 30,
+        "splits": [
+          {
+            "name": "KayKit Animated Character|DashLeft",
+            "from": 0,
+            "to": 1,
+            "wrapMode": 2,
+            "previousId": "595cf"
+          }
+        ]
+      }
+    ],
+    "assetFinder": {
+      "meshes": [
+        "84d58acb-f37a-492f-9d74-afc6e7cc41a5@530fd"
+      ],
+      "skeletons": [
+        "84d58acb-f37a-492f-9d74-afc6e7cc41a5@438fe"
+      ],
+      "textures": [],
+      "materials": [
+        "84d58acb-f37a-492f-9d74-afc6e7cc41a5@88cf9"
+      ],
+      "scenes": [
+        "84d58acb-f37a-492f-9d74-afc6e7cc41a5@fe219"
+      ]
+    },
+    "lods": {
+      "enable": false,
+      "hasBuiltinLOD": false,
+      "options": [
+        {
+          "screenRatio": 0.25,
+          "faceCount": 1
+        },
+        {
+          "screenRatio": 0.125,
+          "faceCount": 0.25
+        },
+        {
+          "screenRatio": 0.01,
+          "faceCount": 0.1
+        }
+      ]
+    }
+  }
+}

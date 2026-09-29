@@ -2,20 +2,23 @@ import { Layers, Node, UITransform, Widget } from "cc";
 
 /** UI分层枚举，层级越大渲染越靠上 */
 export enum UILayerType {
+    /**场景关卡UI(游戏关卡模型，人物模型地图)*/
+    SCENE_MAP = 10,
     /** 底层场景UI（战斗地图内常驻UI：血条、飘字） */
-    SCENE_UI = 10,
+    SCENE_UI = 20,
     /** 普通主界面（主菜单、关卡选择、战斗主面板） */
-    MAIN_WIN = 20,
+    MAIN_WIN = 30,
     /** 普通弹窗（炮塔详情、升级弹窗） */
-    POPUP_WIN = 30,
+    POPUP_WIN = 40,
     /** 置顶弹窗（确认框、奖励结算） */
-    TOP_POPUP = 40,
+    TOP_POPUP = 50,
     /** 引导、提示飘字、点击遮罩（最高层） */
-    TIPS_GUIDE = 50,
+    TIPS_GUIDE = 60,
 }
 
 /** UI分层根节点管理器 */
 export class UILayerRoot {
+    public static sceneMapRoot: Node | null = null;
     public static sceneUIRoot: Node | null = null;
     public static mainWinRoot: Node | null = null;
     public static popupRoot: Node | null = null;
@@ -33,6 +36,7 @@ export class UILayerRoot {
             return;
         }
         this.clearRoots();
+        this.sceneMapRoot = this.createLayerNode(parent, "SceneMapRoot", UILayerType.SCENE_MAP);
         this.sceneUIRoot = this.createLayerNode(parent, "SceneUIRoot", UILayerType.SCENE_UI);
         this.mainWinRoot = this.createLayerNode(parent, "MainWinRoot", UILayerType.MAIN_WIN);
         this.popupRoot = this.createLayerNode(parent, "PopupRoot", UILayerType.POPUP_WIN);
@@ -44,6 +48,7 @@ export class UILayerRoot {
     public static getRootByLayer(layer: UILayerType): Node | null {
         let root: Node | null = null;
         switch (layer) {
+            case UILayerType.SCENE_MAP: root = this.sceneMapRoot; break;
             case UILayerType.SCENE_UI: root = this.sceneUIRoot; break;
             case UILayerType.MAIN_WIN: root = this.mainWinRoot; break;
             case UILayerType.POPUP_WIN: root = this.popupRoot; break;
@@ -56,6 +61,7 @@ export class UILayerRoot {
 
     private static clearRoots(): void {
         const roots = [
+            this.sceneMapRoot,
             this.sceneUIRoot,
             this.mainWinRoot,
             this.popupRoot,
@@ -67,6 +73,7 @@ export class UILayerRoot {
                 node.destroy();
             }
         }
+        this.sceneMapRoot = null;
         this.sceneUIRoot = null;
         this.mainWinRoot = null;
         this.popupRoot = null;

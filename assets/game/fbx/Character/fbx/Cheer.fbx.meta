@@ -1,0 +1,157 @@
+{
+  "ver": "2.3.14",
+  "importer": "fbx",
+  "imported": true,
+  "uuid": "63de5cb6-dcd5-41aa-8d26-a4844821c1f2",
+  "files": [
+    "__original-animation-0.bin"
+  ],
+  "subMetas": {
+    "530fd": {
+      "importer": "gltf-mesh",
+      "uuid": "63de5cb6-dcd5-41aa-8d26-a4844821c1f2@530fd",
+      "displayName": "",
+      "id": "530fd",
+      "name": "PrototypePete_body.mesh",
+      "userData": {
+        "gltfIndex": 0,
+        "triangleCount": 4879
+      },
+      "ver": "1.1.1",
+      "imported": true,
+      "files": [
+        ".bin",
+        ".json"
+      ],
+      "subMetas": {}
+    },
+    "2ab6c": {
+      "importer": "gltf-animation",
+      "uuid": "63de5cb6-dcd5-41aa-8d26-a4844821c1f2@2ab6c",
+      "displayName": "",
+      "id": "2ab6c",
+      "name": "KayKit Animated Character|Cheer.animation",
+      "userData": {
+        "gltfIndex": 0,
+        "wrapMode": 2,
+        "sample": 30,
+        "span": {
+          "from": 0,
+          "to": 1.5333333015441895
+        },
+        "events": []
+      },
+      "ver": "1.0.18",
+      "imported": true,
+      "files": [
+        ".bin"
+      ],
+      "subMetas": {}
+    },
+    "438fe": {
+      "importer": "gltf-skeleton",
+      "uuid": "63de5cb6-dcd5-41aa-8d26-a4844821c1f2@438fe",
+      "displayName": "",
+      "id": "438fe",
+      "name": "UnnamedSkeleton.skeleton",
+      "userData": {
+        "gltfIndex": 0,
+        "jointsLength": 6
+      },
+      "ver": "1.0.1",
+      "imported": true,
+      "files": [
+        ".json"
+      ],
+      "subMetas": {}
+    },
+    "88cf9": {
+      "importer": "gltf-material",
+      "uuid": "63de5cb6-dcd5-41aa-8d26-a4844821c1f2@88cf9",
+      "displayName": "",
+      "id": "88cf9",
+      "name": "PrototypePete.material",
+      "userData": {
+        "gltfIndex": 0
+      },
+      "ver": "1.0.14",
+      "imported": true,
+      "files": [
+        ".json"
+      ],
+      "subMetas": {}
+    },
+    "5235b": {
+      "importer": "gltf-scene",
+      "uuid": "63de5cb6-dcd5-41aa-8d26-a4844821c1f2@5235b",
+      "displayName": "",
+      "id": "5235b",
+      "name": "Cheer.prefab",
+      "userData": {
+        "gltfIndex": 0
+      },
+      "ver": "1.0.14",
+      "imported": true,
+      "files": [
+        ".json"
+      ],
+      "subMetas": {}
+    }
+  },
+  "userData": {
+    "imageMetas": [],
+    "fbx": {
+      "smartMaterialEnabled": true,
+      "matchMeshNames": false
+    },
+    "animationImportSettings": [
+      {
+        "name": "KayKit Animated Character|Cheer",
+        "duration": 1.5333333015441895,
+        "fps": 30,
+        "splits": [
+          {
+            "name": "KayKit Animated Character|Cheer",
+            "from": 0,
+            "to": 1.5333333015441895,
+            "wrapMode": 2,
+            "previousId": "2ab6c"
+          }
+        ]
+      }
+    ],
+    "assetFinder": {
+      "meshes": [
+        "63de5cb6-dcd5-41aa-8d26-a4844821c1f2@530fd"
+      ],
+      "skeletons": [
+        "63de5cb6-dcd5-41aa-8d26-a4844821c1f2@438fe"
+      ],
+      "textures": [],
+      "materials": [
+        "63de5cb6-dcd5-41aa-8d26-a4844821c1f2@88cf9"
+      ],
+      "scenes": [
+        "63de5cb6-dcd5-41aa-8d26-a4844821c1f2@5235b"
+      ]
+    },
+    "lods": {
+      "enable": false,
+      "hasBuiltinLOD": false,
+      "options": [
+        {
+          "screenRatio": 0.25,
+          "faceCount": 1
+        },
+        {
+          "screenRatio": 0.125,
+          "faceCount": 0.25
+        },
+        {
+          "screenRatio": 0.01,
+          "faceCount": 0.1
+        }
+      ]
+    }
+  }
+}

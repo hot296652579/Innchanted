@@ -1,0 +1,145 @@
+{
+  "ver": "2.3.14",
+  "importer": "fbx",
+  "imported": true,
+  "uuid": "30628f06-7a04-4133-8f4f-6066d153d55f",
+  "files": [],
+  "subMetas": {
+    "2bcc7": {
+      "importer": "gltf-mesh",
+      "uuid": "30628f06-7a04-4133-8f4f-6066d153d55f@2bcc7",
+      "displayName": "",
+      "id": "2bcc7",
+      "name": "floor_tile_big_spikes.mesh",
+      "userData": {
+        "gltfIndex": 0,
+        "triangleCount": 530
+      },
+      "ver": "1.1.1",
+      "imported": true,
+      "files": [
+        ".bin",
+        ".json"
+      ],
+      "subMetas": {}
+    },
+    "a5d44": {
+      "importer": "gltf-mesh",
+      "uuid": "30628f06-7a04-4133-8f4f-6066d153d55f@a5d44",
+      "displayName": "",
+      "id": "a5d44",
+      "name": "spikes.mesh",
+      "userData": {
+        "gltfIndex": 1,
+        "triangleCount": 108
+      },
+      "ver": "1.1.1",
+      "imported": true,
+      "files": [
+        ".bin",
+        ".json"
+      ],
+      "subMetas": {}
+    },
+    "7d6ab": {
+      "importer": "texture",
+      "uuid": "30628f06-7a04-4133-8f4f-6066d153d55f@7d6ab",
+      "displayName": "",
+      "id": "7d6ab",
+      "name": "base_color_texture.texture",
+      "userData": {
+        "wrapModeS": "repeat",
+        "wrapModeT": "repeat",
+        "minfilter": "linear",
+        "magfilter": "linear",
+        "mipfilter": "none",
+        "anisotropy": 0,
+        "isUuid": false,
+        "imageUuidOrDatabaseUri": "db://assets/game/fbx/KayKit_Dungeon_Pack_1.1_FREE/Assets/fbx(unity)/dungeon_texture.png"
+      },
+      "ver": "1.0.22",
+      "imported": true,
+      "files": [
+        ".json"
+      ],
+      "subMetas": {}
+    },
+    "5b641": {
+      "importer": "gltf-material",
+      "uuid": "30628f06-7a04-4133-8f4f-6066d153d55f@5b641",
+      "displayName": "",
+      "id": "5b641",
+      "name": "texture.material",
+      "userData": {
+        "gltfIndex": 0
+      },
+      "ver": "1.0.14",
+      "imported": true,
+      "files": [
+        ".json"
+      ],
+      "subMetas": {}
+    },
+    "42ce9": {
+      "importer": "gltf-scene",
+      "uuid": "30628f06-7a04-4133-8f4f-6066d153d55f@42ce9",
+      "displayName": "",
+      "id": "42ce9",
+      "name": "floor_tile_big_spikes.prefab",
+      "userData": {
+        "gltfIndex": 0
+      },
+      "ver": "1.0.14",
+      "imported": true,
+      "files": [
+        ".json"
+      ],
+      "subMetas": {}
+    }
+  },
+  "userData": {
+    "imageMetas": [
+      {
+        "name": "base_color_texture",
+        "uri": "db://assets/game/fbx/KayKit_Dungeon_Pack_1.1_FREE/Assets/fbx(unity)/dungeon_texture.png"
+      }
+    ],
+    "fbx": {
+      "smartMaterialEnabled": true
+    },
+    "lods": {
+      "enable": false,
+      "hasBuiltinLOD": false,
+      "options": [
+        {
+          "screenRatio": 0.25,
+          "faceCount": 1
+        },
+        {
+          "screenRatio": 0.125,
+          "faceCount": 0.25
+        },
+        {
+          "screenRatio": 0.01,
+          "faceCount": 0.1
+        }
+      ]
+    },
+    "assetFinder": {
+      "meshes": [
+        "30628f06-7a04-4133-8f4f-6066d153d55f@2bcc7",
+        "30628f06-7a04-4133-8f4f-6066d153d55f@a5d44"
+      ],
+      "skeletons": [],
+      "textures": [
+        "30628f06-7a04-4133-8f4f-6066d153d55f@7d6ab"
+      ],
+      "materials": [
+        "30628f06-7a04-4133-8f4f-6066d153d55f@5b641"
+      ],
+      "scenes": [
+        "30628f06-7a04-4133-8f4f-6066d153d55f@42ce9"
+      ]
+    }
+  }
+}
