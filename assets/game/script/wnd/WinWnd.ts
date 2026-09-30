@@ -18,21 +18,11 @@ export class WinWnd extends BaseWindow {
     @property(Node)
     btNext: Node = null!;
 
-    @property(sp.Skeleton)
-    effect: sp.Skeleton = null!;
-
     windowLayer = UILayerType.TOP_POPUP;
 
     protected onLoad(): void {
         AudioPlayer.getInstance().playEffect(BundlesEnum.Game, AudioEnum.MUSIC_REWARD);
         this.btNext.on(Node.EventType.TOUCH_END, this.onBtnNextClick, this);
-
-        this.effect.setAnimation(0, ANIM_NAME.PASS_START, false);
-        this.effect.setCompleteListener(this.onEffectComplete.bind(this));
-    }
-
-    private onEffectComplete(): void {
-        this.effect.setAnimation(0, ANIM_NAME.PASS_LOOP, true);
     }
 
     private onBtnNextClick(): void {

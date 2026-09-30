@@ -1,7 +1,3 @@
-/**
- * 挂到 NavBake 节点上。运行预览时烘焙 Recast 导航网格，
- * 点击操作台后让 Player 走到该操作台下的 InteractPos。
- */
 import {
     _decorator,
     Camera,
@@ -32,7 +28,6 @@ export class NavBakeStarter extends Component {
     @property({ type: Node, tooltip: '玩家节点。留空则按名字 Player 自动查找' })
     player: Node | null = null;
 
-    @property({ type: Camera, tooltip: '用于点击射线的相机。留空则使用 Main Camera' })
     camera: Camera | null = null;
 
     @property({ type: Node, tooltip: '操作台根节点。留空则在 NavBake 下查找 Station' })
