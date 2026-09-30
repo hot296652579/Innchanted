@@ -52,8 +52,17 @@ export class ResourceManager extends BaseSingleton {
     }
 
     /**
-     * 加载 Bundle 并预加载其中资源，onProgress 范围为 0~1。
-     * 已预加载过的 Bundle 会立刻回调 1 并返回缓存。
+     * 大分包不要全量 preloadDir("")。game 里 KayKit 同时有 fbx/gltf/obj，
+     * 进度按文件个数走，单个 FBX 还要拆 mesh，会出现很久才跳 1%。
+     * 进战斗只 load 关卡 prefab、结算 UI、音效，模型按 prefab 依赖拉取。
+     */
+    private static readonly BUNDLE_LOAD_DIRS: Record<string, string[]> = {
+        game: ['prefab', 'ui', 'audio'],
+    };
+
+    /**
+     * 加载 Bundle 并加载其中资源，onProgress 范围为 0~1。
+     * 已加载过的 Bundle 会立刻回调 1 并返回缓存。
      */
     public async preloadBundle(
         bundleName: string,
@@ -74,22 +83,57 @@ export class ResourceManager extends BaseSingleton {
         }
         report(0.1);
 
+        const dirs = ResourceManager.BUNDLE_LOAD_DIRS[bundleName];
+        const ok = dirs
+            ? await this.loadBundleDirs(bundle, dirs, (p) => report(0.1 + 0.9 * p))
+            : await this.loadBundleDir(bundle, '', (p) => report(0.1 + 0.9 * p));
+        if (!ok) {
+            console.error('preload bundle fail:', bundleName);
+        }
+        this._preloadedBundles.add(bundleName);
+        report(1);
+        return bundle;
+    }
+
+    private loadBundleDir(
+        bundle: AssetManager.Bundle,
+        dir: string,
+        onProgress: (progress: number) => void
+    ): Promise<boolean> {
         return new Promise((resolve) => {
-            bundle.preloadDir("", (finished: number, total: number) => {
-                if (total <= 0) {
-                    report(1);
-                    return;
-                }
-                report(0.1 + 0.9 * (finished / total));
+            bundle.loadDir(dir, (finished: number, total: number) => {
+                onProgress(total > 0 ? finished / total : 1);
             }, (err) => {
                 if (err) {
-                    console.error("preload bundle fail:", bundleName, err);
+                    console.error(`load dir fail: ${bundle.name}/${dir || '(root)'}`, err);
+                    resolve(false);
+                    return;
                 }
-                this._preloadedBundles.add(bundleName);
-                report(1);
-                resolve(bundle);
+                onProgress(1);
+                resolve(true);
             });
         });
+    }
+
+    private async loadBundleDirs(
+        bundle: AssetManager.Bundle,
+        dirs: string[],
+        onProgress: (progress: number) => void
+    ): Promise<boolean> {
+        if (dirs.length === 0) {
+            onProgress(1);
+            return true;
+        }
+        let ok = true;
+        for (let i = 0; i < dirs.length; i++) {
+            const dirOk = await this.loadBundleDir(bundle, dirs[i], (inner) => {
+                onProgress((i + inner) / dirs.length);
+            });
+            if (!dirOk) {
+                ok = false;
+            }
+        }
+        return ok;
     }
 
     /** 按顺序加载多个 Bundle，总进度 0~1 按 Bundle 数量均分 */

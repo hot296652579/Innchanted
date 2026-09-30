@@ -110,7 +110,7 @@
             "_value": false
           },
           "geometry-renderer": {
-            "_value": false
+            "_value": true
           },
           "debug-renderer": {
             "_value": false
@@ -202,6 +202,7 @@
           "audio",
           "base",
           "custom-pipeline",
+          "geometry-renderer",
           "gfx-webgl",
           "graphics",
           "intersection-2d",
