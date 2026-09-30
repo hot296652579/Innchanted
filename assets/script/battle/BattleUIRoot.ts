@@ -1,5 +1,5 @@
 import { _decorator, Component } from "cc";
-const { ccclass, property } = _decorator;
+const { ccclass } = _decorator;
 
 import { UILayerRoot } from "../../framework/ui/UILayer";
 

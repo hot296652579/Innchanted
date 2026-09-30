@@ -1,0 +1,12 @@
+{
+  "name": "fix-wechat-virtual-cc",
+  "title": "Fix WeChat _virtual_cc",
+  "package_version": 2,
+  "version": "1.0.0",
+  "author": "Innchanted",
+  "description": "Keep the Cocos engine virtual chunk in the WeChat mini-game package",
+  "editor": ">=3.8.0",
+  "contributions": {
+    "builder": "./builder.js"
+  }
+}
