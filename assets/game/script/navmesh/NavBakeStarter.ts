@@ -68,6 +68,7 @@ export class NavBakeStarter extends Component {
             this.debugMaterial!,
             bakeRoot.layer,
             bakeRoot,
+            (mesh) => !this.isUnderHoldPoint(mesh.node, bakeRoot),
         );
 
         if (this.recastDetourManager.navmeshdebug) {
@@ -81,6 +82,17 @@ export class NavBakeStarter extends Component {
         if (!this.getComponent('PlayerBootstrap')) {
             this.node.addComponent('PlayerBootstrap');
         }
+    }
+
+    private isUnderHoldPoint(node: Node, stopAt: Node): boolean {
+        let current: Node | null = node;
+        while (current && current !== stopAt) {
+            if (current.name === "HoldPoint") {
+                return true;
+            }
+            current = current.parent;
+        }
+        return false;
     }
 
     private resolveSceneRefs(bakeRoot: Node) {

@@ -105,8 +105,17 @@ export default class RecastDetourManager {
         this.init();
     }
 
-    static async getInstanceByNode(node: Node, debugMaterial: Material, debugLayer: number, root: Node) {
+    static async getInstanceByNode(
+        node: Node,
+        debugMaterial: Material,
+        debugLayer: number,
+        root: Node,
+        meshFilter?: (mesh: MeshRenderer) => boolean,
+    ) {
         let comps = node.getComponentsInChildren(MeshRenderer);
+        if (meshFilter) {
+            comps = comps.filter(meshFilter);
+        }
         let instance = await this.getInstance(debugMaterial, debugLayer, root);
         let navmeshParameters = {
             cs: 0.2,
@@ -238,6 +247,10 @@ export default class RecastDetourManager {
             separationWeight: 1.0
         };
         return this.crowd!.addAgent(pos, agentParams);
+    }
+
+    snapToNav(position: Vec3): Vec3 {
+        return this.toNavPoint(position);
     }
 
     private toNavPoint(position: Vec3) {

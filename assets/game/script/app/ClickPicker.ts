@@ -94,7 +94,7 @@ export class ClickPicker extends Component {
                 if (binding) {
                     const playerY = this.player
                         ? this.player.worldPosition.y
-                        : binding.interactPos.worldPosition.y;
+                        : (binding.interactPos ?? binding.node).worldPosition.y;
                     const dest = this.registry.standPoint(binding, playerY);
                     return {
                         target: { kind: "place", stationId: binding.station.id },

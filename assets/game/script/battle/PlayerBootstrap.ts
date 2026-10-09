@@ -1,4 +1,4 @@
-import { _decorator, Component } from "cc";
+import { _decorator, Component, Node } from "cc";
 import { BundlesEnum } from "../../../define/BundlesEnum";
 import { ConfigManager } from "../../../framework/config/ConfigManager";
 import { GameEvent } from "../../../framework/event/EventName";
@@ -7,12 +7,12 @@ import { ClickHit, ClickPicker } from "../app/ClickPicker";
 import { CommandService } from "../app/CommandService";
 import { ActionKind, resolveDefaultAction } from "../app/DefaultAction";
 import { Actor } from "../domain/Actor";
-import { Station } from "../domain/Station";
 import { CommandFsm } from "../fsm/CommandFsm";
 import { NavBakeStarter } from "../navmesh/NavBakeStarter";
 import { GridAgent } from "../sim/GridAgent";
 import { RecastPathfinder } from "../sim/RecastPathfinder";
-import { StationRegistry } from "../sim/StationRegistry";
+import { StationBinding, StationRegistry } from "../sim/StationRegistry";
+import { ItemHoldView } from "../view/ItemHoldView";
 import { PlayerView } from "../view/PlayerView";
 
 const { ccclass } = _decorator;
@@ -25,6 +25,7 @@ export class PlayerBootstrap extends Component {
     private _registry = new StationRegistry();
     private _pathfinder: RecastPathfinder | null = null;
     private _view: PlayerView | null = null;
+    private _holds: ItemHoldView | null = null;
 
     async start(): Promise<void> {
         const baker = this.getComponent(NavBakeStarter);
@@ -64,8 +65,13 @@ export class PlayerBootstrap extends Component {
         this._fsm = new CommandFsm(agent);
         this._commands = new CommandService(this._fsm);
 
+        player.mobility = 2;
         this._view = player.getComponent(PlayerView) ?? player.addComponent(PlayerView);
         this._view.bind(this._pathfinder, agentId, yOffset, baker.yawOffset, baker.turnSpeed);
+
+        const playerHold = this.resolvePlayerHold(player);
+        this._holds = new ItemHoldView(playerHold);
+        this._holds.capture(this._registry);
 
         const picker = this.getComponent(ClickPicker) ?? this.node.addComponent(ClickPicker);
         picker.camera = baker.camera;
@@ -85,6 +91,19 @@ export class PlayerBootstrap extends Component {
 
     onDestroy(): void {
         this._registry.clear();
+    }
+
+    private resolvePlayerHold(player: Node): Node {
+        let hold = player.getChildByName("HoldPoint");
+        if (!hold) {
+            hold = new Node("HoldPoint");
+            player.addChild(hold);
+            hold.setPosition(0, 0.5, 0.5);
+            console.warn("[Player] 没有 HoldPoint，已在玩家根节点下创建");
+        }
+        hold.mobility = 2;
+        console.log("[Player] HoldPoint 位于", player.name, "/", hold.name, "父节点", hold.parent?.name);
+        return hold;
     }
 
     private onClick(hit: ClickHit): void {
@@ -117,27 +136,40 @@ export class PlayerBootstrap extends Component {
             target: "place",
             slot: binding.station.slot,
         });
-        this.applyAction(action, binding.station);
+        console.log(
+            "[Player] 到达",
+            binding.station.id,
+            action,
+            "手",
+            this._actor.hand,
+            "台",
+            binding.station.slot,
+        );
+        this.applyAction(action, binding);
     }
 
-    private applyAction(action: ActionKind, station: Station): void {
+    private applyAction(action: ActionKind, binding: StationBinding): void {
         const actor = this._actor!;
+        const station = binding.station;
         const events = EventManager.getInstance();
         switch (action) {
             case "Take":
                 actor.hand = station.slot;
                 station.slot = null;
+                this._holds?.take(station.id);
                 break;
             case "Place":
                 station.slot = actor.hand;
                 actor.hand = null;
+                this._holds?.place(station.id);
                 break;
             case "Stack":
                 if (actor.hand && station.slot) {
-                    const left = station.slot.absorb(actor.hand);
-                    if (left <= 0) {
+                    const moved = actor.hand.count - station.slot.absorb(actor.hand);
+                    if (actor.hand.empty) {
                         actor.hand = null;
                     }
+                    this._holds?.stack(station.id, moved);
                 }
                 break;
             case "RefuseSwap":

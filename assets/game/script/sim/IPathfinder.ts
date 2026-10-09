@@ -13,6 +13,7 @@ export interface AgentMoveParams {
 export interface IPathfinder {
     addAgent(worldPos: Vec3, params: AgentMoveParams): number;
     goto(agentId: number, worldPos: Vec3): void;
+    snap(worldPos: Vec3): Vec3;
     stop(agentId: number): void;
     update(dt: number): void;
     getPosition(agentId: number): Vec3;
