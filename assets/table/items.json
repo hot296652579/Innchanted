@@ -1,0 +1,4 @@
+[
+  { "id": "potato", "stack": 3, "displayName": "土豆" },
+  { "id": "onion", "stack": 3, "displayName": "洋葱" }
+]

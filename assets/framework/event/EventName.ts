@@ -33,4 +33,11 @@ export enum GameEvent {
     BATTLE_UNDO_CLICK = "BATTLE_UNDO_CLICK",
     /** 战斗界面点击返回 退回到关卡选择界面*/
     BATTLE_BACK_CLICK = "BATTLE_BACK_CLICK",
+
+    /** 玩家发出新单击指令 */
+    COMMAND_ISSUED = "COMMAND_ISSUED",
+    /** 玩家/伙伴手里物品变化 */
+    ITEM_HELD_CHANGED = "ITEM_HELD_CHANGED",
+    /** 放置台槽位变化 */
+    STATION_SLOT_CHANGED = "STATION_SLOT_CHANGED",
 }

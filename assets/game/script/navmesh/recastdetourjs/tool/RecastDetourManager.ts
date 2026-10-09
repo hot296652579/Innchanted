@@ -208,8 +208,11 @@ export default class RecastDetourManager {
      */
     agentGotoByIndex(index: number, position: Vec3) {
         const out = this.toNavPoint(position);
-        console.log("goto", out);
         this.crowd!.agentGoto(index, out);
+    }
+
+    agentStopByIndex(index: number) {
+        this.crowd?.agentStop(index);
     }
 
     agentTeleportByIndex(index: number, position: Vec3) {
