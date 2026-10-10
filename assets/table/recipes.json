@@ -1,0 +1,3 @@
+[
+  { "stationType": "cook", "input": "burger", "output": "burgerbaked", "duration": 2 }
+]

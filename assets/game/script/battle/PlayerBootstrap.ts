@@ -6,7 +6,9 @@ import { EventManager } from "../../../framework/event/EventManager";
 import { ClickHit, ClickPicker } from "../app/ClickPicker";
 import { CommandService } from "../app/CommandService";
 import { ActionKind, resolveDefaultAction } from "../app/DefaultAction";
+import { findCookRecipe } from "../app/Recipe";
 import { Actor } from "../domain/Actor";
+import { ItemStack } from "../domain/ItemStack";
 import { CommandFsm } from "../fsm/CommandFsm";
 import { NavBakeStarter } from "../navmesh/NavBakeStarter";
 import { GridAgent } from "../sim/GridAgent";
@@ -14,6 +16,7 @@ import { RecastPathfinder } from "../sim/RecastPathfinder";
 import { StationBinding, StationRegistry } from "../sim/StationRegistry";
 import { ItemHoldView } from "../view/ItemHoldView";
 import { PlayerView } from "../view/PlayerView";
+import { ProcessorView } from "../view/ProcessorView";
 
 const { ccclass } = _decorator;
 
@@ -26,6 +29,7 @@ export class PlayerBootstrap extends Component {
     private _pathfinder: RecastPathfinder | null = null;
     private _view: PlayerView | null = null;
     private _holds: ItemHoldView | null = null;
+    private _cookView: ProcessorView | null = null;
 
     async start(): Promise<void> {
         const baker = this.getComponent(NavBakeStarter);
@@ -42,6 +46,7 @@ export class PlayerBootstrap extends Component {
         }
 
         await ConfigManager.getInstance().loadTable("items", BundlesEnum.Table);
+        await ConfigManager.getInstance().loadTable("recipes", BundlesEnum.Table);
 
         this._registry.scan(stationRoot);
         this._pathfinder = new RecastPathfinder(recast);
@@ -72,6 +77,8 @@ export class PlayerBootstrap extends Component {
         const playerHold = this.resolvePlayerHold(player);
         this._holds = new ItemHoldView(playerHold);
         this._holds.capture(this._registry);
+        this._cookView = new ProcessorView(baker.camera);
+        await this._cookView.load();
 
         const picker = this.getComponent(ClickPicker) ?? this.node.addComponent(ClickPicker);
         picker.camera = baker.camera;
@@ -87,6 +94,8 @@ export class PlayerBootstrap extends Component {
     update(dt: number): void {
         this._pathfinder?.update(dt);
         this._fsm?.update(dt);
+        this.tickCook(dt);
+        this._cookView?.update();
     }
 
     onDestroy(): void {
@@ -135,6 +144,8 @@ export class PlayerBootstrap extends Component {
             hand: this._actor.hand,
             target: "place",
             slot: binding.station.slot,
+            stationType: binding.station.type,
+            cookState: binding.station.cook?.state,
         });
         console.log(
             "[Player] 到达",
@@ -156,9 +167,15 @@ export class PlayerBootstrap extends Component {
             case "Take":
                 actor.hand = station.slot;
                 station.slot = null;
+                station.cook?.reset();
                 this._holds?.take(station.id);
+                this._cookView?.hideBar(binding);
                 break;
             case "Place":
+                if (station.type === "cook") {
+                    this.placeOntoCook(actor, binding);
+                    break;
+                }
                 station.slot = actor.hand;
                 actor.hand = null;
                 this._holds?.place(station.id);
@@ -173,8 +190,9 @@ export class PlayerBootstrap extends Component {
                 }
                 break;
             case "RefuseSwap":
-                events.emit(GameEvent.SHOW_TIPS, "不能和台上的交换");
-                console.warn("[Player] 不能和台上的交换");
+                const tip = station.type === "cook" ? "这个不能放进炉灶" : "不能和台上的交换";
+                events.emit(GameEvent.SHOW_TIPS, tip);
+                console.warn("[Player]", tip);
                 return;
             default:
                 return;
@@ -182,5 +200,44 @@ export class PlayerBootstrap extends Component {
         events.emit(GameEvent.ITEM_HELD_CHANGED, actor.id, actor.hand);
         events.emit(GameEvent.STATION_SLOT_CHANGED, station.id);
         console.log("[Player]", action, "手", actor.hand, "台", station.slot);
+    }
+
+    private placeOntoCook(actor: Actor, binding: StationBinding): void {
+        const hand = actor.hand;
+        const cook = binding.station.cook;
+        if (!hand || !cook || cook.state !== "idle") {
+            return;
+        }
+        const recipe = findCookRecipe(hand.itemId);
+        if (!recipe) {
+            EventManager.getInstance().emit(GameEvent.SHOW_TIPS, "这个不能放进炉灶");
+            return;
+        }
+        binding.station.slot = new ItemStack(hand.itemId, 1);
+        hand.count -= 1;
+        if (hand.empty) {
+            actor.hand = null;
+        }
+        this._holds?.place(binding.station.id, 1);
+        cook.start(recipe.input, recipe.output, recipe.duration);
+        this._cookView?.begin(binding);
+        console.log("[Cook] 开始烘培", recipe.input, "→", recipe.output, recipe.duration, "s");
+    }
+
+    private tickCook(dt: number): void {
+        for (let i = 0; i < this._registry.all.length; i++) {
+            const binding = this._registry.all[i];
+            const cook = binding.station.cook;
+            if (!cook || cook.state !== "cooking") {
+                continue;
+            }
+            const next = cook.update(dt);
+            if (next === "ready") {
+                binding.station.slot = new ItemStack(cook.outputId, 1);
+                this._cookView?.showReady(binding, cook.outputId);
+                EventManager.getInstance().emit(GameEvent.STATION_SLOT_CHANGED, binding.station.id);
+                console.log("[Cook] 完成", binding.station.id, cook.outputId);
+            }
+        }
     }
 }

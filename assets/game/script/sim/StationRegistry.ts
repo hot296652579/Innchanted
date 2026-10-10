@@ -42,7 +42,7 @@ export class StationRegistry {
             if (this._byId.has(id)) {
                 id = `${node.name}_${i}`;
             }
-            const station = new Station(id, "place");
+            const station = new Station(id, inferStationType(node.name));
             station.slot = stackFromHoldPoint(holdPoint);
             const binding: StationBinding = {
                 station,
@@ -54,7 +54,7 @@ export class StationRegistry {
             this._list.push(binding);
             const slot = station.slot;
             console.log(
-                `[Station] ${id} HoldPoint 货物`,
+                `[Station] ${id} (${station.type}) HoldPoint 货物`,
                 slot ? `${slot.itemId} x${slot.count}` : "空",
             );
         }
@@ -105,6 +105,14 @@ export class StationRegistry {
         dest.y = playerY;
         return dest;
     }
+}
+
+function inferStationType(name: string): Station["type"] {
+    const id = name.toLowerCase();
+    if (id.startsWith("stove") || id.startsWith("cook")) {
+        return "cook";
+    }
+    return "place";
 }
 
 export function findNamedDescendant(root: Node, name: string): Node | null {

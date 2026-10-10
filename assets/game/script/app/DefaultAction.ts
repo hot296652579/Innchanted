@@ -1,4 +1,7 @@
+import { CookState } from "../domain/CookProcess";
 import { ItemStack } from "../domain/ItemStack";
+import { StationType } from "../domain/Station";
+import { findCookRecipe } from "./Recipe";
 
 export type ActionKind =
     | "None"
@@ -15,6 +18,8 @@ export interface ActionContext {
     hand: ItemStack | null;
     target: ActionTargetKind;
     slot: ItemStack | null;
+    stationType?: StationType;
+    cookState?: CookState;
 }
 
 /** 到达后默认动作。纯函数，可单测。 */
@@ -27,6 +32,9 @@ export function resolveDefaultAction(ctx: ActionContext): ActionKind {
     }
     if (ctx.target !== "place") {
         return "None";
+    }
+    if (ctx.stationType === "cook") {
+        return resolveCookAction(ctx);
     }
 
     const hand = ctx.hand && !ctx.hand.empty ? ctx.hand : null;
@@ -45,4 +53,23 @@ export function resolveDefaultAction(ctx: ActionContext): ActionKind {
         return "RefuseSwap";
     }
     return "MoveOnly";
+}
+
+function resolveCookAction(ctx: ActionContext): ActionKind {
+    const hand = ctx.hand && !ctx.hand.empty ? ctx.hand : null;
+    const state = ctx.cookState ?? "idle";
+
+    if (state === "cooking") {
+        return "MoveOnly";
+    }
+    if (state === "ready") {
+        return hand ? "MoveOnly" : "Take";
+    }
+    if (!hand) {
+        return "MoveOnly";
+    }
+    if (findCookRecipe(hand.itemId)) {
+        return "Place";
+    }
+    return "RefuseSwap";
 }

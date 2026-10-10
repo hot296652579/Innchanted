@@ -20,8 +20,8 @@ export class ItemHoldView {
         this.transfer(this.hold(stationId), this.playerHold, -1);
     }
 
-    place(stationId: string): void {
-        this.transfer(this.playerHold, this.hold(stationId), -1);
+    place(stationId: string, count = -1): void {
+        this.transfer(this.playerHold, this.hold(stationId), count);
     }
 
     stack(stationId: string, moved: number): void {
