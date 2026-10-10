@@ -60,7 +60,7 @@ export class ProcessorView {
         if (session.meter) {
             session.meter.progress = 0;
         }
-        this.followStove(session.bar, binding);
+        this.followStove2(session.bar, binding);
     }
 
     /** 已有进度条只改 progress，不再实例化。 */
@@ -76,7 +76,7 @@ export class ProcessorView {
             if (session.meter) {
                 session.meter.progress = cook.progress;
             }
-            this.followStove(session.bar, session.binding);
+            this.followStove2(session.bar, session.binding);
         });
     }
 
@@ -148,6 +148,21 @@ export class ProcessorView {
         _local.x = (_screen.x / camW - 0.5) * uiW;
         _local.y = (_screen.y / camH - 0.5) * uiH;
         _local.z = 0;
+        bar.setPosition(_local.x, _local.y + UI_Y_OFFSET, 0);
+    }
+
+    private followStove2(bar: Node, binding: StationBinding): void {
+        const cam3d = this.camera;
+        const renderCam = cam3d?.camera;
+        const sceneUI = UILayerRoot.getRootByLayer(UILayerType.SCENE_UI);
+        const uiTrans = sceneUI?.getComponent(UITransform);
+        if (!cam3d || !renderCam || !sceneUI || !uiTrans) {
+            return;
+        }
+
+        const stove = binding.node.worldPosition;
+        _world.set(stove.x, stove.y, stove.z);
+        cam3d.convertToUINode(_world, sceneUI, _local);
         bar.setPosition(_local.x, _local.y + UI_Y_OFFSET, 0);
     }
 }
