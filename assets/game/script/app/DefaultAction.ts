@@ -10,6 +10,7 @@ export type ActionKind =
     | "Place"
     | "Take"
     | "Stack"
+    | "Serve"
     | "RefuseSwap";
 
 export type ActionTargetKind = "ground" | "self" | "place";
@@ -20,6 +21,8 @@ export interface ActionContext {
     slot: ItemStack | null;
     stationType?: StationType;
     cookState?: CookState;
+    /** 入座客人当前要的食物，没有则为空 */
+    wantedItemId?: string | null;
 }
 
 /** 到达后默认动作。纯函数，可单测。 */
@@ -35,6 +38,9 @@ export function resolveDefaultAction(ctx: ActionContext): ActionKind {
     }
     if (ctx.stationType === "cook") {
         return resolveCookAction(ctx);
+    }
+    if (ctx.stationType === "table") {
+        return resolveTableAction(ctx);
     }
 
     const hand = ctx.hand && !ctx.hand.empty ? ctx.hand : null;
@@ -72,4 +78,25 @@ function resolveCookAction(ctx: ActionContext): ActionKind {
         return "Place";
     }
     return "RefuseSwap";
+}
+
+function resolveTableAction(ctx: ActionContext): ActionKind {
+    const hand = ctx.hand && !ctx.hand.empty ? ctx.hand : null;
+    const slot = ctx.slot && !ctx.slot.empty ? ctx.slot : null;
+    if (hand && !slot && ctx.wantedItemId && hand.itemId === ctx.wantedItemId) {
+        return "Serve";
+    }
+    if (!hand && slot) {
+        return "Take";
+    }
+    if (hand && !slot) {
+        return "Place";
+    }
+    if (hand && slot && hand.itemId === slot.itemId) {
+        return "Stack";
+    }
+    if (hand && slot && hand.itemId !== slot.itemId) {
+        return "RefuseSwap";
+    }
+    return "MoveOnly";
 }

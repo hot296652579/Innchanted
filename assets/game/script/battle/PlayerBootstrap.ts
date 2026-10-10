@@ -1,37 +1,13 @@
-import { _decorator, Component, Node } from "cc";
-import { BundlesEnum } from "../../../define/BundlesEnum";
-import { ConfigManager } from "../../../framework/config/ConfigManager";
-import { GameEvent } from "../../../framework/event/EventName";
-import { EventManager } from "../../../framework/event/EventManager";
-import { ClickHit, ClickPicker } from "../app/ClickPicker";
-import { CommandService } from "../app/CommandService";
-import { ActionKind, resolveDefaultAction } from "../app/DefaultAction";
-import { GuestService } from "../app/GuestService";
-import { findCookRecipe } from "../app/Recipe";
-import { Actor } from "../domain/Actor";
-import { ItemStack } from "../domain/ItemStack";
-import { CommandFsm } from "../fsm/CommandFsm";
+import { _decorator, Component } from "cc";
+import { ShiftController } from "../app/ShiftController";
 import { NavBakeStarter } from "../navmesh/NavBakeStarter";
-import { GridAgent } from "../sim/GridAgent";
-import { RecastPathfinder } from "../sim/RecastPathfinder";
-import { StationBinding, StationRegistry } from "../sim/StationRegistry";
-import { ItemHoldView } from "../view/ItemHoldView";
-import { PlayerView } from "../view/PlayerView";
-import { ProcessorView } from "../view/ProcessorView";
 
 const { ccclass } = _decorator;
 
+/** 场景钩子：等 NavBake 就绪后把一局交给 ShiftController。 */
 @ccclass("PlayerBootstrap")
 export class PlayerBootstrap extends Component {
-    private _actor: Actor | null = null;
-    private _fsm: CommandFsm | null = null;
-    private _commands: CommandService | null = null;
-    private _registry = new StationRegistry();
-    private _pathfinder: RecastPathfinder | null = null;
-    private _view: PlayerView | null = null;
-    private _holds: ItemHoldView | null = null;
-    private _cookView: ProcessorView | null = null;
-    private _guests: GuestService | null = null;
+    private _shift: ShiftController | null = null;
 
     async start(): Promise<void> {
         const baker = this.getComponent(NavBakeStarter);
@@ -47,222 +23,25 @@ export class PlayerBootstrap extends Component {
             return;
         }
 
-        await ConfigManager.getInstance().loadTable("items", BundlesEnum.Table);
-        await ConfigManager.getInstance().loadTable("recipes", BundlesEnum.Table);
-
-        this._registry.scan(stationRoot);
-        this._pathfinder = new RecastPathfinder(recast);
-
-        const startPos = player.worldPosition.clone();
-        const agentId = this._pathfinder.addAgent(startPos, {
-            radius: 0.45,
-            height: 1.6,
-            maxAcceleration: 12,
-            maxSpeed: 4.5,
-            collisionQueryRange: 1.2,
-            pathOptimizationRange: 4,
-            separationWeight: 1,
+        this._shift = new ShiftController();
+        await this._shift.start({
+            recast,
+            host: this,
+            player,
+            stationRoot,
+            camera: baker.camera,
+            yawOffset: baker.yawOffset,
+            turnSpeed: baker.turnSpeed,
+            levelRoot: baker.navBake?.parent ?? baker.node.parent ?? baker.node,
+            planeRoot: baker.navBake?.getChildByName("Plane") ?? baker.navBake,
         });
-        const agentPos = this._pathfinder.getPosition(agentId);
-        const yOffset = startPos.y - agentPos.y;
-        player.setWorldPosition(agentPos.x, agentPos.y + yOffset, agentPos.z);
-
-        const agent = new GridAgent(this._pathfinder, agentId);
-        this._actor = new Actor("player");
-        this._fsm = new CommandFsm(agent);
-        this._commands = new CommandService(this._fsm);
-
-        player.mobility = 2;
-        this._view = player.getComponent(PlayerView) ?? player.addComponent(PlayerView);
-        this._view.bind(this._pathfinder, agentId, yOffset, baker.yawOffset, baker.turnSpeed);
-
-        const playerHold = this.resolvePlayerHold(player);
-        this._holds = new ItemHoldView(playerHold);
-        this._holds.capture(this._registry);
-        this._cookView = new ProcessorView(baker.camera);
-        await this._cookView.load();
-
-        this._guests = new GuestService(this._pathfinder, this._registry);
-        await this._guests.load();
-        const levelRoot = baker.navBake?.parent ?? baker.node.parent ?? baker.node;
-        this._guests.start(levelRoot, stationRoot, baker.yawOffset);
-
-        const picker = this.getComponent(ClickPicker) ?? this.node.addComponent(ClickPicker);
-        picker.camera = baker.camera;
-        picker.player = player;
-        picker.stationRoot = stationRoot;
-        picker.planeRoot = baker.navBake?.getChildByName("Plane") ?? baker.navBake;
-        picker.registry = this._registry;
-        picker.onHit = (hit) => this.onClick(hit);
-
-        console.log(`[Player] 就绪，放置台 ${this._registry.all.length} 个`);
     }
 
     update(dt: number): void {
-        this._pathfinder?.update(dt);
-        this._fsm?.update(dt);
-        this.tickCook(dt);
-        this._cookView?.update();
-        this._guests?.update();
+        this._shift?.update(dt);
     }
 
     onDestroy(): void {
-        this._registry.clear();
-    }
-
-    private resolvePlayerHold(player: Node): Node {
-        let hold = player.getChildByName("HoldPoint");
-        if (!hold) {
-            hold = new Node("HoldPoint");
-            player.addChild(hold);
-            hold.setPosition(0, 0.5, 0.5);
-            console.warn("[Player] 没有 HoldPoint，已在玩家根节点下创建");
-        }
-        hold.mobility = 2;
-        console.log("[Player] HoldPoint 位于", player.name, "/", hold.name, "父节点", hold.parent?.name);
-        return hold;
-    }
-
-    private onClick(hit: ClickHit): void {
-        if (!this._commands || !this._actor) {
-            return;
-        }
-        if (hit.target.kind === "self") {
-            this._commands.issue(hit.target, null, null);
-            this._view?.clearLookTarget();
-            return;
-        }
-        if (hit.lookAt) {
-            this._view?.setLookTarget(hit.lookAt);
-        } else {
-            this._view?.clearLookTarget();
-        }
-        this._commands.issue(hit.target, hit.dest, () => this.onArrive(hit));
-    }
-
-    private onArrive(hit: ClickHit): void {
-        if (!this._actor || hit.target.kind !== "place") {
-            return;
-        }
-        const binding = this._registry.get(hit.target.stationId);
-        if (!binding) {
-            return;
-        }
-        const action = resolveDefaultAction({
-            hand: this._actor.hand,
-            target: "place",
-            slot: binding.station.slot,
-            stationType: binding.station.type,
-            cookState: binding.station.cook?.state,
-        });
-        console.log(
-            "[Player] 到达",
-            binding.station.id,
-            action,
-            "手",
-            this._actor.hand,
-            "台",
-            binding.station.slot,
-        );
-        this.applyAction(action, binding);
-    }
-
-    private applyAction(action: ActionKind, binding: StationBinding): void {
-        const actor = this._actor!;
-        const station = binding.station;
-        const events = EventManager.getInstance();
-        switch (action) {
-            case "Take":
-                actor.hand = station.slot;
-                station.slot = null;
-                station.cook?.reset();
-                this._holds?.take(station.id);
-                this._cookView?.hideBar(binding);
-                break;
-            case "Place":
-                if (station.type === "cook") {
-                    this.placeOntoCook(actor, binding);
-                    break;
-                }
-                station.slot = actor.hand;
-                actor.hand = null;
-                this._holds?.place(station.id);
-                if (station.type === "table") {
-                    this.tryServeTable(binding);
-                }
-                break;
-            case "Stack":
-                if (actor.hand && station.slot) {
-                    const moved = actor.hand.count - station.slot.absorb(actor.hand);
-                    if (actor.hand.empty) {
-                        actor.hand = null;
-                    }
-                    this._holds?.stack(station.id, moved);
-                }
-                break;
-            case "RefuseSwap":
-                const tip = station.type === "cook" ? "这个不能放进炉灶" : "不能和台上的交换";
-                events.emit(GameEvent.SHOW_TIPS, tip);
-                console.warn("[Player]", tip);
-                return;
-            default:
-                return;
-        }
-        events.emit(GameEvent.ITEM_HELD_CHANGED, actor.id, actor.hand);
-        events.emit(GameEvent.STATION_SLOT_CHANGED, station.id);
-        console.log("[Player]", action, "手", actor.hand, "台", station.slot);
-    }
-
-    private placeOntoCook(actor: Actor, binding: StationBinding): void {
-        const hand = actor.hand;
-        const cook = binding.station.cook;
-        if (!hand || !cook || cook.state !== "idle") {
-            return;
-        }
-        const recipe = findCookRecipe(hand.itemId);
-        if (!recipe) {
-            EventManager.getInstance().emit(GameEvent.SHOW_TIPS, "这个不能放进炉灶");
-            return;
-        }
-        binding.station.slot = new ItemStack(hand.itemId, 1);
-        hand.count -= 1;
-        if (hand.empty) {
-            actor.hand = null;
-        }
-        this._holds?.place(binding.station.id, 1);
-        cook.start(recipe.input, recipe.output, recipe.duration);
-        this._cookView?.begin(binding);
-        console.log("[Cook] 开始烘培", recipe.input, "→", recipe.output, recipe.duration, "s");
-    }
-
-    private tryServeTable(binding: StationBinding): void {
-        if (this._guests?.tryServe(binding)) {
-            EventManager.getInstance().emit(GameEvent.SHOW_TIPS, "客人吃完离开了");
-            EventManager.getInstance().emit(GameEvent.STATION_SLOT_CHANGED, binding.station.id);
-            console.log("[Guest] 上菜成功", binding.station.id);
-            return;
-        }
-        const order = this._guests?.seatedOrder();
-        const slot = binding.station.slot;
-        if (order && slot && slot.itemId !== order) {
-            EventManager.getInstance().emit(GameEvent.SHOW_TIPS, "这不是客人要的");
-        }
-    }
-
-    private tickCook(dt: number): void {
-        for (let i = 0; i < this._registry.all.length; i++) {
-            const binding = this._registry.all[i];
-            const cook = binding.station.cook;
-            if (!cook || cook.state !== "cooking") {
-                continue;
-            }
-            const next = cook.update(dt);
-            if (next === "ready") {
-                binding.station.slot = new ItemStack(cook.outputId, 1);
-                this._cookView?.showReady(binding, cook.outputId);
-                EventManager.getInstance().emit(GameEvent.STATION_SLOT_CHANGED, binding.station.id);
-                console.log("[Cook] 完成", binding.station.id, cook.outputId);
-            }
-        }
+        this._shift?.clear();
     }
 }
