@@ -34,7 +34,11 @@ export class StationRegistry {
         this.clear();
         for (let i = 0; i < stationRoot.children.length; i++) {
             const node = stationRoot.children[i];
-            const holdPoint = findNamedDescendant(node, HOLD_POINT_NAME);
+            const type = inferStationType(node.name);
+            let holdPoint = findNamedDescendant(node, HOLD_POINT_NAME);
+            if (!holdPoint && type === "table") {
+                holdPoint = ensureHoldPoint(node, 0.85);
+            }
             if (!holdPoint) {
                 continue;
             }
@@ -42,7 +46,7 @@ export class StationRegistry {
             if (this._byId.has(id)) {
                 id = `${node.name}_${i}`;
             }
-            const station = new Station(id, inferStationType(node.name));
+            const station = new Station(id, type);
             station.slot = stackFromHoldPoint(holdPoint);
             const binding: StationBinding = {
                 station,
@@ -112,7 +116,17 @@ function inferStationType(name: string): Station["type"] {
     if (id.startsWith("stove") || id.startsWith("cook")) {
         return "cook";
     }
+    if (id === "table" || id.startsWith("table-") || id.startsWith("table_")) {
+        return "table";
+    }
     return "place";
+}
+
+function ensureHoldPoint(node: Node, localY: number): Node {
+    const hold = new Node(HOLD_POINT_NAME);
+    node.addChild(hold);
+    hold.setPosition(0, localY, 0);
+    return hold;
 }
 
 export function findNamedDescendant(root: Node, name: string): Node | null {

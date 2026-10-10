@@ -6,6 +6,7 @@ import { EventManager } from "../../../framework/event/EventManager";
 import { ClickHit, ClickPicker } from "../app/ClickPicker";
 import { CommandService } from "../app/CommandService";
 import { ActionKind, resolveDefaultAction } from "../app/DefaultAction";
+import { GuestService } from "../app/GuestService";
 import { findCookRecipe } from "../app/Recipe";
 import { Actor } from "../domain/Actor";
 import { ItemStack } from "../domain/ItemStack";
@@ -30,6 +31,7 @@ export class PlayerBootstrap extends Component {
     private _view: PlayerView | null = null;
     private _holds: ItemHoldView | null = null;
     private _cookView: ProcessorView | null = null;
+    private _guests: GuestService | null = null;
 
     async start(): Promise<void> {
         const baker = this.getComponent(NavBakeStarter);
@@ -80,6 +82,11 @@ export class PlayerBootstrap extends Component {
         this._cookView = new ProcessorView(baker.camera);
         await this._cookView.load();
 
+        this._guests = new GuestService(this._pathfinder, this._registry);
+        await this._guests.load();
+        const levelRoot = baker.navBake?.parent ?? baker.node.parent ?? baker.node;
+        this._guests.start(levelRoot, stationRoot, baker.yawOffset);
+
         const picker = this.getComponent(ClickPicker) ?? this.node.addComponent(ClickPicker);
         picker.camera = baker.camera;
         picker.player = player;
@@ -96,6 +103,7 @@ export class PlayerBootstrap extends Component {
         this._fsm?.update(dt);
         this.tickCook(dt);
         this._cookView?.update();
+        this._guests?.update();
     }
 
     onDestroy(): void {
@@ -179,6 +187,9 @@ export class PlayerBootstrap extends Component {
                 station.slot = actor.hand;
                 actor.hand = null;
                 this._holds?.place(station.id);
+                if (station.type === "table") {
+                    this.tryServeTable(binding);
+                }
                 break;
             case "Stack":
                 if (actor.hand && station.slot) {
@@ -222,6 +233,20 @@ export class PlayerBootstrap extends Component {
         cook.start(recipe.input, recipe.output, recipe.duration);
         this._cookView?.begin(binding);
         console.log("[Cook] 开始烘培", recipe.input, "→", recipe.output, recipe.duration, "s");
+    }
+
+    private tryServeTable(binding: StationBinding): void {
+        if (this._guests?.tryServe(binding)) {
+            EventManager.getInstance().emit(GameEvent.SHOW_TIPS, "客人吃完离开了");
+            EventManager.getInstance().emit(GameEvent.STATION_SLOT_CHANGED, binding.station.id);
+            console.log("[Guest] 上菜成功", binding.station.id);
+            return;
+        }
+        const order = this._guests?.seatedOrder();
+        const slot = binding.station.slot;
+        if (order && slot && slot.itemId !== order) {
+            EventManager.getInstance().emit(GameEvent.SHOW_TIPS, "这不是客人要的");
+        }
     }
 
     private tickCook(dt: number): void {

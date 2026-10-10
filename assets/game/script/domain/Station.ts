@@ -1,7 +1,7 @@
 import { CookProcess } from "./CookProcess";
 import { ItemStack } from "./ItemStack";
 
-export type StationType = "place" | "cook";
+export type StationType = "place" | "cook" | "table";
 
 export class Station {
     public slot: ItemStack | null = null;
