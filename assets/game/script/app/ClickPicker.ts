@@ -92,10 +92,11 @@ export class ClickPicker extends Component {
             if (stationNode) {
                 const binding = this.registry.findByHitNode(stationNode, this.stationRoot);
                 if (binding) {
-                    const playerY = this.player
-                        ? this.player.worldPosition.y
+                    const from = this.player?.worldPosition ?? null;
+                    const playerY = from
+                        ? from.y
                         : (binding.interactPos ?? binding.node).worldPosition.y;
-                    const dest = this.registry.standPoint(binding, playerY);
+                    const dest = this.registry.standPoint(binding, playerY, from);
                     return {
                         target: { kind: "place", stationId: binding.station.id },
                         dest,

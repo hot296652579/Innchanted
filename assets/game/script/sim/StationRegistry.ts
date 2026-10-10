@@ -80,11 +80,14 @@ export class StationRegistry {
         return null;
     }
 
-    standPoint(binding: StationBinding, playerY: number): Vec3 {
+    /** 没有 InteractPos 时，站在台子朝向玩家的一侧，而不是死用节点 forward。 */
+    standPoint(binding: StationBinding, playerY: number, from: Vec3 | null = null): Vec3 {
         const center = binding.node.worldPosition;
         const dest = new Vec3();
         if (binding.interactPos) {
             dest.set(binding.interactPos.worldPosition);
+        } else if (from) {
+            dest.set(from.x, playerY, from.z);
         } else {
             const forward = binding.node.forward;
             dest.set(
@@ -103,9 +106,8 @@ export class StationRegistry {
             dx /= len;
             dz /= len;
         }
-        const push = Math.max(len, STAND_CLEAR);
-        dest.x = center.x + dx * push;
-        dest.z = center.z + dz * push;
+        dest.x = center.x + dx * STAND_CLEAR;
+        dest.z = center.z + dz * STAND_CLEAR;
         dest.y = playerY;
         return dest;
     }

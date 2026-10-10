@@ -123,12 +123,12 @@ export default class RecastDetourManager {
             walkableSlopeAngle: 35,
             walkableHeight: 10,
             walkableClimb: 1.0,
-            // Recast 单位是体素。cs=0.2 时 2 个体素 = 0.4 米，避免网格贴进桌子/灶台
-            walkableRadius: 2,
+            // 1 体素 = 0.2m。太大时桌椅之间的通道会被侵蚀掐断
+            walkableRadius: 1,
             maxEdgeLen: 12.,
-            maxSimplificationError: 1.2,
-            minRegionArea: 40,
-            mergeRegionArea: 60,
+            maxSimplificationError: 0.8,
+            minRegionArea: 8,
+            mergeRegionArea: 20,
             maxVertsPerPoly: 3,
             detailSampleDist: 6,
             detailSampleMaxError: 1,
