@@ -1,6 +1,7 @@
 import { GameEvent } from "../../../framework/event/EventName";
 import { EventManager } from "../../../framework/event/EventManager";
 import { Actor } from "../domain/Actor";
+import { StationType } from "../domain/Station";
 import { StationBinding } from "../sim/StationRegistry";
 import { ItemHoldView } from "../view/ItemHoldView";
 import { ActionKind } from "./DefaultAction";
@@ -29,7 +30,7 @@ export class InteractService {
                 this.processors.hideBar(binding);
                 break;
             case "Place":
-                if (station.type === "cook") {
+                if (station.type === StationType.Cook) {
                     if (!this.processors.startFromHand(actor, binding)) {
                         return;
                     }
@@ -37,7 +38,7 @@ export class InteractService {
                     break;
                 }
                 this.dropHand(binding);
-                if (station.type === "table") {
+                if (station.type === StationType.Table) {
                     this.tryServe(binding);
                 }
                 break;
@@ -58,7 +59,7 @@ export class InteractService {
                 }
                 break;
             case "RefuseSwap":
-                const tip = station.type === "cook" ? "这个不能放进炉灶" : "不能和台上的交换";
+                const tip = station.type === StationType.Cook ? "这个不能放进炉灶" : "不能和台上的交换";
                 events.emit(GameEvent.SHOW_TIPS, tip);
                 console.warn("[Player]", tip);
                 return;

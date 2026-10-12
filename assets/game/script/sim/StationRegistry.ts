@@ -1,6 +1,6 @@
 import { Node, Vec3 } from "cc";
 import { ITEM_STACK_CAP, ItemStack } from "../domain/ItemStack";
-import { Station } from "../domain/Station";
+import { Station, StationType } from "../domain/Station";
 
 const INTERACT_POS_NAME = "InteractPos";
 const HOLD_POINT_NAME = "HoldPoint";
@@ -36,7 +36,7 @@ export class StationRegistry {
             const node = stationRoot.children[i];
             const type = inferStationType(node.name);
             let holdPoint = findNamedDescendant(node, HOLD_POINT_NAME);
-            if (!holdPoint && type === "table") {
+            if (!holdPoint && type === StationType.Table) {
                 holdPoint = ensureHoldPoint(node, 0.85);
             }
             if (!holdPoint) {
@@ -113,15 +113,15 @@ export class StationRegistry {
     }
 }
 
-function inferStationType(name: string): Station["type"] {
+function inferStationType(name: string): StationType {
     const id = name.toLowerCase();
     if (id.startsWith("stove") || id.startsWith("cook")) {
-        return "cook";
+        return StationType.Cook;
     }
     if (id === "table" || id.startsWith("table-") || id.startsWith("table_")) {
-        return "table";
+        return StationType.Table;
     }
-    return "place";
+    return StationType.Place;
 }
 
 function ensureHoldPoint(node: Node, localY: number): Node {

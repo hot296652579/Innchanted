@@ -1,3 +1,4 @@
 [
-  { "stationType": "cook", "input": "burger", "output": "burgerbaked", "duration": 2 }
+  { "stationType": "cook", "input": "burger", "output": "burgerbaked", "duration": 2 },
+  { "stationType": "cook", "input": "chickenleg", "output": "chickenlegbaked", "duration": 2 }
 ]

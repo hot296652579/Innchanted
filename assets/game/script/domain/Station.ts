@@ -1,7 +1,11 @@
 import { CookProcess } from "./CookProcess";
 import { ItemStack } from "./ItemStack";
 
-export type StationType = "place" | "cook" | "table";
+export enum StationType {
+    Place = "place",
+    Cook = "cook",
+    Table = "table",
+}
 
 export class Station {
     public slot: ItemStack | null = null;
@@ -9,9 +13,9 @@ export class Station {
 
     constructor(
         public readonly id: string,
-        public readonly type: StationType = "place",
+        public readonly type: StationType = StationType.Place,
     ) {
-        if (type === "cook") {
+        if (type === StationType.Cook) {
             this.cook = new CookProcess();
         }
     }

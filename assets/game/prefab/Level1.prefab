@@ -1125,7 +1125,8 @@
     "fileId": "5ePSKYNTlaZLYVbvKvYNjO",
     "instance": {
       "__id__": 71
-    }
+    },
+    "targetOverrides": null
   },
   {
     "__type__": "cc.PrefabInstance",
@@ -1297,7 +1298,8 @@
     "fileId": "5ePSKYNTlaZLYVbvKvYNjO",
     "instance": {
       "__id__": 86
-    }
+    },
+    "targetOverrides": null
   },
   {
     "__type__": "cc.PrefabInstance",
@@ -3583,7 +3585,7 @@
       "__id__": 232
     },
     "asset": {
-      "__uuid__": "26e1d487-a5cc-4dae-a0fd-b106d152432b",
+      "__uuid__": "c4fe79f4-5623-4d97-98e8-f83ee2afd215",
       "__expectedType__": "cc.Prefab"
     },
     "fileId": "c46/YsCPVOJYA4mWEpNYRx",
@@ -3594,7 +3596,7 @@
   },
   {
     "__type__": "cc.PrefabInstance",
-    "fileId": "57gwHmKd5K7Z/GGSgDdX1o",
+    "fileId": "57vD5BYY5AArrekXcm0uRe",
     "prefabRootNode": {
       "__id__": 1
     },
@@ -3624,7 +3626,7 @@
     "propertyPath": [
       "_name"
     ],
-    "value": "Burger"
+    "value": "ChickenLeg"
   },
   {
     "__type__": "cc.TargetInfo",
@@ -3642,8 +3644,8 @@
     ],
     "value": {
       "__type__": "cc.Vec3",
-      "x": 0,
-      "y": 0.15,
+      "x": -0.167,
+      "y": 0.417,
       "z": 0
     }
   },
@@ -3870,7 +3872,8 @@
     "fileId": "27y45nG+VegrOybGMpwrSD",
     "instance": {
       "__id__": 254
-    }
+    },
+    "targetOverrides": null
   },
   {
     "__type__": "cc.PrefabInstance",

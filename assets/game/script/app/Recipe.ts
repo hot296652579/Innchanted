@@ -1,21 +1,23 @@
 import { ConfigManager } from "../../../framework/config/ConfigManager";
+import { StationType } from "../domain/Station";
 
 export type CookRecipe = {
-    stationType: string;
+    stationType: StationType | string;
     input: string;
     output: string;
     duration: number;
 };
 
 const FALLBACK: CookRecipe[] = [
-    { stationType: "cook", input: "burger", output: "burgerbaked", duration: 2 },
+    { stationType: StationType.Cook, input: "burger", output: "burgerbaked", duration: 2 },
+    { stationType: StationType.Cook, input: "chickenleg", output: "chickenlegbaked", duration: 2 },
 ];
 
 export function findCookRecipe(inputId: string): CookRecipe | null {
     const table = ConfigManager.getInstance().getTable<CookRecipe>("recipes") ?? FALLBACK;
     for (let i = 0; i < table.length; i++) {
         const row = table[i];
-        if (row.stationType === "cook" && row.input === inputId) {
+        if (row.stationType === StationType.Cook && row.input === inputId) {
             return row;
         }
     }

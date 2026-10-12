@@ -36,10 +36,10 @@ export function resolveDefaultAction(ctx: ActionContext): ActionKind {
     if (ctx.target !== "place") {
         return "None";
     }
-    if (ctx.stationType === "cook") {
+    if (ctx.stationType === StationType.Cook) {
         return resolveCookAction(ctx);
     }
-    if (ctx.stationType === "table") {
+    if (ctx.stationType === StationType.Table) {
         return resolveTableAction(ctx);
     }
 

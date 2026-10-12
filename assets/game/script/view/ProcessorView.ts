@@ -27,16 +27,20 @@ export class ProcessorView {
     async load(): Promise<void> {
         const res = ResourceManager.getInstance();
         this._barPrefab = await res.loadPrefab("prefab/LoadingBar", BundlesEnum.Game);
-        const baked = await res.loadPrefab("prefab/items/BurgerBaked", BundlesEnum.Game);
-        if (baked) {
-            this._outputPrefabs.set("burgerbaked", baked);
-        }
+        await this.loadOutput(res, "prefab/items/BurgerBaked", "burgerbaked");
+        await this.loadOutput(res, "prefab/items/ChickenLegBaked", "chickenlegbaked");
         if (!this._barPrefab) {
             console.warn("[Cook] 未找到 prefab/LoadingBar");
         }
-        if (!baked) {
-            console.warn("[Cook] 未找到 prefab/items/BurgerBaked");
+    }
+
+    private async loadOutput(res: ResourceManager, path: string, itemId: string): Promise<void> {
+        const prefab = await res.loadPrefab(path, BundlesEnum.Game);
+        if (!prefab) {
+            console.warn("[Cook] 未找到", path);
+            return;
         }
+        this._outputPrefabs.set(itemId, prefab);
     }
 
     /** 开始加工时创建一次进度条，之后只走 update。 */

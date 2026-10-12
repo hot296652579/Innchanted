@@ -1,4 +1,5 @@
 import { Node } from "cc";
+import { StationType } from "../domain/Station";
 import { findNamedDescendant, StationBinding, StationRegistry } from "./StationRegistry";
 
 export interface DiningLayout {
@@ -16,7 +17,7 @@ export function scanDining(
 ): DiningLayout | null {
     const guestNode = findNamedDescendant(levelRoot, "Guest");
     const leavePoint = findNamedDescendant(levelRoot, "LeavePoint");
-    const table = registry.all.find((b) => b.station.type === "table") ?? null;
+    const table = registry.all.find((b) => b.station.type === StationType.Table) ?? null;
     const seatPoint = findSeat(stationRoot);
     if (!guestNode || !leavePoint || !table || !seatPoint) {
         return null;
