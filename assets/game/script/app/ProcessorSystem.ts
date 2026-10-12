@@ -1,6 +1,6 @@
 import { Camera } from "cc";
-import { GameEvent } from "../../../framework/event/EventName";
 import { EventManager } from "../../../framework/event/EventManager";
+import { GameEvent } from "../../../framework/event/EventName";
 import { Actor } from "../domain/Actor";
 import { ItemStack } from "../domain/ItemStack";
 import { StationBinding, StationRegistry } from "../sim/StationRegistry";
@@ -54,7 +54,7 @@ export class ProcessorSystem {
         if (!hand || !cook || cook.state !== "idle") {
             return false;
         }
-        const recipe = findCookRecipe(hand.itemId);
+        const recipe = findCookRecipe(hand.itemId);// 查找烘培配方
         if (!recipe) {
             EventManager.getInstance().emit(GameEvent.SHOW_TIPS, "这个不能放进炉灶");
             return false;

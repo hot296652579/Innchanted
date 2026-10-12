@@ -1,5 +1,5 @@
-import { GameEvent } from "../../../framework/event/EventName";
 import { EventManager } from "../../../framework/event/EventManager";
+import { GameEvent } from "../../../framework/event/EventName";
 import { Actor } from "../domain/Actor";
 import { StationType } from "../domain/Station";
 import { StationBinding } from "../sim/StationRegistry";
@@ -15,21 +15,21 @@ export class InteractService {
         private readonly holds: ItemHoldView,
         private readonly processors: ProcessorSystem,
         private readonly guests: GuestLoop,
-    ) {}
+    ) { }
 
     apply(action: ActionKind, binding: StationBinding): void {
         const actor = this.actor;
         const station = binding.station;
         const events = EventManager.getInstance();
         switch (action) {
-            case "Take":
+            case "Take"://拿取物品
                 actor.hand = station.slot;
                 station.slot = null;
                 station.cook?.reset();
                 this.holds.take(station.id);
                 this.processors.hideBar(binding);
                 break;
-            case "Place":
+            case "Place":// 灶炉：开烘培；其他台：放手物品
                 if (station.type === StationType.Cook) {
                     if (!this.processors.startFromHand(actor, binding)) {
                         return;
@@ -42,14 +42,14 @@ export class InteractService {
                     this.tryServe(binding);
                 }
                 break;
-            case "Serve":
+            case "Serve":// 上菜
                 this.dropHand(binding);
                 if (!this.tryServe(binding)) {
                     events.emit(GameEvent.SHOW_TIPS, "这不是客人要的");
                     return;
                 }
                 break;
-            case "Stack":
+            case "Stack":// 堆叠物品
                 if (actor.hand && station.slot) {
                     const moved = actor.hand.count - station.slot.absorb(actor.hand);
                     if (actor.hand.empty) {
@@ -58,7 +58,7 @@ export class InteractService {
                     this.holds.stack(station.id, moved);
                 }
                 break;
-            case "RefuseSwap":
+            case "RefuseSwap":// 拒绝交换
                 const tip = station.type === StationType.Cook ? "这个不能放进炉灶" : "不能和台上的交换";
                 events.emit(GameEvent.SHOW_TIPS, tip);
                 console.warn("[Player]", tip);
