@@ -1,6 +1,5 @@
-import { CookState } from "../domain/CookProcess";
 import { ItemStack } from "../domain/ItemStack";
-import { StationType } from "../domain/Station";
+import { Station, StationType } from "../domain/Station";
 import { findCookRecipe } from "./Recipe";
 
 export type ActionKind =
@@ -13,90 +12,78 @@ export type ActionKind =
     | "Serve"
     | "RefuseSwap";
 
-export type ActionTargetKind = "ground" | "self" | "place";
+type StationResolver = (
+    hand: ItemStack | null,
+    station: Station,
+    wantedItemId?: string | null,
+) => ActionKind;
 
-export interface ActionContext {
-    hand: ItemStack | null;
-    target: ActionTargetKind;
-    slot: ItemStack | null;
-    stationType?: StationType;
-    cookState?: CookState;
-    /** 入座客人当前要的食物，没有则为空 */
-    wantedItemId?: string | null;
+/** 加新台子：写 resolveXxx，登记到这张表。漏登记会编译报错。 */
+const STATION_RESOLVERS: Record<StationType, StationResolver> = {
+    [StationType.Cook]: resolveCook,
+    [StationType.Table]: resolveTable,
+    [StationType.Place]: resolvePlace,
+};
+
+/** 到达台子后该做什么。纯函数：手 + 台子 → 动作名。 */
+export function resolveDefaultAction(
+    hand: ItemStack | null,
+    station: Station,
+    wantedItemId?: string | null,
+): ActionKind {
+    return STATION_RESOLVERS[station.type](hand, station, wantedItemId);
 }
 
-/** 到达后默认动作。纯函数，可单测。 */
-export function resolveDefaultAction(ctx: ActionContext): ActionKind {
-    if (ctx.target === "self") {
-        return "Cancel";
-    }
-    if (ctx.target === "ground") {
-        return "MoveOnly";
-    }
-    if (ctx.target !== "place") {
-        return "None";
-    }
-    if (ctx.stationType === StationType.Cook) {
-        return resolveCookAction(ctx);
-    }
-    if (ctx.stationType === StationType.Table) {
-        return resolveTableAction(ctx);
-    }
-
-    const hand = ctx.hand && !ctx.hand.empty ? ctx.hand : null;
-    const slot = ctx.slot && !ctx.slot.empty ? ctx.slot : null;
-
-    if (!hand && slot) {
-        return "Take";
-    }
-    if (hand && !slot) {
-        return "Place";
-    }
-    if (hand && slot && hand.itemId === slot.itemId) {
-        return "Stack";
-    }
-    if (hand && slot && hand.itemId !== slot.itemId) {
-        return "RefuseSwap";
-    }
-    return "MoveOnly";
-}
-
-function resolveCookAction(ctx: ActionContext): ActionKind {
-    const hand = ctx.hand && !ctx.hand.empty ? ctx.hand : null;
-    const state = ctx.cookState ?? "idle";
+function resolveCook(hand: ItemStack | null, station: Station): ActionKind {
+    const held = nonempty(hand);
+    const state = station.cook?.state ?? "idle";
 
     if (state === "cooking") {
         return "MoveOnly";
     }
     if (state === "ready") {
-        return hand ? "MoveOnly" : "Take";
+        return held ? "MoveOnly" : "Take";
     }
-    if (!hand) {
+    if (!held) {
         return "MoveOnly";
     }
-    if (findCookRecipe(hand.itemId)) {
+    if (findCookRecipe(held.itemId)) {
         return "Place";
     }
     return "RefuseSwap";
 }
 
-function resolveTableAction(ctx: ActionContext): ActionKind {
-    const hand = ctx.hand && !ctx.hand.empty ? ctx.hand : null;
-    const slot = ctx.slot && !ctx.slot.empty ? ctx.slot : null;
-    if (hand && !slot && ctx.wantedItemId && hand.itemId === ctx.wantedItemId) {
+function resolveTable(
+    hand: ItemStack | null,
+    station: Station,
+    wantedItemId?: string | null,
+): ActionKind {
+    const held = nonempty(hand);
+    const slot = nonempty(station.slot);
+    if (held && !slot && wantedItemId && held.itemId === wantedItemId) {
         return "Serve";
     }
-    if (!hand && slot) {
+    return resolvePlace(hand, station);
+}
+
+function resolvePlace(hand: ItemStack | null, station: Station): ActionKind {
+    const held = nonempty(hand);
+    const slot = nonempty(station.slot);
+    if (!held && slot) {
         return "Take";
     }
-    if (hand && !slot) {
+    if (held && !slot) {
         return "Place";
     }
-    if (hand && slot && hand.itemId === slot.itemId) {
+    if (held && slot && held.itemId === slot.itemId) {
         return "Stack";
     }
-    if (hand && slot && hand.itemId !== slot.itemId) {
+    if (held && slot) {
         return "RefuseSwap";
     }
     return "MoveOnly";
+}
+
+function nonempty(stack: ItemStack | null): ItemStack | null {
+    return stack && !stack.empty ? stack : null;
 }

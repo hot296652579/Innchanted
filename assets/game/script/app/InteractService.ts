@@ -4,11 +4,11 @@ import { Actor } from "../domain/Actor";
 import { StationType } from "../domain/Station";
 import { StationBinding } from "../sim/StationRegistry";
 import { ItemHoldView } from "../view/ItemHoldView";
-import { ActionKind } from "./DefaultAction";
+import { ActionKind, resolveDefaultAction } from "./DefaultAction";
 import { GuestLoop } from "./GuestLoop";
 import { ProcessorSystem } from "./ProcessorSystem";
 
-/** 到达后执行 DefaultAction，不负责寻路。 */
+/** 到达台子后：先决策再执行。不负责寻路。 */
 export class InteractService {
     constructor(
         private readonly actor: Actor,
@@ -16,6 +16,12 @@ export class InteractService {
         private readonly processors: ProcessorSystem,
         private readonly guests: GuestLoop,
     ) { }
+
+    arrive(binding: StationBinding): void {
+        const action = resolveDefaultAction(this.actor.hand, binding.station, this.guests.seatedOrder());
+        console.log("[Player] 到达", binding.station.id, action);
+        this.apply(action, binding);
+    }
 
     apply(action: ActionKind, binding: StationBinding): void {
         const actor = this.actor;

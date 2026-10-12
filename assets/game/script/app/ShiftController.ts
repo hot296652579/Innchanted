@@ -11,7 +11,6 @@ import { ItemHoldView } from "../view/ItemHoldView";
 import { PlayerView } from "../view/PlayerView";
 import { ClickHit, ClickPicker } from "./ClickPicker";
 import { CommandService } from "./CommandService";
-import { resolveDefaultAction } from "./DefaultAction";
 import { GuestLoop } from "./GuestLoop";
 import { InteractService } from "./InteractService";
 import { ProcessorSystem } from "./ProcessorSystem";
@@ -128,23 +127,13 @@ export class ShiftController {
     }
 
     private onArrive(hit: ClickHit): void {
-        if (!this._actor || !this._interact || hit.target.kind !== "place") {
+        if (!this._interact || hit.target.kind !== "place") {
             return;
         }
         const binding = this._registry.get(hit.target.stationId);
-        if (!binding) {
-            return;
+        if (binding) {
+            this._interact.arrive(binding);
         }
-        const action = resolveDefaultAction({
-            hand: this._actor.hand,
-            target: "place",
-            slot: binding.station.slot,
-            stationType: binding.station.type,
-            cookState: binding.station.cook?.state,
-            wantedItemId: this._guests?.seatedOrder(),
-        });
-        console.log("[Player] 到达", binding.station.id, action);
-        this._interact.apply(action, binding);
     }
 
     private requireHold(player: Node): Node {
