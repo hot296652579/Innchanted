@@ -13,6 +13,7 @@ export interface StationBinding {
     holdPoint: Node;
 }
 
+/** 台子注册表：记录所有台子，方便查找。 */
 export class StationRegistry {
     private readonly _byId = new Map<string, StationBinding>();
     private readonly _list: StationBinding[] = [];
