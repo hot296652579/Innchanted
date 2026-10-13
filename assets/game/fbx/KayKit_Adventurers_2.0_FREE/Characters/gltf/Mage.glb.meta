@@ -1,0 +1,295 @@
+{
+  "ver": "2.3.14",
+  "importer": "gltf",
+  "imported": true,
+  "uuid": "d6416781-d623-4c9f-878f-d9210e3354dc",
+  "files": [],
+  "subMetas": {
+    "538bd": {
+      "importer": "gltf-mesh",
+      "uuid": "d6416781-d623-4c9f-878f-d9210e3354dc@538bd",
+      "displayName": "",
+      "id": "538bd",
+      "name": "Mage_ArmLeft.mesh",
+      "userData": {
+        "gltfIndex": 0,
+        "triangleCount": 468
+      },
+      "ver": "1.1.1",
+      "imported": true,
+      "files": [
+        ".bin",
+        ".json"
+      ],
+      "subMetas": {}
+    },
+    "f8fc7": {
+      "importer": "gltf-mesh",
+      "uuid": "d6416781-d623-4c9f-878f-d9210e3354dc@f8fc7",
+      "displayName": "",
+      "id": "f8fc7",
+      "name": "Mage_ArmRight.mesh",
+      "userData": {
+        "gltfIndex": 1,
+        "triangleCount": 468
+      },
+      "ver": "1.1.1",
+      "imported": true,
+      "files": [
+        ".bin",
+        ".json"
+      ],
+      "subMetas": {}
+    },
+    "799d5": {
+      "importer": "gltf-mesh",
+      "uuid": "d6416781-d623-4c9f-878f-d9210e3354dc@799d5",
+      "displayName": "",
+      "id": "799d5",
+      "name": "Mage_Body.mesh",
+      "userData": {
+        "gltfIndex": 2,
+        "triangleCount": 1230
+      },
+      "ver": "1.1.1",
+      "imported": true,
+      "files": [
+        ".bin",
+        ".json"
+      ],
+      "subMetas": {}
+    },
+    "a76b4": {
+      "importer": "gltf-mesh",
+      "uuid": "d6416781-d623-4c9f-878f-d9210e3354dc@a76b4",
+      "displayName": "",
+      "id": "a76b4",
+      "name": "Mage_Cape.mesh",
+      "userData": {
+        "gltfIndex": 3,
+        "triangleCount": 84
+      },
+      "ver": "1.1.1",
+      "imported": true,
+      "files": [
+        ".bin",
+        ".json"
+      ],
+      "subMetas": {}
+    },
+    "050ec": {
+      "importer": "gltf-mesh",
+      "uuid": "d6416781-d623-4c9f-878f-d9210e3354dc@050ec",
+      "displayName": "",
+      "id": "050ec",
+      "name": "Mage_Hat.mesh",
+      "userData": {
+        "gltfIndex": 4,
+        "triangleCount": 396
+      },
+      "ver": "1.1.1",
+      "imported": true,
+      "files": [
+        ".bin",
+        ".json"
+      ],
+      "subMetas": {}
+    },
+    "0ae7f": {
+      "importer": "gltf-mesh",
+      "uuid": "d6416781-d623-4c9f-878f-d9210e3354dc@0ae7f",
+      "displayName": "",
+      "id": "0ae7f",
+      "name": "Mage_Head.mesh",
+      "userData": {
+        "gltfIndex": 5,
+        "triangleCount": 2162
+      },
+      "ver": "1.1.1",
+      "imported": true,
+      "files": [
+        ".bin",
+        ".json"
+      ],
+      "subMetas": {}
+    },
+    "a6399": {
+      "importer": "gltf-mesh",
+      "uuid": "d6416781-d623-4c9f-878f-d9210e3354dc@a6399",
+      "displayName": "",
+      "id": "a6399",
+      "name": "Mage_LegLeft.mesh",
+      "userData": {
+        "gltfIndex": 6,
+        "triangleCount": 930
+      },
+      "ver": "1.1.1",
+      "imported": true,
+      "files": [
+        ".bin",
+        ".json"
+      ],
+      "subMetas": {}
+    },
+    "e527e": {
+      "importer": "gltf-mesh",
+      "uuid": "d6416781-d623-4c9f-878f-d9210e3354dc@e527e",
+      "displayName": "",
+      "id": "e527e",
+      "name": "Mage_LegRight.mesh",
+      "userData": {
+        "gltfIndex": 7,
+        "triangleCount": 930
+      },
+      "ver": "1.1.1",
+      "imported": true,
+      "files": [
+        ".bin",
+        ".json"
+      ],
+      "subMetas": {}
+    },
+    "65d2c": {
+      "importer": "gltf-skeleton",
+      "uuid": "d6416781-d623-4c9f-878f-d9210e3354dc@65d2c",
+      "displayName": "",
+      "id": "65d2c",
+      "name": "Rig_Medium.skeleton",
+      "userData": {
+        "gltfIndex": 0,
+        "jointsLength": 23
+      },
+      "ver": "1.0.1",
+      "imported": true,
+      "files": [
+        ".json"
+      ],
+      "subMetas": {}
+    },
+    "7bb00": {
+      "importer": "gltf-embeded-image",
+      "uuid": "d6416781-d623-4c9f-878f-d9210e3354dc@7bb00",
+      "displayName": "",
+      "id": "7bb00",
+      "name": "mage_texture.image",
+      "userData": {
+        "gltfIndex": 0,
+        "fixAlphaTransparencyArtifacts": true,
+        "hasAlpha": true,
+        "type": "texture"
+      },
+      "ver": "1.0.3",
+      "imported": true,
+      "files": [
+        ".json",
+        ".png"
+      ],
+      "subMetas": {}
+    },
+    "e39f7": {
+      "importer": "texture",
+      "uuid": "d6416781-d623-4c9f-878f-d9210e3354dc@e39f7",
+      "displayName": "",
+      "id": "e39f7",
+      "name": "UnnamedTexture.texture",
+      "userData": {
+        "wrapModeS": "repeat",
+        "wrapModeT": "repeat",
+        "minfilter": "linear",
+        "magfilter": "linear",
+        "mipfilter": "linear",
+        "anisotropy": 0,
+        "isUuid": true,
+        "imageUuidOrDatabaseUri": "d6416781-d623-4c9f-878f-d9210e3354dc@7bb00"
+      },
+      "ver": "1.0.22",
+      "imported": true,
+      "files": [
+        ".json"
+      ],
+      "subMetas": {}
+    },
+    "d2bd3": {
+      "importer": "gltf-material",
+      "uuid": "d6416781-d623-4c9f-878f-d9210e3354dc@d2bd3",
+      "displayName": "",
+      "id": "d2bd3",
+      "name": "mage.material",
+      "userData": {
+        "gltfIndex": 0
+      },
+      "ver": "1.0.14",
+      "imported": true,
+      "files": [
+        ".json"
+      ],
+      "subMetas": {}
+    },
+    "e9bed": {
+      "importer": "gltf-scene",
+      "uuid": "d6416781-d623-4c9f-878f-d9210e3354dc@e9bed",
+      "displayName": "",
+      "id": "e9bed",
+      "name": "Mage.prefab",
+      "userData": {
+        "gltfIndex": 0
+      },
+      "ver": "1.0.14",
+      "imported": true,
+      "files": [
+        ".json"
+      ],
+      "subMetas": {}
+    }
+  },
+  "userData": {
+    "imageMetas": [
+      {
+        "name": "mage_texture",
+        "uri": "d6416781-d623-4c9f-878f-d9210e3354dc@7bb00"
+      }
+    ],
+    "lods": {
+      "enable": false,
+      "hasBuiltinLOD": false,
+      "options": [
+        {
+          "screenRatio": 0.25,
+          "faceCount": 1
+        },
+        {
+          "screenRatio": 0.125,
+          "faceCount": 0.25
+        },
+        {
+          "screenRatio": 0.01,
+          "faceCount": 0.1
+        }
+      ]
+    },
+    "assetFinder": {
+      "meshes": [
+        "d6416781-d623-4c9f-878f-d9210e3354dc@538bd",
+        "d6416781-d623-4c9f-878f-d9210e3354dc@f8fc7",
+        "d6416781-d623-4c9f-878f-d9210e3354dc@799d5",
+        "d6416781-d623-4c9f-878f-d9210e3354dc@a76b4",
+        "d6416781-d623-4c9f-878f-d9210e3354dc@050ec",
+        "d6416781-d623-4c9f-878f-d9210e3354dc@0ae7f",
+        "d6416781-d623-4c9f-878f-d9210e3354dc@a6399",
+        "d6416781-d623-4c9f-878f-d9210e3354dc@e527e"
+      ],
+      "skeletons": [
+        "d6416781-d623-4c9f-878f-d9210e3354dc@65d2c"
+      ],
+      "textures": [
+        "d6416781-d623-4c9f-878f-d9210e3354dc@e39f7"
+      ],
+      "materials": [
+        "d6416781-d623-4c9f-878f-d9210e3354dc@d2bd3"
+      ],
+      "scenes": [
+        "d6416781-d623-4c9f-878f-d9210e3354dc@e9bed"
+      ]
+    }
+  }
+}

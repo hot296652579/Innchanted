@@ -1,0 +1,123 @@
+{
+  "ver": "2.3.14",
+  "importer": "gltf",
+  "imported": true,
+  "uuid": "5bca5b72-ccb4-4353-8e2b-a167ce8b4d26",
+  "files": [],
+  "subMetas": {
+    "25636": {
+      "importer": "gltf-mesh",
+      "uuid": "5bca5b72-ccb4-4353-8e2b-a167ce8b4d26@25636",
+      "displayName": "",
+      "id": "25636",
+      "name": "arrow_crossbow.mesh",
+      "userData": {
+        "gltfIndex": 0,
+        "triangleCount": 52
+      },
+      "ver": "1.1.1",
+      "imported": true,
+      "files": [
+        ".bin",
+        ".json"
+      ],
+      "subMetas": {}
+    },
+    "e39f7": {
+      "importer": "texture",
+      "uuid": "5bca5b72-ccb4-4353-8e2b-a167ce8b4d26@e39f7",
+      "displayName": "",
+      "id": "e39f7",
+      "name": "UnnamedTexture.texture",
+      "userData": {
+        "wrapModeS": "repeat",
+        "wrapModeT": "repeat",
+        "minfilter": "linear",
+        "magfilter": "linear",
+        "mipfilter": "linear",
+        "anisotropy": 0,
+        "isUuid": false,
+        "imageUuidOrDatabaseUri": "db://assets/game/fbx/KayKit_Adventurers_2.0_FREE/Assets/gltf/rogue_texture.png"
+      },
+      "ver": "1.0.22",
+      "imported": true,
+      "files": [
+        ".json"
+      ],
+      "subMetas": {}
+    },
+    "8d755": {
+      "importer": "gltf-material",
+      "uuid": "5bca5b72-ccb4-4353-8e2b-a167ce8b4d26@8d755",
+      "displayName": "",
+      "id": "8d755",
+      "name": "rogue.material",
+      "userData": {
+        "gltfIndex": 0
+      },
+      "ver": "1.0.14",
+      "imported": true,
+      "files": [
+        ".json"
+      ],
+      "subMetas": {}
+    },
+    "aba27": {
+      "importer": "gltf-scene",
+      "uuid": "5bca5b72-ccb4-4353-8e2b-a167ce8b4d26@aba27",
+      "displayName": "",
+      "id": "aba27",
+      "name": "arrow_crossbow.prefab",
+      "userData": {
+        "gltfIndex": 0
+      },
+      "ver": "1.0.14",
+      "imported": true,
+      "files": [
+        ".json"
+      ],
+      "subMetas": {}
+    }
+  },
+  "userData": {
+    "imageMetas": [
+      {
+        "name": "rogue_texture",
+        "uri": "db://assets/game/fbx/KayKit_Adventurers_2.0_FREE/Assets/gltf/rogue_texture.png"
+      }
+    ],
+    "lods": {
+      "enable": false,
+      "hasBuiltinLOD": false,
+      "options": [
+        {
+          "screenRatio": 0.25,
+          "faceCount": 1
+        },
+        {
+          "screenRatio": 0.125,
+          "faceCount": 0.25
+        },
+        {
+          "screenRatio": 0.01,
+          "faceCount": 0.1
+        }
+      ]
+    },
+    "assetFinder": {
+      "meshes": [
+        "5bca5b72-ccb4-4353-8e2b-a167ce8b4d26@25636"
+      ],
+      "skeletons": [],
+      "textures": [
+        "5bca5b72-ccb4-4353-8e2b-a167ce8b4d26@e39f7"
+      ],
+      "materials": [
+        "5bca5b72-ccb4-4353-8e2b-a167ce8b4d26@8d755"
+      ],
+      "scenes": [
+        "5bca5b72-ccb4-4353-8e2b-a167ce8b4d26@aba27"
+      ]
+    }
+  }
+}

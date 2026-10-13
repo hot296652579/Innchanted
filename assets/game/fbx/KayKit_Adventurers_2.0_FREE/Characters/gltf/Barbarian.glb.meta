@@ -1,0 +1,276 @@
+{
+  "ver": "2.3.14",
+  "importer": "gltf",
+  "imported": true,
+  "uuid": "86ec67b5-5a50-4aff-8a06-aa2285f83603",
+  "files": [],
+  "subMetas": {
+    "29918": {
+      "importer": "gltf-mesh",
+      "uuid": "86ec67b5-5a50-4aff-8a06-aa2285f83603@29918",
+      "displayName": "",
+      "id": "29918",
+      "name": "Barbarian_LegLeft.mesh",
+      "userData": {
+        "gltfIndex": 5,
+        "triangleCount": 914
+      },
+      "ver": "1.1.1",
+      "imported": true,
+      "files": [
+        ".bin",
+        ".json"
+      ],
+      "subMetas": {}
+    },
+    "1de53": {
+      "importer": "gltf-mesh",
+      "uuid": "86ec67b5-5a50-4aff-8a06-aa2285f83603@1de53",
+      "displayName": "",
+      "id": "1de53",
+      "name": "Barbarian_ArmLeft.mesh",
+      "userData": {
+        "gltfIndex": 0,
+        "triangleCount": 702
+      },
+      "ver": "1.1.1",
+      "imported": true,
+      "files": [
+        ".bin",
+        ".json"
+      ],
+      "subMetas": {}
+    },
+    "6fb06": {
+      "importer": "gltf-mesh",
+      "uuid": "86ec67b5-5a50-4aff-8a06-aa2285f83603@6fb06",
+      "displayName": "",
+      "id": "6fb06",
+      "name": "Barbarian_ArmRight.mesh",
+      "userData": {
+        "gltfIndex": 1,
+        "triangleCount": 702
+      },
+      "ver": "1.1.1",
+      "imported": true,
+      "files": [
+        ".bin",
+        ".json"
+      ],
+      "subMetas": {}
+    },
+    "5c875": {
+      "importer": "gltf-mesh",
+      "uuid": "86ec67b5-5a50-4aff-8a06-aa2285f83603@5c875",
+      "displayName": "",
+      "id": "5c875",
+      "name": "Barbarian_BearHat.mesh",
+      "userData": {
+        "gltfIndex": 2,
+        "triangleCount": 1030
+      },
+      "ver": "1.1.1",
+      "imported": true,
+      "files": [
+        ".bin",
+        ".json"
+      ],
+      "subMetas": {}
+    },
+    "95b85": {
+      "importer": "gltf-mesh",
+      "uuid": "86ec67b5-5a50-4aff-8a06-aa2285f83603@95b85",
+      "displayName": "",
+      "id": "95b85",
+      "name": "Barbarian_Body.mesh",
+      "userData": {
+        "gltfIndex": 3,
+        "triangleCount": 1840
+      },
+      "ver": "1.1.1",
+      "imported": true,
+      "files": [
+        ".bin",
+        ".json"
+      ],
+      "subMetas": {}
+    },
+    "6979d": {
+      "importer": "gltf-mesh",
+      "uuid": "86ec67b5-5a50-4aff-8a06-aa2285f83603@6979d",
+      "displayName": "",
+      "id": "6979d",
+      "name": "Barbarian_Head.mesh",
+      "userData": {
+        "gltfIndex": 4,
+        "triangleCount": 1021
+      },
+      "ver": "1.1.1",
+      "imported": true,
+      "files": [
+        ".bin",
+        ".json"
+      ],
+      "subMetas": {}
+    },
+    "5d691": {
+      "importer": "gltf-mesh",
+      "uuid": "86ec67b5-5a50-4aff-8a06-aa2285f83603@5d691",
+      "displayName": "",
+      "id": "5d691",
+      "name": "Barbarian_LegRight.mesh",
+      "userData": {
+        "gltfIndex": 6,
+        "triangleCount": 914
+      },
+      "ver": "1.1.1",
+      "imported": true,
+      "files": [
+        ".bin",
+        ".json"
+      ],
+      "subMetas": {}
+    },
+    "65d2c": {
+      "importer": "gltf-skeleton",
+      "uuid": "86ec67b5-5a50-4aff-8a06-aa2285f83603@65d2c",
+      "displayName": "",
+      "id": "65d2c",
+      "name": "Rig_Medium.skeleton",
+      "userData": {
+        "gltfIndex": 0,
+        "jointsLength": 23
+      },
+      "ver": "1.0.1",
+      "imported": true,
+      "files": [
+        ".json"
+      ],
+      "subMetas": {}
+    },
+    "2e3e9": {
+      "importer": "gltf-embeded-image",
+      "uuid": "86ec67b5-5a50-4aff-8a06-aa2285f83603@2e3e9",
+      "displayName": "",
+      "id": "2e3e9",
+      "name": "barbarian_texture.image",
+      "userData": {
+        "gltfIndex": 0,
+        "fixAlphaTransparencyArtifacts": true,
+        "hasAlpha": true,
+        "type": "texture"
+      },
+      "ver": "1.0.3",
+      "imported": true,
+      "files": [
+        ".json",
+        ".png"
+      ],
+      "subMetas": {}
+    },
+    "e39f7": {
+      "importer": "texture",
+      "uuid": "86ec67b5-5a50-4aff-8a06-aa2285f83603@e39f7",
+      "displayName": "",
+      "id": "e39f7",
+      "name": "UnnamedTexture.texture",
+      "userData": {
+        "wrapModeS": "repeat",
+        "wrapModeT": "repeat",
+        "minfilter": "linear",
+        "magfilter": "linear",
+        "mipfilter": "linear",
+        "anisotropy": 0,
+        "isUuid": true,
+        "imageUuidOrDatabaseUri": "86ec67b5-5a50-4aff-8a06-aa2285f83603@2e3e9"
+      },
+      "ver": "1.0.22",
+      "imported": true,
+      "files": [
+        ".json"
+      ],
+      "subMetas": {}
+    },
+    "06d75": {
+      "importer": "gltf-material",
+      "uuid": "86ec67b5-5a50-4aff-8a06-aa2285f83603@06d75",
+      "displayName": "",
+      "id": "06d75",
+      "name": "barbarian.material",
+      "userData": {
+        "gltfIndex": 0
+      },
+      "ver": "1.0.14",
+      "imported": true,
+      "files": [
+        ".json"
+      ],
+      "subMetas": {}
+    },
+    "05fa3": {
+      "importer": "gltf-scene",
+      "uuid": "86ec67b5-5a50-4aff-8a06-aa2285f83603@05fa3",
+      "displayName": "",
+      "id": "05fa3",
+      "name": "Barbarian.prefab",
+      "userData": {
+        "gltfIndex": 0
+      },
+      "ver": "1.0.14",
+      "imported": true,
+      "files": [
+        ".json"
+      ],
+      "subMetas": {}
+    }
+  },
+  "userData": {
+    "imageMetas": [
+      {
+        "name": "barbarian_texture",
+        "uri": "86ec67b5-5a50-4aff-8a06-aa2285f83603@2e3e9"
+      }
+    ],
+    "lods": {
+      "enable": false,
+      "hasBuiltinLOD": false,
+      "options": [
+        {
+          "screenRatio": 0.25,
+          "faceCount": 1
+        },
+        {
+          "screenRatio": 0.125,
+          "faceCount": 0.25
+        },
+        {
+          "screenRatio": 0.01,
+          "faceCount": 0.1
+        }
+      ]
+    },
+    "assetFinder": {
+      "meshes": [
+        "86ec67b5-5a50-4aff-8a06-aa2285f83603@1de53",
+        "86ec67b5-5a50-4aff-8a06-aa2285f83603@6fb06",
+        "86ec67b5-5a50-4aff-8a06-aa2285f83603@5c875",
+        "86ec67b5-5a50-4aff-8a06-aa2285f83603@95b85",
+        "86ec67b5-5a50-4aff-8a06-aa2285f83603@6979d",
+        "86ec67b5-5a50-4aff-8a06-aa2285f83603@29918",
+        "86ec67b5-5a50-4aff-8a06-aa2285f83603@5d691"
+      ],
+      "skeletons": [
+        "86ec67b5-5a50-4aff-8a06-aa2285f83603@65d2c"
+      ],
+      "textures": [
+        "86ec67b5-5a50-4aff-8a06-aa2285f83603@e39f7"
+      ],
+      "materials": [
+        "86ec67b5-5a50-4aff-8a06-aa2285f83603@06d75"
+      ],
+      "scenes": [
+        "86ec67b5-5a50-4aff-8a06-aa2285f83603@05fa3"
+      ]
+    }
+  }
+}

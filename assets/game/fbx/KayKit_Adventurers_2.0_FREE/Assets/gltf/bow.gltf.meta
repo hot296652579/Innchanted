@@ -1,0 +1,123 @@
+{
+  "ver": "2.3.14",
+  "importer": "gltf",
+  "imported": true,
+  "uuid": "b2135b52-77d4-42f4-aef3-56f9cf58579f",
+  "files": [],
+  "subMetas": {
+    "c60b9": {
+      "importer": "gltf-mesh",
+      "uuid": "b2135b52-77d4-42f4-aef3-56f9cf58579f@c60b9",
+      "displayName": "",
+      "id": "c60b9",
+      "name": "bow.mesh",
+      "userData": {
+        "gltfIndex": 0,
+        "triangleCount": 412
+      },
+      "ver": "1.1.1",
+      "imported": true,
+      "files": [
+        ".bin",
+        ".json"
+      ],
+      "subMetas": {}
+    },
+    "e39f7": {
+      "importer": "texture",
+      "uuid": "b2135b52-77d4-42f4-aef3-56f9cf58579f@e39f7",
+      "displayName": "",
+      "id": "e39f7",
+      "name": "UnnamedTexture.texture",
+      "userData": {
+        "wrapModeS": "repeat",
+        "wrapModeT": "repeat",
+        "minfilter": "linear",
+        "magfilter": "linear",
+        "mipfilter": "linear",
+        "anisotropy": 0,
+        "isUuid": false,
+        "imageUuidOrDatabaseUri": "db://assets/game/fbx/KayKit_Adventurers_2.0_FREE/Assets/gltf/ranger_texture.png"
+      },
+      "ver": "1.0.22",
+      "imported": true,
+      "files": [
+        ".json"
+      ],
+      "subMetas": {}
+    },
+    "4cd4c": {
+      "importer": "gltf-material",
+      "uuid": "b2135b52-77d4-42f4-aef3-56f9cf58579f@4cd4c",
+      "displayName": "",
+      "id": "4cd4c",
+      "name": "ranger.material",
+      "userData": {
+        "gltfIndex": 0
+      },
+      "ver": "1.0.14",
+      "imported": true,
+      "files": [
+        ".json"
+      ],
+      "subMetas": {}
+    },
+    "11f8d": {
+      "importer": "gltf-scene",
+      "uuid": "b2135b52-77d4-42f4-aef3-56f9cf58579f@11f8d",
+      "displayName": "",
+      "id": "11f8d",
+      "name": "bow.prefab",
+      "userData": {
+        "gltfIndex": 0
+      },
+      "ver": "1.0.14",
+      "imported": true,
+      "files": [
+        ".json"
+      ],
+      "subMetas": {}
+    }
+  },
+  "userData": {
+    "imageMetas": [
+      {
+        "name": "ranger_texture",
+        "uri": "db://assets/game/fbx/KayKit_Adventurers_2.0_FREE/Assets/gltf/ranger_texture.png"
+      }
+    ],
+    "lods": {
+      "enable": false,
+      "hasBuiltinLOD": false,
+      "options": [
+        {
+          "screenRatio": 0.25,
+          "faceCount": 1
+        },
+        {
+          "screenRatio": 0.125,
+          "faceCount": 0.25
+        },
+        {
+          "screenRatio": 0.01,
+          "faceCount": 0.1
+        }
+      ]
+    },
+    "assetFinder": {
+      "meshes": [
+        "b2135b52-77d4-42f4-aef3-56f9cf58579f@c60b9"
+      ],
+      "skeletons": [],
+      "textures": [
+        "b2135b52-77d4-42f4-aef3-56f9cf58579f@e39f7"
+      ],
+      "materials": [
+        "b2135b52-77d4-42f4-aef3-56f9cf58579f@4cd4c"
+      ],
+      "scenes": [
+        "b2135b52-77d4-42f4-aef3-56f9cf58579f@11f8d"
+      ]
+    }
+  }
+}

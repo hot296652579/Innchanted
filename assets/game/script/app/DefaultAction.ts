@@ -58,8 +58,8 @@ function resolveTable(
     station: Station,
     wantedItemId?: string | null,
 ): ActionKind {
-    const held = nonempty(hand);
-    const slot = nonempty(station.slot);
+    const held = nonempty(hand); // 手上有没有货物
+    const slot = nonempty(station.slot);// 台子上有没有货物
     if (held && !slot && wantedItemId && held.itemId === wantedItemId) {
         return "Serve";
     }

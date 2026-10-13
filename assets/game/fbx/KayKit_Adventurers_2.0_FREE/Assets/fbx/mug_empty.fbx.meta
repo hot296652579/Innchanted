@@ -1,0 +1,126 @@
+{
+  "ver": "2.3.14",
+  "importer": "fbx",
+  "imported": true,
+  "uuid": "303391b8-4200-4f68-9411-4f5829c52291",
+  "files": [],
+  "subMetas": {
+    "1e362": {
+      "importer": "gltf-mesh",
+      "uuid": "303391b8-4200-4f68-9411-4f5829c52291@1e362",
+      "displayName": "",
+      "id": "1e362",
+      "name": "mug_empty.mesh",
+      "userData": {
+        "gltfIndex": 0,
+        "triangleCount": 366
+      },
+      "ver": "1.1.1",
+      "imported": true,
+      "files": [
+        ".bin",
+        ".json"
+      ],
+      "subMetas": {}
+    },
+    "7d6ab": {
+      "importer": "texture",
+      "uuid": "303391b8-4200-4f68-9411-4f5829c52291@7d6ab",
+      "displayName": "",
+      "id": "7d6ab",
+      "name": "base_color_texture.texture",
+      "userData": {
+        "wrapModeS": "repeat",
+        "wrapModeT": "repeat",
+        "minfilter": "linear",
+        "magfilter": "linear",
+        "mipfilter": "none",
+        "anisotropy": 0,
+        "isUuid": false,
+        "imageUuidOrDatabaseUri": "db://assets/game/fbx/KayKit_Adventurers_2.0_FREE/Assets/fbx/barbarian_texture.png"
+      },
+      "ver": "1.0.22",
+      "imported": true,
+      "files": [
+        ".json"
+      ],
+      "subMetas": {}
+    },
+    "06d75": {
+      "importer": "gltf-material",
+      "uuid": "303391b8-4200-4f68-9411-4f5829c52291@06d75",
+      "displayName": "",
+      "id": "06d75",
+      "name": "barbarian.material",
+      "userData": {
+        "gltfIndex": 0
+      },
+      "ver": "1.0.14",
+      "imported": true,
+      "files": [
+        ".json"
+      ],
+      "subMetas": {}
+    },
+    "0c596": {
+      "importer": "gltf-scene",
+      "uuid": "303391b8-4200-4f68-9411-4f5829c52291@0c596",
+      "displayName": "",
+      "id": "0c596",
+      "name": "mug_empty.prefab",
+      "userData": {
+        "gltfIndex": 0
+      },
+      "ver": "1.0.14",
+      "imported": true,
+      "files": [
+        ".json"
+      ],
+      "subMetas": {}
+    }
+  },
+  "userData": {
+    "imageMetas": [
+      {
+        "name": "base_color_texture",
+        "uri": "db://assets/game/fbx/KayKit_Adventurers_2.0_FREE/Assets/fbx/barbarian_texture.png"
+      }
+    ],
+    "fbx": {
+      "smartMaterialEnabled": true
+    },
+    "lods": {
+      "enable": false,
+      "hasBuiltinLOD": false,
+      "options": [
+        {
+          "screenRatio": 0.25,
+          "faceCount": 1
+        },
+        {
+          "screenRatio": 0.125,
+          "faceCount": 0.25
+        },
+        {
+          "screenRatio": 0.01,
+          "faceCount": 0.1
+        }
+      ]
+    },
+    "assetFinder": {
+      "meshes": [
+        "303391b8-4200-4f68-9411-4f5829c52291@1e362"
+      ],
+      "skeletons": [],
+      "textures": [
+        "303391b8-4200-4f68-9411-4f5829c52291@7d6ab"
+      ],
+      "materials": [
+        "303391b8-4200-4f68-9411-4f5829c52291@06d75"
+      ],
+      "scenes": [
+        "303391b8-4200-4f68-9411-4f5829c52291@0c596"
+      ]
+    }
+  }
+}

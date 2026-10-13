@@ -1,0 +1,404 @@
+{
+  "ver": "2.3.14",
+  "importer": "fbx",
+  "imported": true,
+  "uuid": "808b3bc1-59df-48af-85bf-970649135ed5",
+  "files": [],
+  "subMetas": {
+    "30732": {
+      "importer": "gltf-skeleton",
+      "uuid": "808b3bc1-59df-48af-85bf-970649135ed5@30732",
+      "displayName": "",
+      "id": "30732",
+      "name": "UnnamedSkeleton-0.skeleton",
+      "userData": {
+        "gltfIndex": 0,
+        "jointsLength": 23
+      },
+      "ver": "1.0.1",
+      "imported": true,
+      "files": [
+        ".json"
+      ],
+      "subMetas": {}
+    },
+    "62756": {
+      "importer": "gltf-skeleton",
+      "uuid": "808b3bc1-59df-48af-85bf-970649135ed5@62756",
+      "displayName": "",
+      "id": "62756",
+      "name": "UnnamedSkeleton-5.skeleton",
+      "userData": {
+        "gltfIndex": 5,
+        "jointsLength": 23
+      },
+      "ver": "1.0.1",
+      "imported": true,
+      "files": [
+        ".json"
+      ],
+      "subMetas": {}
+    },
+    "99080": {
+      "importer": "gltf-mesh",
+      "uuid": "808b3bc1-59df-48af-85bf-970649135ed5@99080",
+      "displayName": "",
+      "id": "99080",
+      "name": "RogueHooded_ArmRight.mesh",
+      "userData": {
+        "gltfIndex": 4,
+        "triangleCount": 788
+      },
+      "ver": "1.1.1",
+      "imported": true,
+      "files": [
+        ".bin",
+        ".json"
+      ],
+      "subMetas": {}
+    },
+    "5e39b": {
+      "importer": "gltf-mesh",
+      "uuid": "808b3bc1-59df-48af-85bf-970649135ed5@5e39b",
+      "displayName": "",
+      "id": "5e39b",
+      "name": "RogueHooded_LegLeft.mesh",
+      "userData": {
+        "gltfIndex": 0,
+        "triangleCount": 930
+      },
+      "ver": "1.1.1",
+      "imported": true,
+      "files": [
+        ".bin",
+        ".json"
+      ],
+      "subMetas": {}
+    },
+    "0c4e5": {
+      "importer": "gltf-mesh",
+      "uuid": "808b3bc1-59df-48af-85bf-970649135ed5@0c4e5",
+      "displayName": "",
+      "id": "0c4e5",
+      "name": "RogueHooded_LegRight.mesh",
+      "userData": {
+        "gltfIndex": 1,
+        "triangleCount": 930
+      },
+      "ver": "1.1.1",
+      "imported": true,
+      "files": [
+        ".bin",
+        ".json"
+      ],
+      "subMetas": {}
+    },
+    "2d2c4": {
+      "importer": "gltf-mesh",
+      "uuid": "808b3bc1-59df-48af-85bf-970649135ed5@2d2c4",
+      "displayName": "",
+      "id": "2d2c4",
+      "name": "RogueHooded_Head.mesh",
+      "userData": {
+        "gltfIndex": 2,
+        "triangleCount": 1577
+      },
+      "ver": "1.1.1",
+      "imported": true,
+      "files": [
+        ".bin",
+        ".json"
+      ],
+      "subMetas": {}
+    },
+    "361ff": {
+      "importer": "gltf-mesh",
+      "uuid": "808b3bc1-59df-48af-85bf-970649135ed5@361ff",
+      "displayName": "",
+      "id": "361ff",
+      "name": "RogueHooded_ArmLeft.mesh",
+      "userData": {
+        "gltfIndex": 3,
+        "triangleCount": 788
+      },
+      "ver": "1.1.1",
+      "imported": true,
+      "files": [
+        ".bin",
+        ".json"
+      ],
+      "subMetas": {}
+    },
+    "3f04f": {
+      "importer": "gltf-mesh",
+      "uuid": "808b3bc1-59df-48af-85bf-970649135ed5@3f04f",
+      "displayName": "",
+      "id": "3f04f",
+      "name": "RogueHooded_Body.mesh",
+      "userData": {
+        "gltfIndex": 5,
+        "triangleCount": 1784
+      },
+      "ver": "1.1.1",
+      "imported": true,
+      "files": [
+        ".bin",
+        ".json"
+      ],
+      "subMetas": {}
+    },
+    "4a737": {
+      "importer": "gltf-mesh",
+      "uuid": "808b3bc1-59df-48af-85bf-970649135ed5@4a737",
+      "displayName": "",
+      "id": "4a737",
+      "name": "RogueHooded_Mask.mesh",
+      "userData": {
+        "gltfIndex": 6,
+        "triangleCount": 304
+      },
+      "ver": "1.1.1",
+      "imported": true,
+      "files": [
+        ".bin",
+        ".json"
+      ],
+      "subMetas": {}
+    },
+    "2ee1b": {
+      "importer": "gltf-mesh",
+      "uuid": "808b3bc1-59df-48af-85bf-970649135ed5@2ee1b",
+      "displayName": "",
+      "id": "2ee1b",
+      "name": "RogueHooded_Cape.mesh",
+      "userData": {
+        "gltfIndex": 7,
+        "triangleCount": 84
+      },
+      "ver": "1.1.1",
+      "imported": true,
+      "files": [
+        ".bin",
+        ".json"
+      ],
+      "subMetas": {}
+    },
+    "f1394": {
+      "importer": "gltf-skeleton",
+      "uuid": "808b3bc1-59df-48af-85bf-970649135ed5@f1394",
+      "displayName": "",
+      "id": "f1394",
+      "name": "UnnamedSkeleton-1.skeleton",
+      "userData": {
+        "gltfIndex": 1,
+        "jointsLength": 23
+      },
+      "ver": "1.0.1",
+      "imported": true,
+      "files": [
+        ".json"
+      ],
+      "subMetas": {}
+    },
+    "75ee4": {
+      "importer": "gltf-skeleton",
+      "uuid": "808b3bc1-59df-48af-85bf-970649135ed5@75ee4",
+      "displayName": "",
+      "id": "75ee4",
+      "name": "UnnamedSkeleton-2.skeleton",
+      "userData": {
+        "gltfIndex": 2,
+        "jointsLength": 23
+      },
+      "ver": "1.0.1",
+      "imported": true,
+      "files": [
+        ".json"
+      ],
+      "subMetas": {}
+    },
+    "a72ab": {
+      "importer": "gltf-skeleton",
+      "uuid": "808b3bc1-59df-48af-85bf-970649135ed5@a72ab",
+      "displayName": "",
+      "id": "a72ab",
+      "name": "UnnamedSkeleton-3.skeleton",
+      "userData": {
+        "gltfIndex": 3,
+        "jointsLength": 23
+      },
+      "ver": "1.0.1",
+      "imported": true,
+      "files": [
+        ".json"
+      ],
+      "subMetas": {}
+    },
+    "2224c": {
+      "importer": "gltf-skeleton",
+      "uuid": "808b3bc1-59df-48af-85bf-970649135ed5@2224c",
+      "displayName": "",
+      "id": "2224c",
+      "name": "UnnamedSkeleton-4.skeleton",
+      "userData": {
+        "gltfIndex": 4,
+        "jointsLength": 23
+      },
+      "ver": "1.0.1",
+      "imported": true,
+      "files": [
+        ".json"
+      ],
+      "subMetas": {}
+    },
+    "7d08b": {
+      "importer": "gltf-skeleton",
+      "uuid": "808b3bc1-59df-48af-85bf-970649135ed5@7d08b",
+      "displayName": "",
+      "id": "7d08b",
+      "name": "UnnamedSkeleton-6.skeleton",
+      "userData": {
+        "gltfIndex": 6,
+        "jointsLength": 23
+      },
+      "ver": "1.0.1",
+      "imported": true,
+      "files": [
+        ".json"
+      ],
+      "subMetas": {}
+    },
+    "b5902": {
+      "importer": "gltf-skeleton",
+      "uuid": "808b3bc1-59df-48af-85bf-970649135ed5@b5902",
+      "displayName": "",
+      "id": "b5902",
+      "name": "UnnamedSkeleton-7.skeleton",
+      "userData": {
+        "gltfIndex": 7,
+        "jointsLength": 23
+      },
+      "ver": "1.0.1",
+      "imported": true,
+      "files": [
+        ".json"
+      ],
+      "subMetas": {}
+    },
+    "7d6ab": {
+      "importer": "texture",
+      "uuid": "808b3bc1-59df-48af-85bf-970649135ed5@7d6ab",
+      "displayName": "",
+      "id": "7d6ab",
+      "name": "base_color_texture.texture",
+      "userData": {
+        "wrapModeS": "repeat",
+        "wrapModeT": "repeat",
+        "minfilter": "linear",
+        "magfilter": "linear",
+        "mipfilter": "none",
+        "anisotropy": 0,
+        "isUuid": false,
+        "imageUuidOrDatabaseUri": "db://assets/game/fbx/KayKit_Adventurers_2.0_FREE/Characters/fbx/rogue_texture.png"
+      },
+      "ver": "1.0.22",
+      "imported": true,
+      "files": [
+        ".json"
+      ],
+      "subMetas": {}
+    },
+    "8d755": {
+      "importer": "gltf-material",
+      "uuid": "808b3bc1-59df-48af-85bf-970649135ed5@8d755",
+      "displayName": "",
+      "id": "8d755",
+      "name": "rogue.material",
+      "userData": {
+        "gltfIndex": 0
+      },
+      "ver": "1.0.14",
+      "imported": true,
+      "files": [
+        ".json"
+      ],
+      "subMetas": {}
+    },
+    "06f9e": {
+      "importer": "gltf-scene",
+      "uuid": "808b3bc1-59df-48af-85bf-970649135ed5@06f9e",
+      "displayName": "",
+      "id": "06f9e",
+      "name": "Rogue_Hooded.prefab",
+      "userData": {
+        "gltfIndex": 0
+      },
+      "ver": "1.0.14",
+      "imported": true,
+      "files": [
+        ".json"
+      ],
+      "subMetas": {}
+    }
+  },
+  "userData": {
+    "imageMetas": [
+      {
+        "name": "base_color_texture",
+        "uri": "db://assets/game/fbx/KayKit_Adventurers_2.0_FREE/Characters/fbx/rogue_texture.png"
+      }
+    ],
+    "fbx": {
+      "smartMaterialEnabled": true
+    },
+    "lods": {
+      "enable": false,
+      "hasBuiltinLOD": false,
+      "options": [
+        {
+          "screenRatio": 0.25,
+          "faceCount": 1
+        },
+        {
+          "screenRatio": 0.125,
+          "faceCount": 0.25
+        },
+        {
+          "screenRatio": 0.01,
+          "faceCount": 0.1
+        }
+      ]
+    },
+    "assetFinder": {
+      "meshes": [
+        "808b3bc1-59df-48af-85bf-970649135ed5@5e39b",
+        "808b3bc1-59df-48af-85bf-970649135ed5@0c4e5",
+        "808b3bc1-59df-48af-85bf-970649135ed5@2d2c4",
+        "808b3bc1-59df-48af-85bf-970649135ed5@361ff",
+        "808b3bc1-59df-48af-85bf-970649135ed5@99080",
+        "808b3bc1-59df-48af-85bf-970649135ed5@3f04f",
+        "808b3bc1-59df-48af-85bf-970649135ed5@4a737",
+        "808b3bc1-59df-48af-85bf-970649135ed5@2ee1b"
+      ],
+      "skeletons": [
+        "808b3bc1-59df-48af-85bf-970649135ed5@30732",
+        "808b3bc1-59df-48af-85bf-970649135ed5@f1394",
+        "808b3bc1-59df-48af-85bf-970649135ed5@75ee4",
+        "808b3bc1-59df-48af-85bf-970649135ed5@a72ab",
+        "808b3bc1-59df-48af-85bf-970649135ed5@2224c",
+        "808b3bc1-59df-48af-85bf-970649135ed5@62756",
+        "808b3bc1-59df-48af-85bf-970649135ed5@7d08b",
+        "808b3bc1-59df-48af-85bf-970649135ed5@b5902"
+      ],
+      "textures": [
+        "808b3bc1-59df-48af-85bf-970649135ed5@7d6ab"
+      ],
+      "materials": [
+        "808b3bc1-59df-48af-85bf-970649135ed5@8d755"
+      ],
+      "scenes": [
+        "808b3bc1-59df-48af-85bf-970649135ed5@06f9e"
+      ]
+    }
+  }
+}

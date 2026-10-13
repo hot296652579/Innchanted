@@ -1,0 +1,121 @@
+{
+  "ver": "2.3.14",
+  "importer": "gltf",
+  "imported": true,
+  "uuid": "43d4b371-b1c5-418e-9cc1-38758d5abe27",
+  "files": [],
+  "subMetas": {
+    "7b44a": {
+      "importer": "gltf-mesh",
+      "uuid": "43d4b371-b1c5-418e-9cc1-38758d5abe27@7b44a",
+      "displayName": "",
+      "id": "7b44a",
+      "name": "staff.mesh",
+      "userData": {
+        "gltfIndex": 0,
+        "triangleCount": 440
+      },
+      "ver": "1.1.1",
+      "imported": true,
+      "files": [
+        ".bin",
+        ".json"
+      ],
+      "subMetas": {}
+    },
+    "e39f7": {
+      "importer": "texture",
+      "uuid": "43d4b371-b1c5-418e-9cc1-38758d5abe27@e39f7",
+      "displayName": "",
+      "id": "e39f7",
+      "name": "UnnamedTexture.texture",
+      "userData": {
+        "wrapModeS": "repeat",
+        "wrapModeT": "repeat",
+        "minfilter": "linear",
+        "magfilter": "linear",
+        "mipfilter": "linear",
+        "anisotropy": 0,
+        "isUuid": false,
+        "imageUuidOrDatabaseUri": "db://assets/game/fbx/KayKit_Adventurers_2.0_FREE/Assets/gltf/mage_texture.png"
+      },
+      "ver": "1.0.22",
+      "imported": false,
+      "files": [],
+      "subMetas": {}
+    },
+    "d2bd3": {
+      "importer": "gltf-material",
+      "uuid": "43d4b371-b1c5-418e-9cc1-38758d5abe27@d2bd3",
+      "displayName": "",
+      "id": "d2bd3",
+      "name": "mage.material",
+      "userData": {
+        "gltfIndex": 0
+      },
+      "ver": "1.0.14",
+      "imported": true,
+      "files": [
+        ".json"
+      ],
+      "subMetas": {}
+    },
+    "155ec": {
+      "importer": "gltf-scene",
+      "uuid": "43d4b371-b1c5-418e-9cc1-38758d5abe27@155ec",
+      "displayName": "",
+      "id": "155ec",
+      "name": "staff.prefab",
+      "userData": {
+        "gltfIndex": 0
+      },
+      "ver": "1.0.14",
+      "imported": true,
+      "files": [
+        ".json"
+      ],
+      "subMetas": {}
+    }
+  },
+  "userData": {
+    "imageMetas": [
+      {
+        "name": "mage_texture",
+        "uri": "db://assets/game/fbx/KayKit_Adventurers_2.0_FREE/Assets/gltf/mage_texture.png"
+      }
+    ],
+    "lods": {
+      "enable": false,
+      "hasBuiltinLOD": false,
+      "options": [
+        {
+          "screenRatio": 0.25,
+          "faceCount": 1
+        },
+        {
+          "screenRatio": 0.125,
+          "faceCount": 0.25
+        },
+        {
+          "screenRatio": 0.01,
+          "faceCount": 0.1
+        }
+      ]
+    },
+    "assetFinder": {
+      "meshes": [
+        "43d4b371-b1c5-418e-9cc1-38758d5abe27@7b44a"
+      ],
+      "skeletons": [],
+      "textures": [
+        "43d4b371-b1c5-418e-9cc1-38758d5abe27@e39f7"
+      ],
+      "materials": [
+        "43d4b371-b1c5-418e-9cc1-38758d5abe27@d2bd3"
+      ],
+      "scenes": [
+        "43d4b371-b1c5-418e-9cc1-38758d5abe27@155ec"
+      ]
+    }
+  }
+}

@@ -1,0 +1,126 @@
+{
+  "ver": "2.3.14",
+  "importer": "fbx",
+  "imported": true,
+  "uuid": "bfbaa7c1-adb4-49d0-a0c7-54156cbd3348",
+  "files": [],
+  "subMetas": {
+    "e7af4": {
+      "importer": "gltf-mesh",
+      "uuid": "bfbaa7c1-adb4-49d0-a0c7-54156cbd3348@e7af4",
+      "displayName": "",
+      "id": "e7af4",
+      "name": "shield_round.mesh",
+      "userData": {
+        "gltfIndex": 0,
+        "triangleCount": 284
+      },
+      "ver": "1.1.1",
+      "imported": true,
+      "files": [
+        ".bin",
+        ".json"
+      ],
+      "subMetas": {}
+    },
+    "7d6ab": {
+      "importer": "texture",
+      "uuid": "bfbaa7c1-adb4-49d0-a0c7-54156cbd3348@7d6ab",
+      "displayName": "",
+      "id": "7d6ab",
+      "name": "base_color_texture.texture",
+      "userData": {
+        "wrapModeS": "repeat",
+        "wrapModeT": "repeat",
+        "minfilter": "linear",
+        "magfilter": "linear",
+        "mipfilter": "none",
+        "anisotropy": 0,
+        "isUuid": false,
+        "imageUuidOrDatabaseUri": "db://assets/game/fbx/KayKit_Adventurers_2.0_FREE/Assets/fbx(unity)/knight_texture.png"
+      },
+      "ver": "1.0.22",
+      "imported": true,
+      "files": [
+        ".json"
+      ],
+      "subMetas": {}
+    },
+    "d77ec": {
+      "importer": "gltf-material",
+      "uuid": "bfbaa7c1-adb4-49d0-a0c7-54156cbd3348@d77ec",
+      "displayName": "",
+      "id": "d77ec",
+      "name": "knight.material",
+      "userData": {
+        "gltfIndex": 0
+      },
+      "ver": "1.0.14",
+      "imported": true,
+      "files": [
+        ".json"
+      ],
+      "subMetas": {}
+    },
+    "64e7e": {
+      "importer": "gltf-scene",
+      "uuid": "bfbaa7c1-adb4-49d0-a0c7-54156cbd3348@64e7e",
+      "displayName": "",
+      "id": "64e7e",
+      "name": "shield_round.prefab",
+      "userData": {
+        "gltfIndex": 0
+      },
+      "ver": "1.0.14",
+      "imported": true,
+      "files": [
+        ".json"
+      ],
+      "subMetas": {}
+    }
+  },
+  "userData": {
+    "imageMetas": [
+      {
+        "name": "base_color_texture",
+        "uri": "db://assets/game/fbx/KayKit_Adventurers_2.0_FREE/Assets/fbx(unity)/knight_texture.png"
+      }
+    ],
+    "fbx": {
+      "smartMaterialEnabled": true
+    },
+    "lods": {
+      "enable": false,
+      "hasBuiltinLOD": false,
+      "options": [
+        {
+          "screenRatio": 0.25,
+          "faceCount": 1
+        },
+        {
+          "screenRatio": 0.125,
+          "faceCount": 0.25
+        },
+        {
+          "screenRatio": 0.01,
+          "faceCount": 0.1
+        }
+      ]
+    },
+    "assetFinder": {
+      "meshes": [
+        "bfbaa7c1-adb4-49d0-a0c7-54156cbd3348@e7af4"
+      ],
+      "skeletons": [],
+      "textures": [
+        "bfbaa7c1-adb4-49d0-a0c7-54156cbd3348@7d6ab"
+      ],
+      "materials": [
+        "bfbaa7c1-adb4-49d0-a0c7-54156cbd3348@d77ec"
+      ],
+      "scenes": [
+        "bfbaa7c1-adb4-49d0-a0c7-54156cbd3348@64e7e"
+      ]
+    }
+  }
+}

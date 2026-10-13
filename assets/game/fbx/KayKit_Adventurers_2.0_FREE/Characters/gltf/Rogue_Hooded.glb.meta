@@ -1,0 +1,295 @@
+{
+  "ver": "2.3.14",
+  "importer": "gltf",
+  "imported": true,
+  "uuid": "fefc739b-1ecf-4ed8-9d17-19b69e208ddd",
+  "files": [],
+  "subMetas": {
+    "99080": {
+      "importer": "gltf-mesh",
+      "uuid": "fefc739b-1ecf-4ed8-9d17-19b69e208ddd@99080",
+      "displayName": "",
+      "id": "99080",
+      "name": "RogueHooded_ArmRight.mesh",
+      "userData": {
+        "gltfIndex": 1,
+        "triangleCount": 788
+      },
+      "ver": "1.1.1",
+      "imported": true,
+      "files": [
+        ".bin",
+        ".json"
+      ],
+      "subMetas": {}
+    },
+    "361ff": {
+      "importer": "gltf-mesh",
+      "uuid": "fefc739b-1ecf-4ed8-9d17-19b69e208ddd@361ff",
+      "displayName": "",
+      "id": "361ff",
+      "name": "RogueHooded_ArmLeft.mesh",
+      "userData": {
+        "gltfIndex": 0,
+        "triangleCount": 788
+      },
+      "ver": "1.1.1",
+      "imported": true,
+      "files": [
+        ".bin",
+        ".json"
+      ],
+      "subMetas": {}
+    },
+    "3f04f": {
+      "importer": "gltf-mesh",
+      "uuid": "fefc739b-1ecf-4ed8-9d17-19b69e208ddd@3f04f",
+      "displayName": "",
+      "id": "3f04f",
+      "name": "RogueHooded_Body.mesh",
+      "userData": {
+        "gltfIndex": 2,
+        "triangleCount": 1784
+      },
+      "ver": "1.1.1",
+      "imported": true,
+      "files": [
+        ".bin",
+        ".json"
+      ],
+      "subMetas": {}
+    },
+    "2ee1b": {
+      "importer": "gltf-mesh",
+      "uuid": "fefc739b-1ecf-4ed8-9d17-19b69e208ddd@2ee1b",
+      "displayName": "",
+      "id": "2ee1b",
+      "name": "RogueHooded_Cape.mesh",
+      "userData": {
+        "gltfIndex": 3,
+        "triangleCount": 84
+      },
+      "ver": "1.1.1",
+      "imported": true,
+      "files": [
+        ".bin",
+        ".json"
+      ],
+      "subMetas": {}
+    },
+    "2d2c4": {
+      "importer": "gltf-mesh",
+      "uuid": "fefc739b-1ecf-4ed8-9d17-19b69e208ddd@2d2c4",
+      "displayName": "",
+      "id": "2d2c4",
+      "name": "RogueHooded_Head.mesh",
+      "userData": {
+        "gltfIndex": 4,
+        "triangleCount": 1577
+      },
+      "ver": "1.1.1",
+      "imported": true,
+      "files": [
+        ".bin",
+        ".json"
+      ],
+      "subMetas": {}
+    },
+    "5e39b": {
+      "importer": "gltf-mesh",
+      "uuid": "fefc739b-1ecf-4ed8-9d17-19b69e208ddd@5e39b",
+      "displayName": "",
+      "id": "5e39b",
+      "name": "RogueHooded_LegLeft.mesh",
+      "userData": {
+        "gltfIndex": 5,
+        "triangleCount": 930
+      },
+      "ver": "1.1.1",
+      "imported": true,
+      "files": [
+        ".bin",
+        ".json"
+      ],
+      "subMetas": {}
+    },
+    "0c4e5": {
+      "importer": "gltf-mesh",
+      "uuid": "fefc739b-1ecf-4ed8-9d17-19b69e208ddd@0c4e5",
+      "displayName": "",
+      "id": "0c4e5",
+      "name": "RogueHooded_LegRight.mesh",
+      "userData": {
+        "gltfIndex": 6,
+        "triangleCount": 930
+      },
+      "ver": "1.1.1",
+      "imported": true,
+      "files": [
+        ".bin",
+        ".json"
+      ],
+      "subMetas": {}
+    },
+    "4a737": {
+      "importer": "gltf-mesh",
+      "uuid": "fefc739b-1ecf-4ed8-9d17-19b69e208ddd@4a737",
+      "displayName": "",
+      "id": "4a737",
+      "name": "RogueHooded_Mask.mesh",
+      "userData": {
+        "gltfIndex": 7,
+        "triangleCount": 304
+      },
+      "ver": "1.1.1",
+      "imported": true,
+      "files": [
+        ".bin",
+        ".json"
+      ],
+      "subMetas": {}
+    },
+    "65d2c": {
+      "importer": "gltf-skeleton",
+      "uuid": "fefc739b-1ecf-4ed8-9d17-19b69e208ddd@65d2c",
+      "displayName": "",
+      "id": "65d2c",
+      "name": "Rig_Medium.skeleton",
+      "userData": {
+        "gltfIndex": 0,
+        "jointsLength": 23
+      },
+      "ver": "1.0.1",
+      "imported": true,
+      "files": [
+        ".json"
+      ],
+      "subMetas": {}
+    },
+    "9fecc": {
+      "importer": "gltf-embeded-image",
+      "uuid": "fefc739b-1ecf-4ed8-9d17-19b69e208ddd@9fecc",
+      "displayName": "",
+      "id": "9fecc",
+      "name": "rogue_texture.image",
+      "userData": {
+        "gltfIndex": 0,
+        "fixAlphaTransparencyArtifacts": true,
+        "hasAlpha": true,
+        "type": "texture"
+      },
+      "ver": "1.0.3",
+      "imported": true,
+      "files": [
+        ".json",
+        ".png"
+      ],
+      "subMetas": {}
+    },
+    "e39f7": {
+      "importer": "texture",
+      "uuid": "fefc739b-1ecf-4ed8-9d17-19b69e208ddd@e39f7",
+      "displayName": "",
+      "id": "e39f7",
+      "name": "UnnamedTexture.texture",
+      "userData": {
+        "wrapModeS": "repeat",
+        "wrapModeT": "repeat",
+        "minfilter": "linear",
+        "magfilter": "linear",
+        "mipfilter": "linear",
+        "anisotropy": 0,
+        "isUuid": true,
+        "imageUuidOrDatabaseUri": "fefc739b-1ecf-4ed8-9d17-19b69e208ddd@9fecc"
+      },
+      "ver": "1.0.22",
+      "imported": true,
+      "files": [
+        ".json"
+      ],
+      "subMetas": {}
+    },
+    "8d755": {
+      "importer": "gltf-material",
+      "uuid": "fefc739b-1ecf-4ed8-9d17-19b69e208ddd@8d755",
+      "displayName": "",
+      "id": "8d755",
+      "name": "rogue.material",
+      "userData": {
+        "gltfIndex": 0
+      },
+      "ver": "1.0.14",
+      "imported": true,
+      "files": [
+        ".json"
+      ],
+      "subMetas": {}
+    },
+    "06f9e": {
+      "importer": "gltf-scene",
+      "uuid": "fefc739b-1ecf-4ed8-9d17-19b69e208ddd@06f9e",
+      "displayName": "",
+      "id": "06f9e",
+      "name": "Rogue_Hooded.prefab",
+      "userData": {
+        "gltfIndex": 0
+      },
+      "ver": "1.0.14",
+      "imported": true,
+      "files": [
+        ".json"
+      ],
+      "subMetas": {}
+    }
+  },
+  "userData": {
+    "imageMetas": [
+      {
+        "name": "rogue_texture",
+        "uri": "fefc739b-1ecf-4ed8-9d17-19b69e208ddd@9fecc"
+      }
+    ],
+    "lods": {
+      "enable": false,
+      "hasBuiltinLOD": false,
+      "options": [
+        {
+          "screenRatio": 0.25,
+          "faceCount": 1
+        },
+        {
+          "screenRatio": 0.125,
+          "faceCount": 0.25
+        },
+        {
+          "screenRatio": 0.01,
+          "faceCount": 0.1
+        }
+      ]
+    },
+    "assetFinder": {
+      "meshes": [
+        "fefc739b-1ecf-4ed8-9d17-19b69e208ddd@361ff",
+        "fefc739b-1ecf-4ed8-9d17-19b69e208ddd@99080",
+        "fefc739b-1ecf-4ed8-9d17-19b69e208ddd@3f04f",
+        "fefc739b-1ecf-4ed8-9d17-19b69e208ddd@2ee1b",
+        "fefc739b-1ecf-4ed8-9d17-19b69e208ddd@2d2c4",
+        "fefc739b-1ecf-4ed8-9d17-19b69e208ddd@5e39b",
+        "fefc739b-1ecf-4ed8-9d17-19b69e208ddd@0c4e5",
+        "fefc739b-1ecf-4ed8-9d17-19b69e208ddd@4a737"
+      ],
+      "skeletons": [
+        "fefc739b-1ecf-4ed8-9d17-19b69e208ddd@65d2c"
+      ],
+      "textures": [
+        "fefc739b-1ecf-4ed8-9d17-19b69e208ddd@e39f7"
+      ],
+      "materials": [
+        "fefc739b-1ecf-4ed8-9d17-19b69e208ddd@8d755"
+      ],
+      "scenes": [
+        "fefc739b-1ecf-4ed8-9d17-19b69e208ddd@06f9e"
+      ]
+    }
+  }
+}

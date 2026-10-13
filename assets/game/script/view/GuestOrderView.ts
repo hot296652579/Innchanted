@@ -24,11 +24,7 @@ export class GuestOrderView {
         if (!this._point) {
             this._point = new Node(ORDER_NAME);
             guest.addChild(this._point);
-            this._point.setPosition(0, 2.15, 0);
-        }
-        const torus = guest.getChildByName("Torus");
-        if (torus) {
-            torus.active = false;
+            this._point.setPosition(0, 2.5, 0);
         }
     }
 
@@ -41,7 +37,7 @@ export class GuestOrderView {
         icon.name = itemId;
         this._point.addChild(icon);
         icon.setPosition(0, 0, 0);
-        icon.setScale(0.7, 0.7, 0.7);
+        icon.setScale(1, 1, 1);
     }
 
     hide(): void {

@@ -1,0 +1,276 @@
+{
+  "ver": "2.3.14",
+  "importer": "gltf",
+  "imported": true,
+  "uuid": "d8441367-de24-440f-8e7c-fc192f91915c",
+  "files": [],
+  "subMetas": {
+    "86279": {
+      "importer": "gltf-mesh",
+      "uuid": "d8441367-de24-440f-8e7c-fc192f91915c@86279",
+      "displayName": "",
+      "id": "86279",
+      "name": "Rogue_ArmLeft.mesh",
+      "userData": {
+        "gltfIndex": 0,
+        "triangleCount": 788
+      },
+      "ver": "1.1.1",
+      "imported": true,
+      "files": [
+        ".bin",
+        ".json"
+      ],
+      "subMetas": {}
+    },
+    "94516": {
+      "importer": "gltf-mesh",
+      "uuid": "d8441367-de24-440f-8e7c-fc192f91915c@94516",
+      "displayName": "",
+      "id": "94516",
+      "name": "Rogue_LegRight.mesh",
+      "userData": {
+        "gltfIndex": 6,
+        "triangleCount": 930
+      },
+      "ver": "1.1.1",
+      "imported": true,
+      "files": [
+        ".bin",
+        ".json"
+      ],
+      "subMetas": {}
+    },
+    "aada8": {
+      "importer": "gltf-mesh",
+      "uuid": "d8441367-de24-440f-8e7c-fc192f91915c@aada8",
+      "displayName": "",
+      "id": "aada8",
+      "name": "Rogue_ArmRight.mesh",
+      "userData": {
+        "gltfIndex": 1,
+        "triangleCount": 788
+      },
+      "ver": "1.1.1",
+      "imported": true,
+      "files": [
+        ".bin",
+        ".json"
+      ],
+      "subMetas": {}
+    },
+    "0dca1": {
+      "importer": "gltf-mesh",
+      "uuid": "d8441367-de24-440f-8e7c-fc192f91915c@0dca1",
+      "displayName": "",
+      "id": "0dca1",
+      "name": "Rogue_Body.mesh",
+      "userData": {
+        "gltfIndex": 2,
+        "triangleCount": 1436
+      },
+      "ver": "1.1.1",
+      "imported": true,
+      "files": [
+        ".bin",
+        ".json"
+      ],
+      "subMetas": {}
+    },
+    "b3e75": {
+      "importer": "gltf-mesh",
+      "uuid": "d8441367-de24-440f-8e7c-fc192f91915c@b3e75",
+      "displayName": "",
+      "id": "b3e75",
+      "name": "Rogue_Cape.mesh",
+      "userData": {
+        "gltfIndex": 3,
+        "triangleCount": 84
+      },
+      "ver": "1.1.1",
+      "imported": true,
+      "files": [
+        ".bin",
+        ".json"
+      ],
+      "subMetas": {}
+    },
+    "595c3": {
+      "importer": "gltf-mesh",
+      "uuid": "d8441367-de24-440f-8e7c-fc192f91915c@595c3",
+      "displayName": "",
+      "id": "595c3",
+      "name": "Rogue_Head.mesh",
+      "userData": {
+        "gltfIndex": 4,
+        "triangleCount": 2606
+      },
+      "ver": "1.1.1",
+      "imported": true,
+      "files": [
+        ".bin",
+        ".json"
+      ],
+      "subMetas": {}
+    },
+    "94ec2": {
+      "importer": "gltf-mesh",
+      "uuid": "d8441367-de24-440f-8e7c-fc192f91915c@94ec2",
+      "displayName": "",
+      "id": "94ec2",
+      "name": "Rogue_LegLeft.mesh",
+      "userData": {
+        "gltfIndex": 5,
+        "triangleCount": 930
+      },
+      "ver": "1.1.1",
+      "imported": true,
+      "files": [
+        ".bin",
+        ".json"
+      ],
+      "subMetas": {}
+    },
+    "65d2c": {
+      "importer": "gltf-skeleton",
+      "uuid": "d8441367-de24-440f-8e7c-fc192f91915c@65d2c",
+      "displayName": "",
+      "id": "65d2c",
+      "name": "Rig_Medium.skeleton",
+      "userData": {
+        "gltfIndex": 0,
+        "jointsLength": 23
+      },
+      "ver": "1.0.1",
+      "imported": true,
+      "files": [
+        ".json"
+      ],
+      "subMetas": {}
+    },
+    "9fecc": {
+      "importer": "gltf-embeded-image",
+      "uuid": "d8441367-de24-440f-8e7c-fc192f91915c@9fecc",
+      "displayName": "",
+      "id": "9fecc",
+      "name": "rogue_texture.image",
+      "userData": {
+        "gltfIndex": 0,
+        "fixAlphaTransparencyArtifacts": true,
+        "hasAlpha": true,
+        "type": "texture"
+      },
+      "ver": "1.0.3",
+      "imported": true,
+      "files": [
+        ".json",
+        ".png"
+      ],
+      "subMetas": {}
+    },
+    "e39f7": {
+      "importer": "texture",
+      "uuid": "d8441367-de24-440f-8e7c-fc192f91915c@e39f7",
+      "displayName": "",
+      "id": "e39f7",
+      "name": "UnnamedTexture.texture",
+      "userData": {
+        "wrapModeS": "repeat",
+        "wrapModeT": "repeat",
+        "minfilter": "linear",
+        "magfilter": "linear",
+        "mipfilter": "linear",
+        "anisotropy": 0,
+        "isUuid": true,
+        "imageUuidOrDatabaseUri": "d8441367-de24-440f-8e7c-fc192f91915c@9fecc"
+      },
+      "ver": "1.0.22",
+      "imported": true,
+      "files": [
+        ".json"
+      ],
+      "subMetas": {}
+    },
+    "8d755": {
+      "importer": "gltf-material",
+      "uuid": "d8441367-de24-440f-8e7c-fc192f91915c@8d755",
+      "displayName": "",
+      "id": "8d755",
+      "name": "rogue.material",
+      "userData": {
+        "gltfIndex": 0
+      },
+      "ver": "1.0.14",
+      "imported": true,
+      "files": [
+        ".json"
+      ],
+      "subMetas": {}
+    },
+    "1917e": {
+      "importer": "gltf-scene",
+      "uuid": "d8441367-de24-440f-8e7c-fc192f91915c@1917e",
+      "displayName": "",
+      "id": "1917e",
+      "name": "Rogue.prefab",
+      "userData": {
+        "gltfIndex": 0
+      },
+      "ver": "1.0.14",
+      "imported": true,
+      "files": [
+        ".json"
+      ],
+      "subMetas": {}
+    }
+  },
+  "userData": {
+    "imageMetas": [
+      {
+        "name": "rogue_texture",
+        "uri": "d8441367-de24-440f-8e7c-fc192f91915c@9fecc"
+      }
+    ],
+    "lods": {
+      "enable": false,
+      "hasBuiltinLOD": false,
+      "options": [
+        {
+          "screenRatio": 0.25,
+          "faceCount": 1
+        },
+        {
+          "screenRatio": 0.125,
+          "faceCount": 0.25
+        },
+        {
+          "screenRatio": 0.01,
+          "faceCount": 0.1
+        }
+      ]
+    },
+    "assetFinder": {
+      "meshes": [
+        "d8441367-de24-440f-8e7c-fc192f91915c@86279",
+        "d8441367-de24-440f-8e7c-fc192f91915c@aada8",
+        "d8441367-de24-440f-8e7c-fc192f91915c@0dca1",
+        "d8441367-de24-440f-8e7c-fc192f91915c@b3e75",
+        "d8441367-de24-440f-8e7c-fc192f91915c@595c3",
+        "d8441367-de24-440f-8e7c-fc192f91915c@94ec2",
+        "d8441367-de24-440f-8e7c-fc192f91915c@94516"
+      ],
+      "skeletons": [
+        "d8441367-de24-440f-8e7c-fc192f91915c@65d2c"
+      ],
+      "textures": [
+        "d8441367-de24-440f-8e7c-fc192f91915c@e39f7"
+      ],
+      "materials": [
+        "d8441367-de24-440f-8e7c-fc192f91915c@8d755"
+      ],
+      "scenes": [
+        "d8441367-de24-440f-8e7c-fc192f91915c@1917e"
+      ]
+    }
+  }
+}

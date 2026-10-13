@@ -1,0 +1,314 @@
+{
+  "ver": "2.3.14",
+  "importer": "gltf",
+  "imported": true,
+  "uuid": "face4d70-1b54-4b67-83f5-fc3dbe3f3f1c",
+  "files": [],
+  "subMetas": {
+    "78311": {
+      "importer": "gltf-mesh",
+      "uuid": "face4d70-1b54-4b67-83f5-fc3dbe3f3f1c@78311",
+      "displayName": "",
+      "id": "78311",
+      "name": "Knight_Cape.mesh",
+      "userData": {
+        "gltfIndex": 3,
+        "triangleCount": 84
+      },
+      "ver": "1.1.1",
+      "imported": true,
+      "files": [
+        ".bin",
+        ".json"
+      ],
+      "subMetas": {}
+    },
+    "9b0be": {
+      "importer": "gltf-mesh",
+      "uuid": "face4d70-1b54-4b67-83f5-fc3dbe3f3f1c@9b0be",
+      "displayName": "",
+      "id": "9b0be",
+      "name": "Knight_ArmLeft.mesh",
+      "userData": {
+        "gltfIndex": 0,
+        "triangleCount": 622
+      },
+      "ver": "1.1.1",
+      "imported": true,
+      "files": [
+        ".bin",
+        ".json"
+      ],
+      "subMetas": {}
+    },
+    "7840c": {
+      "importer": "gltf-mesh",
+      "uuid": "face4d70-1b54-4b67-83f5-fc3dbe3f3f1c@7840c",
+      "displayName": "",
+      "id": "7840c",
+      "name": "Knight_ArmRight.mesh",
+      "userData": {
+        "gltfIndex": 1,
+        "triangleCount": 622
+      },
+      "ver": "1.1.1",
+      "imported": true,
+      "files": [
+        ".bin",
+        ".json"
+      ],
+      "subMetas": {}
+    },
+    "44d21": {
+      "importer": "gltf-mesh",
+      "uuid": "face4d70-1b54-4b67-83f5-fc3dbe3f3f1c@44d21",
+      "displayName": "",
+      "id": "44d21",
+      "name": "Knight_Body.mesh",
+      "userData": {
+        "gltfIndex": 2,
+        "triangleCount": 1288
+      },
+      "ver": "1.1.1",
+      "imported": true,
+      "files": [
+        ".bin",
+        ".json"
+      ],
+      "subMetas": {}
+    },
+    "42bab": {
+      "importer": "gltf-mesh",
+      "uuid": "face4d70-1b54-4b67-83f5-fc3dbe3f3f1c@42bab",
+      "displayName": "",
+      "id": "42bab",
+      "name": "Knight_Head.mesh",
+      "userData": {
+        "gltfIndex": 4,
+        "triangleCount": 1082
+      },
+      "ver": "1.1.1",
+      "imported": true,
+      "files": [
+        ".bin",
+        ".json"
+      ],
+      "subMetas": {}
+    },
+    "9cc51": {
+      "importer": "gltf-mesh",
+      "uuid": "face4d70-1b54-4b67-83f5-fc3dbe3f3f1c@9cc51",
+      "displayName": "",
+      "id": "9cc51",
+      "name": "Knight_Helmet.mesh",
+      "userData": {
+        "gltfIndex": 5,
+        "triangleCount": 418
+      },
+      "ver": "1.1.1",
+      "imported": true,
+      "files": [
+        ".bin",
+        ".json"
+      ],
+      "subMetas": {}
+    },
+    "4521c": {
+      "importer": "gltf-mesh",
+      "uuid": "face4d70-1b54-4b67-83f5-fc3dbe3f3f1c@4521c",
+      "displayName": "",
+      "id": "4521c",
+      "name": "Knight_HelmetVisor.mesh",
+      "userData": {
+        "gltfIndex": 6,
+        "triangleCount": 428
+      },
+      "ver": "1.1.1",
+      "imported": true,
+      "files": [
+        ".bin",
+        ".json"
+      ],
+      "subMetas": {}
+    },
+    "ad1e7": {
+      "importer": "gltf-mesh",
+      "uuid": "face4d70-1b54-4b67-83f5-fc3dbe3f3f1c@ad1e7",
+      "displayName": "",
+      "id": "ad1e7",
+      "name": "Knight_LegLeft.mesh",
+      "userData": {
+        "gltfIndex": 7,
+        "triangleCount": 628
+      },
+      "ver": "1.1.1",
+      "imported": true,
+      "files": [
+        ".bin",
+        ".json"
+      ],
+      "subMetas": {}
+    },
+    "a13e4": {
+      "importer": "gltf-mesh",
+      "uuid": "face4d70-1b54-4b67-83f5-fc3dbe3f3f1c@a13e4",
+      "displayName": "",
+      "id": "a13e4",
+      "name": "Knight_LegRight.mesh",
+      "userData": {
+        "gltfIndex": 8,
+        "triangleCount": 628
+      },
+      "ver": "1.1.1",
+      "imported": true,
+      "files": [
+        ".bin",
+        ".json"
+      ],
+      "subMetas": {}
+    },
+    "65d2c": {
+      "importer": "gltf-skeleton",
+      "uuid": "face4d70-1b54-4b67-83f5-fc3dbe3f3f1c@65d2c",
+      "displayName": "",
+      "id": "65d2c",
+      "name": "Rig_Medium.skeleton",
+      "userData": {
+        "gltfIndex": 0,
+        "jointsLength": 23
+      },
+      "ver": "1.0.1",
+      "imported": true,
+      "files": [
+        ".json"
+      ],
+      "subMetas": {}
+    },
+    "b1f4a": {
+      "importer": "gltf-embeded-image",
+      "uuid": "face4d70-1b54-4b67-83f5-fc3dbe3f3f1c@b1f4a",
+      "displayName": "",
+      "id": "b1f4a",
+      "name": "knight_texture.image",
+      "userData": {
+        "gltfIndex": 0,
+        "fixAlphaTransparencyArtifacts": true,
+        "hasAlpha": true,
+        "type": "texture"
+      },
+      "ver": "1.0.3",
+      "imported": true,
+      "files": [
+        ".json",
+        ".png"
+      ],
+      "subMetas": {}
+    },
+    "e39f7": {
+      "importer": "texture",
+      "uuid": "face4d70-1b54-4b67-83f5-fc3dbe3f3f1c@e39f7",
+      "displayName": "",
+      "id": "e39f7",
+      "name": "UnnamedTexture.texture",
+      "userData": {
+        "wrapModeS": "repeat",
+        "wrapModeT": "repeat",
+        "minfilter": "linear",
+        "magfilter": "linear",
+        "mipfilter": "linear",
+        "anisotropy": 0,
+        "isUuid": true,
+        "imageUuidOrDatabaseUri": "face4d70-1b54-4b67-83f5-fc3dbe3f3f1c@b1f4a"
+      },
+      "ver": "1.0.22",
+      "imported": true,
+      "files": [
+        ".json"
+      ],
+      "subMetas": {}
+    },
+    "d77ec": {
+      "importer": "gltf-material",
+      "uuid": "face4d70-1b54-4b67-83f5-fc3dbe3f3f1c@d77ec",
+      "displayName": "",
+      "id": "d77ec",
+      "name": "knight.material",
+      "userData": {
+        "gltfIndex": 0
+      },
+      "ver": "1.0.14",
+      "imported": true,
+      "files": [
+        ".json"
+      ],
+      "subMetas": {}
+    },
+    "a0320": {
+      "importer": "gltf-scene",
+      "uuid": "face4d70-1b54-4b67-83f5-fc3dbe3f3f1c@a0320",
+      "displayName": "",
+      "id": "a0320",
+      "name": "Knight.prefab",
+      "userData": {
+        "gltfIndex": 0
+      },
+      "ver": "1.0.14",
+      "imported": true,
+      "files": [
+        ".json"
+      ],
+      "subMetas": {}
+    }
+  },
+  "userData": {
+    "imageMetas": [
+      {
+        "name": "knight_texture",
+        "uri": "face4d70-1b54-4b67-83f5-fc3dbe3f3f1c@b1f4a"
+      }
+    ],
+    "lods": {
+      "enable": false,
+      "hasBuiltinLOD": false,
+      "options": [
+        {
+          "screenRatio": 0.25,
+          "faceCount": 1
+        },
+        {
+          "screenRatio": 0.125,
+          "faceCount": 0.25
+        },
+        {
+          "screenRatio": 0.01,
+          "faceCount": 0.1
+        }
+      ]
+    },
+    "assetFinder": {
+      "meshes": [
+        "face4d70-1b54-4b67-83f5-fc3dbe3f3f1c@9b0be",
+        "face4d70-1b54-4b67-83f5-fc3dbe3f3f1c@7840c",
+        "face4d70-1b54-4b67-83f5-fc3dbe3f3f1c@44d21",
+        "face4d70-1b54-4b67-83f5-fc3dbe3f3f1c@78311",
+        "face4d70-1b54-4b67-83f5-fc3dbe3f3f1c@42bab",
+        "face4d70-1b54-4b67-83f5-fc3dbe3f3f1c@9cc51",
+        "face4d70-1b54-4b67-83f5-fc3dbe3f3f1c@4521c",
+        "face4d70-1b54-4b67-83f5-fc3dbe3f3f1c@ad1e7",
+        "face4d70-1b54-4b67-83f5-fc3dbe3f3f1c@a13e4"
+      ],
+      "skeletons": [
+        "face4d70-1b54-4b67-83f5-fc3dbe3f3f1c@65d2c"
+      ],
+      "textures": [
+        "face4d70-1b54-4b67-83f5-fc3dbe3f3f1c@e39f7"
+      ],
+      "materials": [
+        "face4d70-1b54-4b67-83f5-fc3dbe3f3f1c@d77ec"
+      ],
+      "scenes": [
+        "face4d70-1b54-4b67-83f5-fc3dbe3f3f1c@a0320"
+      ]
+    }
+  }
+}

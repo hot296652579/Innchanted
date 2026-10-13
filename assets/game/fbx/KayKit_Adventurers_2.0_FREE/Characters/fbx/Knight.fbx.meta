@@ -1,0 +1,441 @@
+{
+  "ver": "2.3.14",
+  "importer": "fbx",
+  "imported": true,
+  "uuid": "290225fa-fd00-40d8-b251-3fa48c0599d5",
+  "files": [],
+  "subMetas": {
+    "30732": {
+      "importer": "gltf-skeleton",
+      "uuid": "290225fa-fd00-40d8-b251-3fa48c0599d5@30732",
+      "displayName": "",
+      "id": "30732",
+      "name": "UnnamedSkeleton-0.skeleton",
+      "userData": {
+        "gltfIndex": 0,
+        "jointsLength": 23
+      },
+      "ver": "1.0.1",
+      "imported": true,
+      "files": [
+        ".json"
+      ],
+      "subMetas": {}
+    },
+    "62756": {
+      "importer": "gltf-skeleton",
+      "uuid": "290225fa-fd00-40d8-b251-3fa48c0599d5@62756",
+      "displayName": "",
+      "id": "62756",
+      "name": "UnnamedSkeleton-5.skeleton",
+      "userData": {
+        "gltfIndex": 5,
+        "jointsLength": 23
+      },
+      "ver": "1.0.1",
+      "imported": true,
+      "files": [
+        ".json"
+      ],
+      "subMetas": {}
+    },
+    "78311": {
+      "importer": "gltf-mesh",
+      "uuid": "290225fa-fd00-40d8-b251-3fa48c0599d5@78311",
+      "displayName": "",
+      "id": "78311",
+      "name": "Knight_Cape.mesh",
+      "userData": {
+        "gltfIndex": 8,
+        "triangleCount": 84
+      },
+      "ver": "1.1.1",
+      "imported": true,
+      "files": [
+        ".bin",
+        ".json"
+      ],
+      "subMetas": {}
+    },
+    "42bab": {
+      "importer": "gltf-mesh",
+      "uuid": "290225fa-fd00-40d8-b251-3fa48c0599d5@42bab",
+      "displayName": "",
+      "id": "42bab",
+      "name": "Knight_Head.mesh",
+      "userData": {
+        "gltfIndex": 0,
+        "triangleCount": 1082
+      },
+      "ver": "1.1.1",
+      "imported": true,
+      "files": [
+        ".bin",
+        ".json"
+      ],
+      "subMetas": {}
+    },
+    "9cc51": {
+      "importer": "gltf-mesh",
+      "uuid": "290225fa-fd00-40d8-b251-3fa48c0599d5@9cc51",
+      "displayName": "",
+      "id": "9cc51",
+      "name": "Knight_Helmet.mesh",
+      "userData": {
+        "gltfIndex": 1,
+        "triangleCount": 418
+      },
+      "ver": "1.1.1",
+      "imported": true,
+      "files": [
+        ".bin",
+        ".json"
+      ],
+      "subMetas": {}
+    },
+    "4521c": {
+      "importer": "gltf-mesh",
+      "uuid": "290225fa-fd00-40d8-b251-3fa48c0599d5@4521c",
+      "displayName": "",
+      "id": "4521c",
+      "name": "Knight_HelmetVisor.mesh",
+      "userData": {
+        "gltfIndex": 2,
+        "triangleCount": 428
+      },
+      "ver": "1.1.1",
+      "imported": true,
+      "files": [
+        ".bin",
+        ".json"
+      ],
+      "subMetas": {}
+    },
+    "44d21": {
+      "importer": "gltf-mesh",
+      "uuid": "290225fa-fd00-40d8-b251-3fa48c0599d5@44d21",
+      "displayName": "",
+      "id": "44d21",
+      "name": "Knight_Body.mesh",
+      "userData": {
+        "gltfIndex": 3,
+        "triangleCount": 1288
+      },
+      "ver": "1.1.1",
+      "imported": true,
+      "files": [
+        ".bin",
+        ".json"
+      ],
+      "subMetas": {}
+    },
+    "9b0be": {
+      "importer": "gltf-mesh",
+      "uuid": "290225fa-fd00-40d8-b251-3fa48c0599d5@9b0be",
+      "displayName": "",
+      "id": "9b0be",
+      "name": "Knight_ArmLeft.mesh",
+      "userData": {
+        "gltfIndex": 4,
+        "triangleCount": 622
+      },
+      "ver": "1.1.1",
+      "imported": true,
+      "files": [
+        ".bin",
+        ".json"
+      ],
+      "subMetas": {}
+    },
+    "ad1e7": {
+      "importer": "gltf-mesh",
+      "uuid": "290225fa-fd00-40d8-b251-3fa48c0599d5@ad1e7",
+      "displayName": "",
+      "id": "ad1e7",
+      "name": "Knight_LegLeft.mesh",
+      "userData": {
+        "gltfIndex": 5,
+        "triangleCount": 628
+      },
+      "ver": "1.1.1",
+      "imported": true,
+      "files": [
+        ".bin",
+        ".json"
+      ],
+      "subMetas": {}
+    },
+    "a13e4": {
+      "importer": "gltf-mesh",
+      "uuid": "290225fa-fd00-40d8-b251-3fa48c0599d5@a13e4",
+      "displayName": "",
+      "id": "a13e4",
+      "name": "Knight_LegRight.mesh",
+      "userData": {
+        "gltfIndex": 6,
+        "triangleCount": 628
+      },
+      "ver": "1.1.1",
+      "imported": true,
+      "files": [
+        ".bin",
+        ".json"
+      ],
+      "subMetas": {}
+    },
+    "7840c": {
+      "importer": "gltf-mesh",
+      "uuid": "290225fa-fd00-40d8-b251-3fa48c0599d5@7840c",
+      "displayName": "",
+      "id": "7840c",
+      "name": "Knight_ArmRight.mesh",
+      "userData": {
+        "gltfIndex": 7,
+        "triangleCount": 622
+      },
+      "ver": "1.1.1",
+      "imported": true,
+      "files": [
+        ".bin",
+        ".json"
+      ],
+      "subMetas": {}
+    },
+    "f1394": {
+      "importer": "gltf-skeleton",
+      "uuid": "290225fa-fd00-40d8-b251-3fa48c0599d5@f1394",
+      "displayName": "",
+      "id": "f1394",
+      "name": "UnnamedSkeleton-1.skeleton",
+      "userData": {
+        "gltfIndex": 1,
+        "jointsLength": 23
+      },
+      "ver": "1.0.1",
+      "imported": true,
+      "files": [
+        ".json"
+      ],
+      "subMetas": {}
+    },
+    "75ee4": {
+      "importer": "gltf-skeleton",
+      "uuid": "290225fa-fd00-40d8-b251-3fa48c0599d5@75ee4",
+      "displayName": "",
+      "id": "75ee4",
+      "name": "UnnamedSkeleton-2.skeleton",
+      "userData": {
+        "gltfIndex": 2,
+        "jointsLength": 23
+      },
+      "ver": "1.0.1",
+      "imported": true,
+      "files": [
+        ".json"
+      ],
+      "subMetas": {}
+    },
+    "a72ab": {
+      "importer": "gltf-skeleton",
+      "uuid": "290225fa-fd00-40d8-b251-3fa48c0599d5@a72ab",
+      "displayName": "",
+      "id": "a72ab",
+      "name": "UnnamedSkeleton-3.skeleton",
+      "userData": {
+        "gltfIndex": 3,
+        "jointsLength": 23
+      },
+      "ver": "1.0.1",
+      "imported": true,
+      "files": [
+        ".json"
+      ],
+      "subMetas": {}
+    },
+    "2224c": {
+      "importer": "gltf-skeleton",
+      "uuid": "290225fa-fd00-40d8-b251-3fa48c0599d5@2224c",
+      "displayName": "",
+      "id": "2224c",
+      "name": "UnnamedSkeleton-4.skeleton",
+      "userData": {
+        "gltfIndex": 4,
+        "jointsLength": 23
+      },
+      "ver": "1.0.1",
+      "imported": true,
+      "files": [
+        ".json"
+      ],
+      "subMetas": {}
+    },
+    "7d08b": {
+      "importer": "gltf-skeleton",
+      "uuid": "290225fa-fd00-40d8-b251-3fa48c0599d5@7d08b",
+      "displayName": "",
+      "id": "7d08b",
+      "name": "UnnamedSkeleton-6.skeleton",
+      "userData": {
+        "gltfIndex": 6,
+        "jointsLength": 23
+      },
+      "ver": "1.0.1",
+      "imported": true,
+      "files": [
+        ".json"
+      ],
+      "subMetas": {}
+    },
+    "b5902": {
+      "importer": "gltf-skeleton",
+      "uuid": "290225fa-fd00-40d8-b251-3fa48c0599d5@b5902",
+      "displayName": "",
+      "id": "b5902",
+      "name": "UnnamedSkeleton-7.skeleton",
+      "userData": {
+        "gltfIndex": 7,
+        "jointsLength": 23
+      },
+      "ver": "1.0.1",
+      "imported": true,
+      "files": [
+        ".json"
+      ],
+      "subMetas": {}
+    },
+    "2d5df": {
+      "importer": "gltf-skeleton",
+      "uuid": "290225fa-fd00-40d8-b251-3fa48c0599d5@2d5df",
+      "displayName": "",
+      "id": "2d5df",
+      "name": "UnnamedSkeleton-8.skeleton",
+      "userData": {
+        "gltfIndex": 8,
+        "jointsLength": 23
+      },
+      "ver": "1.0.1",
+      "imported": true,
+      "files": [
+        ".json"
+      ],
+      "subMetas": {}
+    },
+    "7d6ab": {
+      "importer": "texture",
+      "uuid": "290225fa-fd00-40d8-b251-3fa48c0599d5@7d6ab",
+      "displayName": "",
+      "id": "7d6ab",
+      "name": "base_color_texture.texture",
+      "userData": {
+        "wrapModeS": "repeat",
+        "wrapModeT": "repeat",
+        "minfilter": "linear",
+        "magfilter": "linear",
+        "mipfilter": "none",
+        "anisotropy": 0,
+        "isUuid": false,
+        "imageUuidOrDatabaseUri": "db://assets/game/fbx/KayKit_Adventurers_2.0_FREE/Characters/fbx/knight_texture.png"
+      },
+      "ver": "1.0.22",
+      "imported": true,
+      "files": [
+        ".json"
+      ],
+      "subMetas": {}
+    },
+    "d77ec": {
+      "importer": "gltf-material",
+      "uuid": "290225fa-fd00-40d8-b251-3fa48c0599d5@d77ec",
+      "displayName": "",
+      "id": "d77ec",
+      "name": "knight.material",
+      "userData": {
+        "gltfIndex": 0
+      },
+      "ver": "1.0.14",
+      "imported": true,
+      "files": [
+        ".json"
+      ],
+      "subMetas": {}
+    },
+    "a0320": {
+      "importer": "gltf-scene",
+      "uuid": "290225fa-fd00-40d8-b251-3fa48c0599d5@a0320",
+      "displayName": "",
+      "id": "a0320",
+      "name": "Knight.prefab",
+      "userData": {
+        "gltfIndex": 0
+      },
+      "ver": "1.0.14",
+      "imported": true,
+      "files": [
+        ".json"
+      ],
+      "subMetas": {}
+    }
+  },
+  "userData": {
+    "imageMetas": [
+      {
+        "name": "base_color_texture",
+        "uri": "db://assets/game/fbx/KayKit_Adventurers_2.0_FREE/Characters/fbx/knight_texture.png"
+      }
+    ],
+    "fbx": {
+      "smartMaterialEnabled": true
+    },
+    "lods": {
+      "enable": false,
+      "hasBuiltinLOD": false,
+      "options": [
+        {
+          "screenRatio": 0.25,
+          "faceCount": 1
+        },
+        {
+          "screenRatio": 0.125,
+          "faceCount": 0.25
+        },
+        {
+          "screenRatio": 0.01,
+          "faceCount": 0.1
+        }
+      ]
+    },
+    "assetFinder": {
+      "meshes": [
+        "290225fa-fd00-40d8-b251-3fa48c0599d5@42bab",
+        "290225fa-fd00-40d8-b251-3fa48c0599d5@9cc51",
+        "290225fa-fd00-40d8-b251-3fa48c0599d5@4521c",
+        "290225fa-fd00-40d8-b251-3fa48c0599d5@44d21",
+        "290225fa-fd00-40d8-b251-3fa48c0599d5@9b0be",
+        "290225fa-fd00-40d8-b251-3fa48c0599d5@ad1e7",
+        "290225fa-fd00-40d8-b251-3fa48c0599d5@a13e4",
+        "290225fa-fd00-40d8-b251-3fa48c0599d5@7840c",
+        "290225fa-fd00-40d8-b251-3fa48c0599d5@78311"
+      ],
+      "skeletons": [
+        "290225fa-fd00-40d8-b251-3fa48c0599d5@30732",
+        "290225fa-fd00-40d8-b251-3fa48c0599d5@f1394",
+        "290225fa-fd00-40d8-b251-3fa48c0599d5@75ee4",
+        "290225fa-fd00-40d8-b251-3fa48c0599d5@a72ab",
+        "290225fa-fd00-40d8-b251-3fa48c0599d5@2224c",
+        "290225fa-fd00-40d8-b251-3fa48c0599d5@62756",
+        "290225fa-fd00-40d8-b251-3fa48c0599d5@7d08b",
+        "290225fa-fd00-40d8-b251-3fa48c0599d5@b5902",
+        "290225fa-fd00-40d8-b251-3fa48c0599d5@2d5df"
+      ],
+      "textures": [
+        "290225fa-fd00-40d8-b251-3fa48c0599d5@7d6ab"
+      ],
+      "materials": [
+        "290225fa-fd00-40d8-b251-3fa48c0599d5@d77ec"
+      ],
+      "scenes": [
+        "290225fa-fd00-40d8-b251-3fa48c0599d5@a0320"
+      ]
+    }
+  }
+}

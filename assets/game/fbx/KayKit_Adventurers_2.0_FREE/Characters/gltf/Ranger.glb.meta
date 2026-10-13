@@ -1,0 +1,295 @@
+{
+  "ver": "2.3.14",
+  "importer": "gltf",
+  "imported": true,
+  "uuid": "c7772927-6659-4a5e-af9c-6f9ac2ac7b50",
+  "files": [],
+  "subMetas": {
+    "16922": {
+      "importer": "gltf-mesh",
+      "uuid": "c7772927-6659-4a5e-af9c-6f9ac2ac7b50@16922",
+      "displayName": "",
+      "id": "16922",
+      "name": "Ranger_Cape.mesh",
+      "userData": {
+        "gltfIndex": 3,
+        "triangleCount": 84
+      },
+      "ver": "1.1.1",
+      "imported": true,
+      "files": [
+        ".bin",
+        ".json"
+      ],
+      "subMetas": {}
+    },
+    "03f0c": {
+      "importer": "gltf-mesh",
+      "uuid": "c7772927-6659-4a5e-af9c-6f9ac2ac7b50@03f0c",
+      "displayName": "",
+      "id": "03f0c",
+      "name": "Ranger_ArmLeft.mesh",
+      "userData": {
+        "gltfIndex": 0,
+        "triangleCount": 820
+      },
+      "ver": "1.1.1",
+      "imported": true,
+      "files": [
+        ".bin",
+        ".json"
+      ],
+      "subMetas": {}
+    },
+    "96f64": {
+      "importer": "gltf-mesh",
+      "uuid": "c7772927-6659-4a5e-af9c-6f9ac2ac7b50@96f64",
+      "displayName": "",
+      "id": "96f64",
+      "name": "Ranger_ArmRight.mesh",
+      "userData": {
+        "gltfIndex": 1,
+        "triangleCount": 820
+      },
+      "ver": "1.1.1",
+      "imported": true,
+      "files": [
+        ".bin",
+        ".json"
+      ],
+      "subMetas": {}
+    },
+    "aa766": {
+      "importer": "gltf-mesh",
+      "uuid": "c7772927-6659-4a5e-af9c-6f9ac2ac7b50@aa766",
+      "displayName": "",
+      "id": "aa766",
+      "name": "Ranger_Body.mesh",
+      "userData": {
+        "gltfIndex": 2,
+        "triangleCount": 3461
+      },
+      "ver": "1.1.1",
+      "imported": true,
+      "files": [
+        ".bin",
+        ".json"
+      ],
+      "subMetas": {}
+    },
+    "da5d7": {
+      "importer": "gltf-mesh",
+      "uuid": "c7772927-6659-4a5e-af9c-6f9ac2ac7b50@da5d7",
+      "displayName": "",
+      "id": "da5d7",
+      "name": "Ranger_Head.mesh",
+      "userData": {
+        "gltfIndex": 4,
+        "triangleCount": 1600
+      },
+      "ver": "1.1.1",
+      "imported": true,
+      "files": [
+        ".bin",
+        ".json"
+      ],
+      "subMetas": {}
+    },
+    "e992a": {
+      "importer": "gltf-mesh",
+      "uuid": "c7772927-6659-4a5e-af9c-6f9ac2ac7b50@e992a",
+      "displayName": "",
+      "id": "e992a",
+      "name": "Ranger_LegLeft.mesh",
+      "userData": {
+        "gltfIndex": 5,
+        "triangleCount": 930
+      },
+      "ver": "1.1.1",
+      "imported": true,
+      "files": [
+        ".bin",
+        ".json"
+      ],
+      "subMetas": {}
+    },
+    "264fa": {
+      "importer": "gltf-mesh",
+      "uuid": "c7772927-6659-4a5e-af9c-6f9ac2ac7b50@264fa",
+      "displayName": "",
+      "id": "264fa",
+      "name": "Ranger_LegRight.mesh",
+      "userData": {
+        "gltfIndex": 6,
+        "triangleCount": 930
+      },
+      "ver": "1.1.1",
+      "imported": true,
+      "files": [
+        ".bin",
+        ".json"
+      ],
+      "subMetas": {}
+    },
+    "6166d": {
+      "importer": "gltf-mesh",
+      "uuid": "c7772927-6659-4a5e-af9c-6f9ac2ac7b50@6166d",
+      "displayName": "",
+      "id": "6166d",
+      "name": "Ranger_Quiver.mesh",
+      "userData": {
+        "gltfIndex": 7,
+        "triangleCount": 255
+      },
+      "ver": "1.1.1",
+      "imported": true,
+      "files": [
+        ".bin",
+        ".json"
+      ],
+      "subMetas": {}
+    },
+    "65d2c": {
+      "importer": "gltf-skeleton",
+      "uuid": "c7772927-6659-4a5e-af9c-6f9ac2ac7b50@65d2c",
+      "displayName": "",
+      "id": "65d2c",
+      "name": "Rig_Medium.skeleton",
+      "userData": {
+        "gltfIndex": 0,
+        "jointsLength": 23
+      },
+      "ver": "1.0.1",
+      "imported": true,
+      "files": [
+        ".json"
+      ],
+      "subMetas": {}
+    },
+    "ed44a": {
+      "importer": "gltf-embeded-image",
+      "uuid": "c7772927-6659-4a5e-af9c-6f9ac2ac7b50@ed44a",
+      "displayName": "",
+      "id": "ed44a",
+      "name": "ranger_texture.image",
+      "userData": {
+        "gltfIndex": 0,
+        "fixAlphaTransparencyArtifacts": true,
+        "hasAlpha": true,
+        "type": "texture"
+      },
+      "ver": "1.0.3",
+      "imported": true,
+      "files": [
+        ".json",
+        ".png"
+      ],
+      "subMetas": {}
+    },
+    "e39f7": {
+      "importer": "texture",
+      "uuid": "c7772927-6659-4a5e-af9c-6f9ac2ac7b50@e39f7",
+      "displayName": "",
+      "id": "e39f7",
+      "name": "UnnamedTexture.texture",
+      "userData": {
+        "wrapModeS": "repeat",
+        "wrapModeT": "repeat",
+        "minfilter": "linear",
+        "magfilter": "linear",
+        "mipfilter": "linear",
+        "anisotropy": 0,
+        "isUuid": true,
+        "imageUuidOrDatabaseUri": "c7772927-6659-4a5e-af9c-6f9ac2ac7b50@ed44a"
+      },
+      "ver": "1.0.22",
+      "imported": true,
+      "files": [
+        ".json"
+      ],
+      "subMetas": {}
+    },
+    "4cd4c": {
+      "importer": "gltf-material",
+      "uuid": "c7772927-6659-4a5e-af9c-6f9ac2ac7b50@4cd4c",
+      "displayName": "",
+      "id": "4cd4c",
+      "name": "ranger.material",
+      "userData": {
+        "gltfIndex": 0
+      },
+      "ver": "1.0.14",
+      "imported": true,
+      "files": [
+        ".json"
+      ],
+      "subMetas": {}
+    },
+    "6f280": {
+      "importer": "gltf-scene",
+      "uuid": "c7772927-6659-4a5e-af9c-6f9ac2ac7b50@6f280",
+      "displayName": "",
+      "id": "6f280",
+      "name": "Ranger.prefab",
+      "userData": {
+        "gltfIndex": 0
+      },
+      "ver": "1.0.14",
+      "imported": true,
+      "files": [
+        ".json"
+      ],
+      "subMetas": {}
+    }
+  },
+  "userData": {
+    "imageMetas": [
+      {
+        "name": "ranger_texture",
+        "uri": "c7772927-6659-4a5e-af9c-6f9ac2ac7b50@ed44a"
+      }
+    ],
+    "lods": {
+      "enable": false,
+      "hasBuiltinLOD": false,
+      "options": [
+        {
+          "screenRatio": 0.25,
+          "faceCount": 1
+        },
+        {
+          "screenRatio": 0.125,
+          "faceCount": 0.25
+        },
+        {
+          "screenRatio": 0.01,
+          "faceCount": 0.1
+        }
+      ]
+    },
+    "assetFinder": {
+      "meshes": [
+        "c7772927-6659-4a5e-af9c-6f9ac2ac7b50@03f0c",
+        "c7772927-6659-4a5e-af9c-6f9ac2ac7b50@96f64",
+        "c7772927-6659-4a5e-af9c-6f9ac2ac7b50@aa766",
+        "c7772927-6659-4a5e-af9c-6f9ac2ac7b50@16922",
+        "c7772927-6659-4a5e-af9c-6f9ac2ac7b50@da5d7",
+        "c7772927-6659-4a5e-af9c-6f9ac2ac7b50@e992a",
+        "c7772927-6659-4a5e-af9c-6f9ac2ac7b50@264fa",
+        "c7772927-6659-4a5e-af9c-6f9ac2ac7b50@6166d"
+      ],
+      "skeletons": [
+        "c7772927-6659-4a5e-af9c-6f9ac2ac7b50@65d2c"
+      ],
+      "textures": [
+        "c7772927-6659-4a5e-af9c-6f9ac2ac7b50@e39f7"
+      ],
+      "materials": [
+        "c7772927-6659-4a5e-af9c-6f9ac2ac7b50@4cd4c"
+      ],
+      "scenes": [
+        "c7772927-6659-4a5e-af9c-6f9ac2ac7b50@6f280"
+      ]
+    }
+  }
+}
