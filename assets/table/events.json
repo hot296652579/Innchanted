@@ -1,0 +1,15 @@
+[
+  {
+    "id": "thief",
+    "kind": "thief",
+    "category": "attack",
+    "delay": 1,
+    "duration": 20,
+    "stealCount": 2,
+    "actorName": "Bat",
+    "prefab": "prefab/enemys/Bat",
+    "flySpeed": 6,
+    "warnText": "小偷来袭！20秒后会偷走成品！",
+    "failText": "蝙蝠偷走了成品！"
+  }
+]

@@ -50,4 +50,11 @@ export enum GameEvent {
     GUEST_LEFT = "GUEST_LEFT",
     /** 加工台完成 */
     PROCESSOR_READY = "PROCESSOR_READY",
+
+    /** 突发事件进入预兆倒计时 */
+    EVENT_WARN = "EVENT_WARN",
+    /** 突发事件超时，后果开始结算 */
+    EVENT_FAIL = "EVENT_FAIL",
+    /** 突发事件整段结束（含动画） */
+    EVENT_RESOLVED = "EVENT_RESOLVED",
 }

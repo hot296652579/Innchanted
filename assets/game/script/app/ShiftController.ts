@@ -11,6 +11,7 @@ import { ItemHoldView } from "../view/ItemHoldView";
 import { PlayerView } from "../view/PlayerView";
 import { ClickHit, ClickPicker } from "./ClickPicker";
 import { CommandService } from "./CommandService";
+import { EventDirector } from "./EventDirector";
 import { GuestLoop } from "./GuestLoop";
 import { InteractService } from "./InteractService";
 import { ProcessorSystem } from "./ProcessorSystem";
@@ -38,11 +39,13 @@ export class ShiftController {
     private _processors: ProcessorSystem | null = null;
     private _guests: GuestLoop | null = null;
     private _interact: InteractService | null = null;
+    private _events: EventDirector | null = null;
 
     async start(args: ShiftStartArgs): Promise<void> {
         await ConfigManager.getInstance().loadTable("items", BundlesEnum.Table);
         await ConfigManager.getInstance().loadTable("recipes", BundlesEnum.Table);
         await ConfigManager.getInstance().loadTable("guests", BundlesEnum.Table);
+        await ConfigManager.getInstance().loadTable("events", BundlesEnum.Table);
 
         this._registry.scan(args.stationRoot);
         this._pathfinder = new RecastPathfinder(args.recast);
@@ -59,6 +62,8 @@ export class ShiftController {
         this._guests.start(args.levelRoot, args.stationRoot, args.yawOffset);
 
         this._interact = new InteractService(this._actor!, holds, this._processors, this._guests);
+        this._events = new EventDirector();
+        this._events.start(this._registry, this._processors, args.levelRoot);
         this.bindClick(args);
         console.log(`[Shift] 就绪，台子 ${this._registry.all.length} 个`);
     }
@@ -69,9 +74,11 @@ export class ShiftController {
         this._processors?.tick(dt);
         this._processors?.update();
         this._guests?.update(dt);
+        this._events?.update(dt);
     }
 
     clear(): void {
+        this._events?.clear();
         this._registry.clear();
     }
 
