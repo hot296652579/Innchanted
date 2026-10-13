@@ -42,6 +42,7 @@ export class ShiftController {
     async start(args: ShiftStartArgs): Promise<void> {
         await ConfigManager.getInstance().loadTable("items", BundlesEnum.Table);
         await ConfigManager.getInstance().loadTable("recipes", BundlesEnum.Table);
+        await ConfigManager.getInstance().loadTable("guests", BundlesEnum.Table);
 
         this._registry.scan(args.stationRoot);
         this._pathfinder = new RecastPathfinder(args.recast);
@@ -53,7 +54,7 @@ export class ShiftController {
         this._processors = new ProcessorSystem(args.camera, this._registry);
         await this._processors.load();
 
-        this._guests = new GuestLoop(this._pathfinder, this._registry);
+        this._guests = new GuestLoop(this._pathfinder, this._registry, args.camera);
         await this._guests.load();
         this._guests.start(args.levelRoot, args.stationRoot, args.yawOffset);
 
@@ -67,7 +68,7 @@ export class ShiftController {
         this._fsm?.update(dt);
         this._processors?.tick(dt);
         this._processors?.update();
-        this._guests?.update();
+        this._guests?.update(dt);
     }
 
     clear(): void {

@@ -44,6 +44,8 @@ export enum GameEvent {
     ORDER_SHOWN = "ORDER_SHOWN",
     /** 上菜成功 */
     GUEST_SERVED = "GUEST_SERVED",
+    /** 客人等待超时生气 */
+    GUEST_ANGRY = "GUEST_ANGRY",
     /** 客人走到离店点 */
     GUEST_LEFT = "GUEST_LEFT",
     /** 加工台完成 */

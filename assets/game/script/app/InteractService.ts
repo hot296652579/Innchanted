@@ -18,7 +18,11 @@ export class InteractService {
     ) { }
 
     arrive(binding: StationBinding): void {
-        const action = resolveDefaultAction(this.actor.hand, binding.station, this.guests.seatedOrder());
+        const action = resolveDefaultAction(
+            this.actor.hand,
+            binding.station,
+            this.guests.wantedAt(binding.station.id, this.actor.hand?.itemId),
+        );
         console.log("[Player] 到达", binding.station.id, action);
         this.apply(action, binding);
     }
@@ -88,9 +92,8 @@ export class InteractService {
             EventManager.getInstance().emit(GameEvent.SHOW_TIPS, "客人吃完离开了");
             return true;
         }
-        const order = this.guests.seatedOrder();
         const slot = binding.station.slot;
-        if (order && slot && slot.itemId !== order) {
+        if (slot && this.guests.hasSeated(binding.station.id) && !this.guests.wantedAt(binding.station.id, slot.itemId)) {
             EventManager.getInstance().emit(GameEvent.SHOW_TIPS, "这不是客人要的");
         }
         return false;

@@ -1,0 +1,5 @@
+[
+  { "id": "guest", "waitTime": 25, "orderId": "chickenlegbaked", "orderPrefab": "prefab/items/ChickenLegBaked" },
+  { "id": "regularguest", "waitTime": 25, "orderId": "chickenlegbaked", "orderPrefab": "prefab/items/ChickenLegBaked" },
+  { "id": "gourmetguest", "waitTime": 15, "orderId": "burgerbaked", "orderPrefab": "prefab/items/BurgerBaked" }
+]
