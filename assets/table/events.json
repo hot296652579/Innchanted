@@ -3,7 +3,7 @@
     "id": "thief",
     "kind": "thief",
     "category": "attack",
-    "delay": 1,
+    "delay": 0,
     "duration": 20,
     "stealCount": 2,
     "actorName": "Bat",

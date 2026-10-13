@@ -1,7 +1,8 @@
-import { AnimationClip, Node, SkeletalAnimation, Vec3 } from "cc";
+import { AnimationClip, Node, Quat, SkeletalAnimation, Vec3 } from "cc";
 
 const HOLD_NAME = "HoldPoint";
 const _pos = new Vec3();
+const _rot = new Quat();
 
 /** 蝙蝠小偷的飞行动画与持物点。不写偷多少、不改台子数据。 */
 export class ThiefView {
@@ -11,8 +12,11 @@ export class ThiefView {
     private _hold: Node | null = null;
     private _anim: SkeletalAnimation | null = null;
     private readonly _home = new Vec3();
+    private readonly _homeRot = new Quat();
     private readonly _from = new Vec3();
     private readonly _to = new Vec3();
+    private readonly _fromRot = new Quat();
+    private readonly _toRot = new Quat();
     private _elapsed = 0;
     private _duration = 0.2;
 
@@ -28,6 +32,7 @@ export class ThiefView {
         this._node = node;
         node.mobility = 2;
         this._home.set(node.worldPosition);
+        this._homeRot.set(node.worldRotation);
         this._anim = node.getComponentInChildren(SkeletalAnimation);
         this._hold = node.getChildByName(HOLD_NAME);
         if (!this._hold) {
@@ -42,8 +47,8 @@ export class ThiefView {
         this.playClip(["bat_flying", "flying"], true);
     }
 
-    playAttack(): number {
-        const name = this.playClip(["bat_attack", "attack"], false);
+    playHit(): number {
+        const name = this.playClip(["bat_hit", "hit"], false);
         if (!name || !this._anim) {
             return 1;
         }
@@ -52,17 +57,12 @@ export class ThiefView {
     }
 
     flyTo(world: Vec3, speed: number): void {
-        if (!this._node) {
-            return;
-        }
-        this._from.set(this._node.worldPosition);
-        this._to.set(world);
-        const dist = Vec3.distance(this._from, this._to);
-        this._duration = Math.max(0.15, dist / Math.max(0.5, speed));
-        this._elapsed = 0;
-        this.flying = true;
-        this.face(world);
-        this.playFlying();
+        this.lookQuat(world, this._toRot);
+        this.beginFly(world, speed, this._toRot);
+    }
+
+    flyHome(speed: number): void {
+        this.beginFly(this._home, speed, this._homeRot);
     }
 
     tick(dt: number): void {
@@ -72,15 +72,20 @@ export class ThiefView {
         this._elapsed += dt;
         const t = Math.min(1, this._elapsed / this._duration);
         Vec3.lerp(_pos, this._from, this._to, t);
+        Quat.slerp(_rot, this._fromRot, this._toRot, t);
         this._node.setWorldPosition(_pos);
+        this._node.setWorldRotation(_rot);
         if (t >= 1) {
             this.flying = false;
+            this._node.setWorldPosition(this._to);
+            this._node.setWorldRotation(this._toRot);
         }
     }
 
     snapHome(): void {
         this.flying = false;
         this._node?.setWorldPosition(this._home);
+        this._node?.setWorldRotation(this._homeRot);
     }
 
     discardHeld(): void {
@@ -94,7 +99,22 @@ export class ThiefView {
         }
     }
 
-    private face(world: Vec3): void {
+    private beginFly(world: Vec3, speed: number, rot: Quat): void {
+        if (!this._node) {
+            return;
+        }
+        this._from.set(this._node.worldPosition);
+        this._to.set(world);
+        this._fromRot.set(this._node.worldRotation);
+        this._toRot.set(rot);
+        const dist = Vec3.distance(this._from, this._to);
+        this._duration = Math.max(0.15, dist / Math.max(0.5, speed));
+        this._elapsed = 0;
+        this.flying = true;
+        this.playFlying();
+    }
+
+    private lookQuat(world: Vec3, out: Quat): void {
         const node = this._node;
         if (!node) {
             return;
@@ -103,9 +123,10 @@ export class ThiefView {
         const dx = world.x - p.x;
         const dz = world.z - p.z;
         if (dx * dx + dz * dz < 1e-6) {
+            out.set(node.worldRotation);
             return;
         }
-        node.setRotationFromEuler(0, Math.atan2(dx, dz) * 180 / Math.PI, 0);
+        Quat.fromEuler(out, 0, Math.atan2(dx, dz) * 180 / Math.PI, 0);
     }
 
     private playClip(keys: string[], loop: boolean): string | null {

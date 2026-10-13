@@ -7,7 +7,7 @@ import { IIncident, IncidentContext } from "./Incident";
 
 type Phase = "warning" | "toFood" | "toHome" | "attack" | "done";
 
-/** 小偷来袭：倒计时结束飞去叼走成品，回巢 Attack 后销毁。 */
+/** 小偷来袭：倒计时结束飞去叼走成品，回巢 Hit 后销毁。 */
 export class ThiefIncident implements IIncident {
     private _ctx: IncidentContext | null = null;
     private readonly _view = new ThiefView();
@@ -134,12 +134,12 @@ export class ThiefIncident implements IIncident {
             this.nextTarget();
             return;
         }
-        this._view.flyTo(this._view.home, this.def.flySpeed ?? 6);
+        this._view.flyHome(this.def.flySpeed ?? 6);
         this._phase = "toHome";
     }
 
     private startAttack(): void {
-        this._attackLeft = this._view.playAttack();
+        this._attackLeft = this._view.playHit();
         this._phase = "attack";
     }
 }
