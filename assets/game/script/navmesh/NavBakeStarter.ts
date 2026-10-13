@@ -23,7 +23,6 @@ export class NavBakeStarter extends Component {
     @property({ tooltip: '烘焙完成后显示半透明可行走网格' })
     showDebug = true;
 
-    @property({ type: Node, tooltip: '玩家节点。留空则按名字 Player 自动查找' })
     player: Node | null = null;
 
     camera: Camera | null = null;
