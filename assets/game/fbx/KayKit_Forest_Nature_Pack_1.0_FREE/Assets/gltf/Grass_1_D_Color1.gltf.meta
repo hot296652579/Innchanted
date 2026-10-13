@@ -1,0 +1,123 @@
+{
+  "ver": "2.3.14",
+  "importer": "gltf",
+  "imported": true,
+  "uuid": "99f6ad61-e930-481e-9a28-d062096ea458",
+  "files": [],
+  "subMetas": {
+    "10f8a": {
+      "importer": "gltf-mesh",
+      "uuid": "99f6ad61-e930-481e-9a28-d062096ea458@10f8a",
+      "displayName": "",
+      "id": "10f8a",
+      "name": "Grass_1_D_Color1.mesh",
+      "userData": {
+        "gltfIndex": 0,
+        "triangleCount": 528
+      },
+      "ver": "1.1.1",
+      "imported": true,
+      "files": [
+        ".bin",
+        ".json"
+      ],
+      "subMetas": {}
+    },
+    "e39f7": {
+      "importer": "texture",
+      "uuid": "99f6ad61-e930-481e-9a28-d062096ea458@e39f7",
+      "displayName": "",
+      "id": "e39f7",
+      "name": "UnnamedTexture.texture",
+      "userData": {
+        "wrapModeS": "repeat",
+        "wrapModeT": "repeat",
+        "minfilter": "linear",
+        "magfilter": "linear",
+        "mipfilter": "linear",
+        "anisotropy": 0,
+        "isUuid": false,
+        "imageUuidOrDatabaseUri": "db://assets/game/fbx/KayKit_Forest_Nature_Pack_1.0_FREE/Assets/gltf/forest_texture.png"
+      },
+      "ver": "1.0.22",
+      "imported": true,
+      "files": [
+        ".json"
+      ],
+      "subMetas": {}
+    },
+    "1eca8": {
+      "importer": "gltf-material",
+      "uuid": "99f6ad61-e930-481e-9a28-d062096ea458@1eca8",
+      "displayName": "",
+      "id": "1eca8",
+      "name": "forest.material",
+      "userData": {
+        "gltfIndex": 0
+      },
+      "ver": "1.0.14",
+      "imported": true,
+      "files": [
+        ".json"
+      ],
+      "subMetas": {}
+    },
+    "002d7": {
+      "importer": "gltf-scene",
+      "uuid": "99f6ad61-e930-481e-9a28-d062096ea458@002d7",
+      "displayName": "",
+      "id": "002d7",
+      "name": "Grass_1_D_Color1.prefab",
+      "userData": {
+        "gltfIndex": 0
+      },
+      "ver": "1.0.14",
+      "imported": true,
+      "files": [
+        ".json"
+      ],
+      "subMetas": {}
+    }
+  },
+  "userData": {
+    "imageMetas": [
+      {
+        "name": "forest_texture",
+        "uri": "db://assets/game/fbx/KayKit_Forest_Nature_Pack_1.0_FREE/Assets/gltf/forest_texture.png"
+      }
+    ],
+    "lods": {
+      "enable": false,
+      "hasBuiltinLOD": false,
+      "options": [
+        {
+          "screenRatio": 0.25,
+          "faceCount": 1
+        },
+        {
+          "screenRatio": 0.125,
+          "faceCount": 0.25
+        },
+        {
+          "screenRatio": 0.01,
+          "faceCount": 0.1
+        }
+      ]
+    },
+    "assetFinder": {
+      "meshes": [
+        "99f6ad61-e930-481e-9a28-d062096ea458@10f8a"
+      ],
+      "skeletons": [],
+      "textures": [
+        "99f6ad61-e930-481e-9a28-d062096ea458@e39f7"
+      ],
+      "materials": [
+        "99f6ad61-e930-481e-9a28-d062096ea458@1eca8"
+      ],
+      "scenes": [
+        "99f6ad61-e930-481e-9a28-d062096ea458@002d7"
+      ]
+    }
+  }
+}
