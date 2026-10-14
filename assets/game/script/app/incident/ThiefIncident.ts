@@ -3,6 +3,7 @@ import { GameEvent } from "../../../../framework/event/EventName";
 import { StationBinding, findNamedDescendant } from "../../sim/StationRegistry";
 import { ThiefView } from "../../view/ThiefView";
 import { EventDef } from "../EventCatalog";
+import { isCookedOutput } from "../Recipe";
 import { IIncident, IncidentContext } from "./Incident";
 
 type Phase = "warning" | "toFood" | "hover" | "toHome" | "attack" | "done";
@@ -70,6 +71,10 @@ export class ThiefIncident implements IIncident {
             return;
         }
         if (this._phase === "hover") {
+            if (!this.targetHasFood()) {
+                this.returnEmpty();
+                return;
+            }
             this._hoverLeft -= dt;
             if (this._hoverLeft <= 0) {
                 this.grabAndReturn();
@@ -174,12 +179,28 @@ export class ThiefIncident implements IIncident {
         const binding = this._targets[this._index];
         this._carrying = !!(hold && binding && ctx.processors.takeCooked(binding, hold));
         if (!this._carrying) {
-            this._index += 1;
-            this.nextTarget();
+            this.returnEmpty();
             return;
         }
         this._view.flyHome(this.def.flySpeed ?? 6);
         this._phase = "toHome";
+    }
+
+    private targetHasFood(): boolean {
+        const binding = this._targets[this._index];
+        const slot = binding?.station.slot;
+        if (!slot || slot.empty || !isCookedOutput(slot.itemId)) {
+            return false;
+        }
+        return binding.station.cook?.state !== "cooking";
+    }
+
+    private returnEmpty(): void {
+        this._hoverStationId = null;
+        this._carrying = false;
+        this._view.flyHome(this.def.flySpeed ?? 6);
+        this._phase = "toHome";
+        console.log("[Event] 没有食物，回巢", this.def.id);
     }
 
     private onHome(): void {
