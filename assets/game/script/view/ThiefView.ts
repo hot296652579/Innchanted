@@ -19,6 +19,7 @@ export class ThiefView {
     private readonly _toRot = new Quat();
     private _elapsed = 0;
     private _duration = 0.2;
+    private _landHome = false;
 
     get hold(): Node | null {
         return this._hold;
@@ -57,12 +58,16 @@ export class ThiefView {
     }
 
     flyTo(world: Vec3, speed: number): void {
+        this._landHome = false;
         this.lookQuat(world, this._toRot);
         this.beginFly(world, speed, this._toRot);
     }
 
     flyHome(speed: number): void {
-        this.beginFly(this._home, speed, this._homeRot);
+        this._landHome = true;
+        this.lookQuat(this._home, this._toRot);
+        this._node?.setWorldRotation(this._toRot);
+        this.beginFly(this._home, speed, this._toRot);
     }
 
     tick(dt: number): void {
@@ -78,7 +83,8 @@ export class ThiefView {
         if (t >= 1) {
             this.flying = false;
             this._node.setWorldPosition(this._to);
-            this._node.setWorldRotation(this._toRot);
+            this._node.setWorldRotation(this._landHome ? this._homeRot : this._toRot);
+            this._landHome = false;
         }
     }
 

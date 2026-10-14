@@ -18,7 +18,7 @@ export class ThiefIncident implements IIncident {
     private _index = 0;
     private _urged = false;
 
-    constructor(readonly def: EventDef) {}
+    constructor(readonly def: EventDef) { }
 
     get done(): boolean {
         return this._phase === "done";
