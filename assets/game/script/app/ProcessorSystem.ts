@@ -4,31 +4,73 @@ import { GameEvent } from "../../../framework/event/EventName";
 import { Actor } from "../domain/Actor";
 import { ItemStack } from "../domain/ItemStack";
 import { StationBinding, StationRegistry } from "../sim/StationRegistry";
+import { LockView } from "../view/LockView";
 import { ProcessorView } from "../view/ProcessorView";
 import { findCookRecipe, isCookedOutput } from "./Recipe";
 
 /** 加工台计时 + 进度条。配方仍走 Recipe 纯函数。 */
 export class ProcessorSystem {
     private readonly _view: ProcessorView;
+    private readonly _locks: LockView;
 
     constructor(
         camera: Camera | null,
         private readonly registry: StationRegistry,
     ) {
         this._view = new ProcessorView(camera);
+        this._locks = new LockView(camera);
     }
 
     async load(): Promise<void> {
         await this._view.load();
+        await this._locks.load();
     }
 
     update(): void {
         this._view.update();
+        this._locks.update();
+    }
+
+    /** 从未上锁的灶炉里锁 max 个（默认 1）。返回新锁上的数量。 */
+    lockUnlocked(seconds: number, max = 1): number {
+        const candidates: StationBinding[] = [];
+        for (let i = 0; i < this.registry.all.length; i++) {
+            const binding = this.registry.all[i];
+            if (!binding.station.locked && binding.station.cook) {
+                candidates.push(binding);
+            }
+        }
+        let n = 0;
+        const take = Math.min(max, candidates.length);
+        for (let i = 0; i < take; i++) {
+            const pick = Math.floor(Math.random() * candidates.length);
+            const binding = candidates[pick];
+            candidates.splice(pick, 1);
+            if (!binding.station.tryLock(seconds)) {
+                continue;
+            }
+            this._locks.show(binding);
+            n += 1;
+        }
+        return n;
+    }
+
+    clearLocks(): void {
+        this._locks.clear();
+        for (let i = 0; i < this.registry.all.length; i++) {
+            this.registry.all[i].station.lockRemain = 0;
+        }
     }
 
     tick(dt: number): void {
         for (let i = 0; i < this.registry.all.length; i++) {
             const binding = this.registry.all[i];
+            if (binding.station.tickLock(dt)) {
+                this._locks.hide(binding.station.id);
+            }
+            if (binding.station.locked) {
+                continue;
+            }
             const cook = binding.station.cook;
             if (!cook || cook.state !== "cooking") {
                 continue;
@@ -101,7 +143,7 @@ export class ProcessorSystem {
     startFromHand(actor: Actor, binding: StationBinding): boolean {
         const hand = actor.hand;
         const cook = binding.station.cook;
-        if (!hand || !cook || cook.state !== "idle") {
+        if (!hand || !cook || cook.state !== "idle" || binding.station.locked) {
             return false;
         }
         const recipe = findCookRecipe(hand.itemId);// 查找烘培配方

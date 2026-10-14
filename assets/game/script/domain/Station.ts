@@ -11,6 +11,7 @@ export enum StationType {
 export class Station {
     public slot: ItemStack | null = null;
     public cook: CookProcess | null = null;
+    public lockRemain = 0;
 
     constructor(
         public readonly id: string,
@@ -19,5 +20,31 @@ export class Station {
         if (type === StationType.Cook) {
             this.cook = new CookProcess();
         }
+    }
+
+    get locked(): boolean {
+        return this.lockRemain > 0;
+    }
+
+    /** 未上锁才加锁。成功返回 true。 */
+    tryLock(seconds: number): boolean {
+        if (this.locked || this.type !== StationType.Cook || seconds <= 0) {
+            return false;
+        }
+        this.lockRemain = seconds;
+        return true;
+    }
+
+    /** 刚解锁时返回 true。 */
+    tickLock(dt: number): boolean {
+        if (this.lockRemain <= 0) {
+            return false;
+        }
+        this.lockRemain -= dt;
+        if (this.lockRemain > 0) {
+            return false;
+        }
+        this.lockRemain = 0;
+        return true;
     }
 }

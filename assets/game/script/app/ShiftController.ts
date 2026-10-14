@@ -81,6 +81,7 @@ export class ShiftController {
 
     clear(): void {
         this._events?.clear();
+        this._processors?.clearLocks();
         this._registry.clear();
     }
 

@@ -2,7 +2,7 @@ import { EventManager } from "../../../framework/event/EventManager";
 import { GameEvent } from "../../../framework/event/EventName";
 import { Actor } from "../domain/Actor";
 import { isCoin } from "../domain/ItemStack";
-import { StationType } from "../domain/Station";
+import { Station, StationType } from "../domain/Station";
 import { StationBinding } from "../sim/StationRegistry";
 import { ItemHoldView } from "../view/ItemHoldView";
 import { PlayerView } from "../view/PlayerView";
@@ -119,7 +119,10 @@ export class InteractService {
     }
 }
 
-function refuseTip(station: { type: StationType; slot: { itemId: string } | null }): string {
+function refuseTip(station: Station): string {
+    if (station.locked) {
+        return "灶炉被锁住了";
+    }
     if (station.type === StationType.Cook) {
         return "这个不能放进炉灶";
     }

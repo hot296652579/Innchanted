@@ -6,6 +6,7 @@ import { StationRegistry } from "../sim/StationRegistry";
 import { allEventDefs, EventDef } from "./EventCatalog";
 import { IIncident, IncidentContext } from "./incident/Incident";
 import { CurseIncident } from "./incident/CurseIncident";
+import { LockIncident } from "./incident/LockIncident";
 import { ThiefIncident } from "./incident/ThiefIncident";
 
 type IncidentFactory = (def: EventDef) => IIncident;
@@ -14,6 +15,7 @@ type IncidentFactory = (def: EventDef) => IIncident;
 const FACTORY: Record<string, IncidentFactory> = {
     thief: (def) => new ThiefIncident(def),
     curse: (def) => new CurseIncident(def),
+    lock: (def) => new LockIncident(def),
 };
 
 function createIncident(def: EventDef): IIncident | null {
@@ -25,36 +27,46 @@ function createIncident(def: EventDef): IIncident | null {
     return make(def);
 }
 
-/** 班次突发事件时间轴。同一时刻只跑 1 个攻击型事件。 */
+function isAttack(def: EventDef): boolean {
+    return def.category === "attack" || def.kind === "thief";
+}
+
+/** 班次突发事件时间轴。攻击型同时只跑 1 个；状态型（锁灶）可并行。 */
 export class EventDirector {
     private _queue: EventDef[] = [];
     private _index = 0;
     private _elapsed = 0;
-    private _active: IIncident | null = null;
+    private readonly _running: IIncident[] = [];
     private _ctx: IncidentContext | null = null;
 
     scareAt(stationId: string): boolean {
-        return this._active?.scareAt?.(stationId) ?? false;
+        for (let i = 0; i < this._running.length; i++) {
+            if (this._running[i].scareAt?.(stationId)) {
+                return true;
+            }
+        }
+        return false;
     }
 
     start(registry: StationRegistry, processors: ProcessorSystem, levelRoot: Node): void {
         this._queue = allEventDefs().slice().sort((a, b) => a.delay - b.delay);
         this._index = 0;
         this._elapsed = 0;
-        this._active = null;
+        this._running.length = 0;
         this._ctx = { registry, processors, levelRoot };
         console.log("[Event] 时间轴", this._queue.length, "条");
     }
 
     update(dt: number): void {
         this._elapsed += dt;
-        if (this._active) {
-            this._active.tick(dt);
-            if (this._active.done) {
-                EventManager.getInstance().emit(GameEvent.EVENT_RESOLVED, this._active.def.id);
-                this._active = null;
+        for (let i = this._running.length - 1; i >= 0; i--) {
+            const incident = this._running[i];
+            incident.tick(dt);
+            if (!incident.done) {
+                continue;
             }
-            return;
+            EventManager.getInstance().emit(GameEvent.EVENT_RESOLVED, incident.def.id);
+            this._running.splice(i, 1);
         }
         if (!this._ctx) {
             return;
@@ -64,21 +76,38 @@ export class EventDirector {
             if (def.delay > this._elapsed) {
                 break;
             }
+            if (isAttack(def) && this.hasAttack()) {
+                break;
+            }
             this._index += 1;
             const incident = createIncident(def);
             if (!incident) {
                 continue;
             }
             incident.begin(this._ctx);
-            this._active = incident;
-            break;
+            if (!incident.done) {
+                this._running.push(incident);
+            } else {
+                EventManager.getInstance().emit(GameEvent.EVENT_RESOLVED, def.id);
+            }
         }
     }
 
     clear(): void {
-        this._active?.cancel();
-        this._active = null;
+        for (let i = 0; i < this._running.length; i++) {
+            this._running[i].cancel();
+        }
+        this._running.length = 0;
         this._queue.length = 0;
         this._ctx = null;
+    }
+
+    private hasAttack(): boolean {
+        for (let i = 0; i < this._running.length; i++) {
+            if (isAttack(this._running[i].def)) {
+                return true;
+            }
+        }
+        return false;
     }
 }

@@ -32,6 +32,15 @@ const FALLBACK: EventDef[] = [
         warnText: "小偷来袭！20秒后会偷走成品！",
         failText: "蝙蝠偷走了成品！",
     },
+    {
+        id: "lock",
+        kind: "lock",
+        category: "status",
+        delay: 8,
+        duration: 0,
+        freezeTime: 5,
+        failText: "未上锁的灶炉被锁住 5 秒！",
+    },
 ];
 
 export function allEventDefs(): EventDef[] {

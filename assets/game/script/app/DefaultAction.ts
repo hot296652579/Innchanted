@@ -37,6 +37,9 @@ export function resolveDefaultAction(
 }
 
 function resolveCook(hand: ItemStack | null, station: Station): ActionKind {
+    if (station.locked) {
+        return "RefuseSwap";
+    }
     const held = nonempty(hand);
     const state = station.cook?.state ?? "idle";
 
