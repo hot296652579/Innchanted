@@ -1,7 +1,10 @@
-import { Camera, Node, SkeletalAnimation, Vec3 } from "cc";
+import { Camera, instantiate, Node, Prefab, SkeletalAnimation, Vec3 } from "cc";
+import { BundlesEnum } from "../../../define/BundlesEnum";
 import { EventManager } from "../../../framework/event/EventManager";
 import { GameEvent } from "../../../framework/event/EventName";
+import { ResourceManager } from "../../../framework/resource/ResourceManager";
 import { Guest } from "../domain/Guest";
+import { COIN_ID, ItemStack } from "../domain/ItemStack";
 import { GuestFsm } from "../fsm/GuestFsm";
 import { DiningLayout, scanDining } from "../sim/DiningHall";
 import { GridAgent } from "../sim/GridAgent";
@@ -27,6 +30,7 @@ export class GuestLoop {
     private readonly _orders = new GuestOrderView();
     private readonly _faces: GuestExpressionView;
     private readonly _runtimes: GuestRuntime[] = [];
+    private _coinPrefab: Prefab | null = null;
     private _yawOffset = 0;
 
     constructor(
@@ -40,6 +44,10 @@ export class GuestLoop {
     async load(): Promise<void> {
         await this._orders.load();
         await this._faces.load();
+        this._coinPrefab = await ResourceManager.getInstance().loadPrefab("prefab/items/Coin", BundlesEnum.Game);
+        if (!this._coinPrefab) {
+            console.warn("[Guest] 未找到 prefab/items/Coin");
+        }
     }
 
     start(levelRoot: Node, stationRoot: Node, yawOffset: number): void {
@@ -95,10 +103,11 @@ export class GuestLoop {
                 return false;
             }
             this.clearHold(binding.holdPoint);
-            binding.station.slot = null;
+            this.dropCoin(binding);
             this._orders.hide(runtime.guest.id);
             this.react(runtime, "happy");
             EventManager.getInstance().emit(GameEvent.GUEST_SERVED, runtime.guest.id, runtime.guest.orderId);
+            EventManager.getInstance().emit(GameEvent.SHELL_SPAWNED, binding.station.id);
             return true;
         }
         return false;
@@ -223,6 +232,20 @@ export class GuestLoop {
         } else {
             anim.stop();
         }
+    }
+
+    private dropCoin(binding: StationBinding): void {
+        binding.station.slot = new ItemStack(COIN_ID, 1);
+        const prefab = this._coinPrefab;
+        const hold = binding.holdPoint;
+        if (!prefab) {
+            return;
+        }
+        const coin = instantiate(prefab);
+        coin.name = "Coin";
+        hold.addChild(coin);
+        coin.setPosition(0, 0, 0);
+        coin.mobility = 2;
     }
 
     private clearHold(hold: Node): void {

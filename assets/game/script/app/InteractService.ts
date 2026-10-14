@@ -1,6 +1,7 @@
 import { EventManager } from "../../../framework/event/EventManager";
 import { GameEvent } from "../../../framework/event/EventName";
 import { Actor } from "../domain/Actor";
+import { isCoin } from "../domain/ItemStack";
 import { StationType } from "../domain/Station";
 import { StationBinding } from "../sim/StationRegistry";
 import { ItemHoldView } from "../view/ItemHoldView";
@@ -62,6 +63,18 @@ export class InteractService {
                     return;
                 }
                 break;
+            case "Bank":// 金币存宝箱
+                if (!actor.hand || !isCoin(actor.hand.itemId)) {
+                    return;
+                }
+                {
+                    const count = actor.hand.count;
+                    actor.hand = null;
+                    this.holds.bankInto(station.id);
+                    events.emit(GameEvent.SHELL_BANKED, count);
+                    events.emit(GameEvent.SHOW_TIPS, "金币已存入宝箱");
+                }
+                break;
             case "Stack":// 堆叠物品
                 if (actor.hand && station.slot) {
                     const moved = actor.hand.count - station.slot.absorb(actor.hand);
@@ -72,7 +85,7 @@ export class InteractService {
                 }
                 break;
             case "RefuseSwap":// 拒绝交换
-                const tip = station.type === StationType.Cook ? "这个不能放进炉灶" : "不能和台上的交换";
+                const tip = refuseTip(station);
                 events.emit(GameEvent.SHOW_TIPS, tip);
                 console.warn("[Player]", tip);
                 return;
@@ -104,4 +117,17 @@ export class InteractService {
         }
         return false;
     }
+}
+
+function refuseTip(station: { type: StationType; slot: { itemId: string } | null }): string {
+    if (station.type === StationType.Cook) {
+        return "这个不能放进炉灶";
+    }
+    if (station.type === StationType.Chest) {
+        return "只有金币才能存进宝箱";
+    }
+    if (isCoin(station.slot?.itemId)) {
+        return "先拿走金币才能上菜";
+    }
+    return "不能和台上的交换";
 }

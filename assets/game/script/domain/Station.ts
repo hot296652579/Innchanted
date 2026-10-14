@@ -5,6 +5,7 @@ export enum StationType {
     Place = "place",
     Cook = "cook",
     Table = "table",
+    Chest = "chest",
 }
 
 export class Station {

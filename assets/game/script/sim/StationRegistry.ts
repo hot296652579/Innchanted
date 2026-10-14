@@ -37,8 +37,8 @@ export class StationRegistry {
             const node = stationRoot.children[i];
             const type = inferStationType(node.name);
             let holdPoint = findNamedDescendant(node, HOLD_POINT_NAME);
-            if (!holdPoint && type === StationType.Table) {
-                holdPoint = ensureHoldPoint(node, 0.85);
+            if (!holdPoint && (type === StationType.Table || type === StationType.Chest)) {
+                holdPoint = ensureHoldPoint(node, type === StationType.Chest ? 0.55 : 0.85);
             }
             if (!holdPoint) {
                 continue;
@@ -121,6 +121,9 @@ function inferStationType(name: string): StationType {
     }
     if (id === "table" || id.startsWith("table-") || id.startsWith("table_")) {
         return StationType.Table;
+    }
+    if (id.includes("treasuer") || id.includes("treasure") || id.startsWith("chest") || id.startsWith("bank")) {
+        return StationType.Chest;
     }
     return StationType.Place;
 }

@@ -1,4 +1,9 @@
 export const ITEM_STACK_CAP = 3;
+export const COIN_ID = "coin";
+
+export function isCoin(itemId: string | null | undefined): boolean {
+    return itemId === COIN_ID;
+}
 
 export class ItemStack {
     constructor(

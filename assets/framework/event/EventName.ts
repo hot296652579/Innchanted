@@ -44,6 +44,10 @@ export enum GameEvent {
     ORDER_SHOWN = "ORDER_SHOWN",
     /** 上菜成功 */
     GUEST_SERVED = "GUEST_SERVED",
+    /** 桌上出现金币 */
+    SHELL_SPAWNED = "SHELL_SPAWNED",
+    /** 金币存进宝箱 */
+    SHELL_BANKED = "SHELL_BANKED",
     /** 客人等待超时生气 */
     GUEST_ANGRY = "GUEST_ANGRY",
     /** 客人走到离店点 */

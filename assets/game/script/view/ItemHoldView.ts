@@ -1,4 +1,4 @@
-import { instantiate, Node } from "cc";
+import { instantiate, Node, tween, Vec3 } from "cc";
 import { StationRegistry } from "../sim/StationRegistry";
 
 const STACK_Y = 0.12;
@@ -26,6 +26,32 @@ export class ItemHoldView {
 
     stack(stationId: string, moved: number): void {
         this.transfer(this.playerHold, this.hold(stationId), moved);
+    }
+
+    /** 手里金币飞进宝箱 HoldPoint 后销毁。 */
+    bankInto(stationId: string): void {
+        const to = this.hold(stationId);
+        const from = this.playerHold;
+        if (!from || !to) {
+            return;
+        }
+        const kids = from.children.slice();
+        for (let i = 0; i < kids.length; i++) {
+            const coin = kids[i];
+            const world = coin.worldPosition.clone();
+            to.addChild(coin);
+            coin.setWorldPosition(world);
+            coin.mobility = 2;
+            tween(coin)
+                .delay(i * 0.04)
+                .to(0.35, { position: new Vec3(0, 0, 0) }, { easing: "quadIn" })
+                .call(() => {
+                    if (coin.isValid) {
+                        coin.destroy();
+                    }
+                })
+                .start();
+        }
     }
 
     private hold(stationId: string): Node | null {

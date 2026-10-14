@@ -1,4 +1,4 @@
-import { ItemStack } from "../domain/ItemStack";
+import { isCoin, ItemStack } from "../domain/ItemStack";
 import { Station, StationType } from "../domain/Station";
 import { findCookRecipe } from "./Recipe";
 
@@ -10,6 +10,7 @@ export type ActionKind =
     | "Take"
     | "Stack"
     | "Serve"
+    | "Bank"
     | "RefuseSwap";
 
 type StationResolver = (
@@ -23,6 +24,7 @@ const STATION_RESOLVERS: Record<StationType, StationResolver> = {
     [StationType.Cook]: resolveCook,
     [StationType.Table]: resolveTable,
     [StationType.Place]: resolvePlace,
+    [StationType.Chest]: resolveChest,
 };
 
 /** 到达台子后该做什么。纯函数：手 + 台子 → 动作名。 */
@@ -58,12 +60,29 @@ function resolveTable(
     station: Station,
     wantedItemId?: string | null,
 ): ActionKind {
-    const held = nonempty(hand); // 手上有没有货物
-    const slot = nonempty(station.slot);// 台子上有没有货物
+    const held = nonempty(hand);
+    const slot = nonempty(station.slot);
+    if (slot && isCoin(slot.itemId)) {
+        if (!held) {
+            return "Take";
+        }
+        if (isCoin(held.itemId)) {
+            return "Stack";
+        }
+        return "RefuseSwap";
+    }
     if (held && !slot && wantedItemId && held.itemId === wantedItemId) {
         return "Serve";
     }
     return resolvePlace(hand, station);
+}
+
+function resolveChest(hand: ItemStack | null): ActionKind {
+    const held = nonempty(hand);
+    if (!held) {
+        return "MoveOnly";
+    }
+    return isCoin(held.itemId) ? "Bank" : "RefuseSwap";
 }
 
 function resolvePlace(hand: ItemStack | null, station: Station): ActionKind {
