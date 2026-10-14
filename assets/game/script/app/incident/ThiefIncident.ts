@@ -38,18 +38,7 @@ export class ThiefIncident implements IIncident {
             return;
         }
         this._view.bind(actor);
-        this._remain = this.def.duration;
-        this._urged = false;
-        this._scared = false;
-        this._carrying = false;
-        this._hoverStationId = null;
-        this._phase = "warning";
-        const events = EventManager.getInstance();
-        events.emit(GameEvent.EVENT_WARN, this.def.id, this.def.duration);
-        if (this.def.warnText) {
-            events.emit(GameEvent.SHOW_TIPS, this.def.warnText);
-        }
-        console.log("[Event] 预兆", this.def.id, this.def.duration, "s");
+        this.restartWarn();
     }
 
     scareAt(stationId: string): boolean {
@@ -131,8 +120,8 @@ export class ThiefIncident implements IIncident {
         events.emit(GameEvent.EVENT_FAIL, this.def.id, this._targets.length);
         if (this._targets.length === 0) {
             events.emit(GameEvent.SHOW_TIPS, "没有成品可偷");
-            console.log("[Event] 超时无成品", this.def.id);
-            this._phase = "done";
+            console.log("[Event] 超时无成品，再等", this.def.duration, "s");
+            this.restartWarn();
             return;
         }
         if (this.def.failText) {
@@ -143,9 +132,26 @@ export class ThiefIncident implements IIncident {
         this.nextTarget();
     }
 
+    private restartWarn(): void {
+        this._scared = false;
+        this._carrying = false;
+        this._hoverStationId = null;
+        this._urged = false;
+        this._index = 0;
+        this._targets = [];
+        this._remain = this.def.duration;
+        this._phase = "warning";
+        const events = EventManager.getInstance();
+        events.emit(GameEvent.EVENT_WARN, this.def.id, this.def.duration);
+        if (this.def.warnText) {
+            events.emit(GameEvent.SHOW_TIPS, this.def.warnText);
+        }
+        console.log("[Event] 预兆", this.def.id, this.def.duration, "s");
+    }
+
     private nextTarget(): void {
         if (this._scared || this._index >= this._targets.length) {
-            this._phase = "done";
+            this.restartWarn();
             return;
         }
         const hold = this._targets[this._index].holdPoint;
@@ -182,6 +188,6 @@ export class ThiefIncident implements IIncident {
             this._phase = "attack";
             return;
         }
-        this._phase = "done";
+        this.restartWarn();
     }
 }
