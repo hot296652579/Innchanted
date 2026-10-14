@@ -4,6 +4,7 @@ import { Actor } from "../domain/Actor";
 import { StationType } from "../domain/Station";
 import { StationBinding } from "../sim/StationRegistry";
 import { ItemHoldView } from "../view/ItemHoldView";
+import { PlayerView } from "../view/PlayerView";
 import { ActionKind, resolveDefaultAction } from "./DefaultAction";
 import { GuestLoop } from "./GuestLoop";
 import { ProcessorSystem } from "./ProcessorSystem";
@@ -15,6 +16,7 @@ export class InteractService {
         private readonly holds: ItemHoldView,
         private readonly processors: ProcessorSystem,
         private readonly guests: GuestLoop,
+        private readonly playerView: PlayerView,
     ) { }
 
     arrive(binding: StationBinding): void {
@@ -54,6 +56,7 @@ export class InteractService {
                 break;
             case "Serve":// 上菜
                 this.dropHand(binding);
+                this.playerView.playThrow();
                 if (!this.tryServe(binding)) {
                     events.emit(GameEvent.SHOW_TIPS, "这不是客人要的");
                     return;
@@ -75,6 +78,9 @@ export class InteractService {
                 return;
             default:
                 return;
+        }
+        if (action === "Take" || action === "Place" || action === "Stack") {
+            this.playerView.playThrow();
         }
         events.emit(GameEvent.ITEM_HELD_CHANGED, actor.id, actor.hand);
         events.emit(GameEvent.STATION_SLOT_CHANGED, station.id);

@@ -33,6 +33,10 @@ export class EventDirector {
     private _active: IIncident | null = null;
     private _ctx: IncidentContext | null = null;
 
+    scareAt(stationId: string): boolean {
+        return this._active?.scareAt?.(stationId) ?? false;
+    }
+
     start(registry: StationRegistry, processors: ProcessorSystem, levelRoot: Node): void {
         this._queue = allEventDefs().slice().sort((a, b) => a.delay - b.delay);
         this._index = 0;

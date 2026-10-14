@@ -16,4 +16,6 @@ export interface IIncident {
     begin(ctx: IncidentContext): void;
     tick(dt: number): void;
     cancel(): void;
+    /** 玩家点击该台驱赶。成功返回 true。 */
+    scareAt?(stationId: string): boolean;
 }

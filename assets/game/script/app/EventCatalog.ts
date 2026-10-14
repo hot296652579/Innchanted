@@ -12,6 +12,7 @@ export type EventDef = {
     actorName?: string;
     prefab?: string;
     flySpeed?: number;
+    hoverTime?: number;
     warnText?: string;
     failText?: string;
 };
@@ -27,6 +28,7 @@ const FALLBACK: EventDef[] = [
         actorName: "Bat",
         prefab: "prefab/enemys/Bat",
         flySpeed: 6,
+        hoverTime: 2,
         warnText: "小偷来袭！20秒后会偷走成品！",
         failText: "蝙蝠偷走了成品！",
     },

@@ -5,20 +5,24 @@ import { ThiefView } from "../../view/ThiefView";
 import { EventDef } from "../EventCatalog";
 import { IIncident, IncidentContext } from "./Incident";
 
-type Phase = "warning" | "toFood" | "toHome" | "attack" | "done";
+type Phase = "warning" | "toFood" | "hover" | "toHome" | "attack" | "done";
 
-/** 小偷来袭：倒计时结束飞去叼走成品，回巢 Hit 后销毁。 */
+/** 小偷来袭：飞到台后停留，未被驱赶才偷走；回巢 Hit 后销毁。 */
 export class ThiefIncident implements IIncident {
     private _ctx: IncidentContext | null = null;
     private readonly _view = new ThiefView();
     private _phase: Phase = "done";
     private _remain = 0;
+    private _hoverLeft = 0;
+    private _hoverStationId: string | null = null;
     private _attackLeft = 0;
     private _targets: StationBinding[] = [];
     private _index = 0;
     private _urged = false;
+    private _carrying = false;
+    private _scared = false;
 
-    constructor(readonly def: EventDef) { }
+    constructor(readonly def: EventDef) {}
 
     get done(): boolean {
         return this._phase === "done";
@@ -36,6 +40,9 @@ export class ThiefIncident implements IIncident {
         this._view.bind(actor);
         this._remain = this.def.duration;
         this._urged = false;
+        this._scared = false;
+        this._carrying = false;
+        this._hoverStationId = null;
         this._phase = "warning";
         const events = EventManager.getInstance();
         events.emit(GameEvent.EVENT_WARN, this.def.id, this.def.duration);
@@ -43,6 +50,19 @@ export class ThiefIncident implements IIncident {
             events.emit(GameEvent.SHOW_TIPS, this.def.warnText);
         }
         console.log("[Event] 预兆", this.def.id, this.def.duration, "s");
+    }
+
+    scareAt(stationId: string): boolean {
+        if (this._phase !== "hover" || this._hoverStationId !== stationId) {
+            return false;
+        }
+        this._scared = true;
+        this._carrying = false;
+        this._hoverStationId = null;
+        this._view.flyHome(this.def.flySpeed ?? 6);
+        this._phase = "toHome";
+        console.log("[Event] 被驱赶", this.def.id, stationId);
+        return true;
     }
 
     tick(dt: number): void {
@@ -56,13 +76,20 @@ export class ThiefIncident implements IIncident {
         this._view.tick(dt);
         if (this._phase === "toFood") {
             if (!this._view.flying) {
+                this.startHover();
+            }
+            return;
+        }
+        if (this._phase === "hover") {
+            this._hoverLeft -= dt;
+            if (this._hoverLeft <= 0) {
                 this.grabAndReturn();
             }
             return;
         }
         if (this._phase === "toHome") {
             if (!this._view.flying) {
-                this.startAttack();
+                this.onHome();
             }
             return;
         }
@@ -70,6 +97,7 @@ export class ThiefIncident implements IIncident {
             this._attackLeft -= dt;
             if (this._attackLeft <= 0) {
                 this._view.discardHeld();
+                this._carrying = false;
                 this._index += 1;
                 this.nextTarget();
             }
@@ -79,6 +107,7 @@ export class ThiefIncident implements IIncident {
     cancel(): void {
         this._view.discardHeld();
         this._view.snapHome();
+        this._hoverStationId = null;
         this._phase = "done";
     }
 
@@ -115,7 +144,7 @@ export class ThiefIncident implements IIncident {
     }
 
     private nextTarget(): void {
-        if (this._index >= this._targets.length) {
+        if (this._scared || this._index >= this._targets.length) {
             this._phase = "done";
             return;
         }
@@ -124,12 +153,21 @@ export class ThiefIncident implements IIncident {
         this._phase = "toFood";
     }
 
+    private startHover(): void {
+        const binding = this._targets[this._index];
+        this._hoverStationId = binding?.station.id ?? null;
+        this._hoverLeft = this.def.hoverTime ?? 2;
+        this._phase = "hover";
+        console.log("[Event] 停留", this._hoverStationId, this._hoverLeft, "s");
+    }
+
     private grabAndReturn(): void {
+        this._hoverStationId = null;
         const ctx = this._ctx!;
         const hold = this._view.hold;
         const binding = this._targets[this._index];
-        const took = !!(hold && binding && ctx.processors.takeCooked(binding, hold));
-        if (!took) {
+        this._carrying = !!(hold && binding && ctx.processors.takeCooked(binding, hold));
+        if (!this._carrying) {
             this._index += 1;
             this.nextTarget();
             return;
@@ -138,8 +176,12 @@ export class ThiefIncident implements IIncident {
         this._phase = "toHome";
     }
 
-    private startAttack(): void {
-        this._attackLeft = this._view.playHit();
-        this._phase = "attack";
+    private onHome(): void {
+        if (this._carrying) {
+            this._attackLeft = this._view.playHit();
+            this._phase = "attack";
+            return;
+        }
+        this._phase = "done";
     }
 }

@@ -22,13 +22,13 @@
         "__id__": 2
       },
       {
-        "__id__": 12
+        "__id__": 18
       }
     ],
     "_active": true,
     "_components": [],
     "_prefab": {
-      "__id__": 14
+      "__id__": 20
     },
     "_lpos": {
       "__type__": "cc.Vec3",
@@ -108,6 +108,24 @@
       },
       {
         "__id__": 10
+      },
+      {
+        "__id__": 12
+      },
+      {
+        "__id__": 13
+      },
+      {
+        "__id__": 14
+      },
+      {
+        "__id__": 15
+      },
+      {
+        "__id__": 16
+      },
+      {
+        "__id__": 17
       }
     ],
     "removedComponents": []
@@ -120,7 +138,7 @@
     "propertyPath": [
       "_name"
     ],
-    "value": "Run"
+    "value": "Animation"
   },
   {
     "__type__": "cc.TargetInfo",
@@ -191,6 +209,86 @@
     ]
   },
   {
+    "__type__": "CCPropertyOverrideInfo",
+    "targetInfo": {
+      "__id__": 11
+    },
+    "propertyPath": [
+      "_clips",
+      "length"
+    ],
+    "value": 4
+  },
+  {
+    "__type__": "CCPropertyOverrideInfo",
+    "targetInfo": {
+      "__id__": 11
+    },
+    "propertyPath": [
+      "_clips",
+      "1"
+    ],
+    "value": {
+      "__uuid__": "92753950-28ec-447f-805a-616d0da18b17@4fe37",
+      "__expectedType__": "cc.AnimationClip"
+    }
+  },
+  {
+    "__type__": "CCPropertyOverrideInfo",
+    "targetInfo": {
+      "__id__": 11
+    },
+    "propertyPath": [
+      "_clips",
+      "2"
+    ],
+    "value": {
+      "__uuid__": "6e4f1e4b-33b2-4866-91b8-c6e49e785c4d@8fc16",
+      "__expectedType__": "cc.AnimationClip"
+    }
+  },
+  {
+    "__type__": "CCPropertyOverrideInfo",
+    "targetInfo": {
+      "__id__": 11
+    },
+    "propertyPath": [
+      "_clips",
+      "3"
+    ],
+    "value": {
+      "__uuid__": "eec77076-7d1c-4e39-9c0a-8f4aaa6dc59a@9d0a6",
+      "__expectedType__": "cc.AnimationClip"
+    }
+  },
+  {
+    "__type__": "CCPropertyOverrideInfo",
+    "targetInfo": {
+      "__id__": 11
+    },
+    "propertyPath": [
+      "_clips",
+      "0"
+    ],
+    "value": {
+      "__uuid__": "e66315e6-b62e-40bb-abf9-dbaa248b225e@7ba60",
+      "__expectedType__": "cc.AnimationClip"
+    }
+  },
+  {
+    "__type__": "CCPropertyOverrideInfo",
+    "targetInfo": {
+      "__id__": 11
+    },
+    "propertyPath": [
+      "_defaultClip"
+    ],
+    "value": {
+      "__uuid__": "e66315e6-b62e-40bb-abf9-dbaa248b225e@7ba60",
+      "__expectedType__": "cc.AnimationClip"
+    }
+  },
+  {
     "__type__": "cc.Node",
     "_name": "HoldPoint",
     "_objFlags": 0,
@@ -202,7 +300,7 @@
     "_active": true,
     "_components": [],
     "_prefab": {
-      "__id__": 13
+      "__id__": 19
     },
     "_lpos": {
       "__type__": "cc.Vec3",

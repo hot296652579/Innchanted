@@ -1,6 +1,8 @@
 import { Camera, Component, Node } from "cc";
 import { BundlesEnum } from "../../../define/BundlesEnum";
 import { ConfigManager } from "../../../framework/config/ConfigManager";
+import { EventManager } from "../../../framework/event/EventManager";
+import { GameEvent } from "../../../framework/event/EventName";
 import { Actor } from "../domain/Actor";
 import { CommandFsm } from "../fsm/CommandFsm";
 import RecastDetourManager from "../navmesh/recastdetourjs/tool/RecastDetourManager";
@@ -61,7 +63,7 @@ export class ShiftController {
         await this._guests.load();
         this._guests.start(args.levelRoot, args.stationRoot, args.yawOffset);
 
-        this._interact = new InteractService(this._actor!, holds, this._processors, this._guests);
+        this._interact = new InteractService(this._actor!, holds, this._processors, this._guests, this._playerView!);
         this._events = new EventDirector();
         this._events.start(this._registry, this._processors, args.levelRoot);
         this.bindClick(args);
@@ -130,6 +132,11 @@ export class ShiftController {
             this._playerView?.setLookTarget(hit.lookAt);
         } else {
             this._playerView?.clearLookTarget();
+        }
+        if (hit.target.kind === "place" && this._events?.scareAt(hit.target.stationId)) {
+            this._playerView?.playAttack();
+            EventManager.getInstance().emit(GameEvent.SHOW_TIPS, "赶走了小偷");
+            return;
         }
         this._commands.issue(hit.target, hit.dest, () => this.onArrive(hit));
     }
