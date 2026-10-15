@@ -1,4 +1,4 @@
-export type GuestState = "entering" | "seated" | "reacting" | "leaving" | "gone";
+export type GuestState = "entering" | "queuing" | "seated" | "reacting" | "leaving" | "gone";
 export type GuestLeaveReason = "served" | "angry" | null;
 export type WaitSignal = "urge" | "timeout" | null;
 

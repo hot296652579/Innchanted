@@ -16,6 +16,9 @@ import { PlayerView } from "../view/PlayerView";
 import { findGuestDef } from "./GuestCatalog";
 
 const SEAT_ARRIVE = 1.0;
+const WAIT_GAP = 1.2;
+const _waitPos = new Vec3();
+const _waitBack = new Vec3();
 
 interface GuestRuntime {
     layout: DiningLayout;
@@ -30,6 +33,8 @@ export class GuestLoop {
     private readonly _orders = new GuestOrderView();
     private readonly _faces: GuestExpressionView;
     private readonly _runtimes: GuestRuntime[] = [];
+    private readonly _queue: GuestRuntime[] = [];
+    private _waitPoint: Node | null = null;
     private _coinPrefab: Prefab | null = null;
     private _yawOffset = 0;
 
@@ -53,15 +58,24 @@ export class GuestLoop {
     start(levelRoot: Node, stationRoot: Node, yawOffset: number): void {
         this._yawOffset = yawOffset;
         this._runtimes.length = 0;
-        const layouts = scanDining(levelRoot, stationRoot, this.registry);
-        if (layouts.length === 0) {
+        this._queue.length = 0;
+        const scan = scanDining(levelRoot, stationRoot, this.registry);
+        if (!scan) {
             console.warn("[Guest] 缺少 Guest / Table / SeatPoint / LeavePoint");
             return;
         }
-        for (let i = 0; i < layouts.length; i++) {
-            this.spawn(layouts[i]);
+        this._waitPoint = scan.waitPoint;
+        for (let i = 0; i < scan.seated.length; i++) {
+            this.spawn(scan.seated[i], false);
         }
-        console.log(`[Guest] 就绪 ${this._runtimes.length} 位`);
+        if (scan.waiting.length > 0 && !scan.waitPoint) {
+            console.warn("[Guest] 有人没座位，但缺少 WaitPoint");
+        }
+        for (let i = 0; i < scan.waiting.length; i++) {
+            this.spawn(scan.waiting[i], true);
+        }
+        this.repackQueue();
+        console.log(`[Guest] 就绪 入座 ${scan.seated.length} 排队 ${scan.waiting.length}`);
     }
 
     update(dt: number): void {
@@ -113,14 +127,16 @@ export class GuestLoop {
         return false;
     }
 
-    private spawn(layout: DiningLayout): void {
+    private spawn(layout: DiningLayout, waitInLine: boolean): void {
         const def = findGuestDef(layout.guestType);
         if (!def) {
-            console.warn("[Guest] 没有配置", layout.guestNode.name);
+            console.warn("[Guest] 没有配置", layout.guestNode.name, layout.guestType);
             return;
         }
         const guest = new Guest(layout.guestNode.name, def);
-        guest.tableId = layout.table.station.id;
+        if (layout.table) {
+            guest.tableId = layout.table.station.id;
+        }
         const fsm = new GuestFsm(guest);
         this._orders.bind(guest.id, layout.guestNode);
 
@@ -140,13 +156,28 @@ export class GuestLoop {
         const agent = new GridAgent(this.pathfinder, agentId, SEAT_ARRIVE);
         const view = guestNode.getComponent(PlayerView) ?? guestNode.addComponent(PlayerView);
         view.bind(this.pathfinder, agentId, startPos.y - agentPos.y, this._yawOffset, 8);
-        agent.goto(layout.seatPoint.worldPosition);
         this.setAnimPlaying(guestNode, true);
-        this._runtimes.push({ layout, guest, fsm, view, agent });
+        const runtime: GuestRuntime = { layout, guest, fsm, view, agent };
+        this._runtimes.push(runtime);
+        if (waitInLine) {
+            fsm.queue();
+            this._queue.push(runtime);
+            console.log("[Guest] 排队", guest.id, "要", guest.orderId);
+            return;
+        }
+        if (!layout.seatPoint) {
+            return;
+        }
+        agent.goto(layout.seatPoint.worldPosition);
         console.log("[Guest] 前往入座", guest.id, "要", guest.orderId, guest.waitTime, "s", layout.seatPoint.parent?.name);
     }
 
     private tickRuntime(runtime: GuestRuntime, dt: number): void {
+        if (runtime.fsm.state === "queuing" && runtime.agent.arrived()) {
+            runtime.agent.stop();
+            this.faceWaitLine(runtime.layout.guestNode);
+            return;
+        }
         if (runtime.fsm.state === "entering" && runtime.agent.arrived()) {
             this.sit(runtime);
             return;
@@ -167,6 +198,9 @@ export class GuestLoop {
 
     private sit(runtime: GuestRuntime): void {
         const { layout, guest, fsm, view, agent } = runtime;
+        if (!layout.seatPoint || !layout.table) {
+            return;
+        }
         agent.stop();
         if (view) {
             view.enabled = false;
@@ -194,6 +228,8 @@ export class GuestLoop {
 
     private walkOut(runtime: GuestRuntime): void {
         const leave = runtime.layout.leavePoint;
+        const seat = runtime.layout.seatPoint;
+        const table = runtime.layout.table;
         runtime.fsm.leave();
         this._faces.hide(runtime.guest.id);
         if (runtime.view) {
@@ -202,6 +238,9 @@ export class GuestLoop {
         this.setAnimPlaying(runtime.layout.guestNode, true);
         runtime.agent.goto(leave.worldPosition);
         console.log("[Guest] 离席", runtime.guest.id, runtime.guest.leaveReason);
+        if (seat && table) {
+            this.admitNext(seat, table);
+        }
     }
 
     private finishLeave(runtime: GuestRuntime): void {
@@ -210,6 +249,62 @@ export class GuestLoop {
         runtime.layout.guestNode.active = false;
         EventManager.getInstance().emit(GameEvent.GUEST_LEFT, runtime.guest.id);
         console.log("[Guest] 已离开", runtime.guest.id);
+    }
+
+    private admitNext(seat: Node, table: StationBinding): void {
+        const waiter = this._queue.shift();
+        if (!waiter) {
+            return;
+        }
+        waiter.layout.seatPoint = seat;
+        waiter.layout.table = table;
+        waiter.guest.tableId = table.station.id;
+        waiter.fsm.goSeat();
+        if (waiter.view) {
+            waiter.view.enabled = true;
+        }
+        this.setAnimPlaying(waiter.layout.guestNode, true);
+        waiter.agent.goto(seat.worldPosition);
+        this.repackQueue();
+        console.log("[Guest] 补位入座", waiter.guest.id, table.station.id);
+    }
+
+    private repackQueue(): void {
+        const wait = this._waitPoint;
+        if (!wait) {
+            return;
+        }
+        for (let i = 0; i < this._queue.length; i++) {
+            this._queue[i].agent.goto(this.waitSlot(wait, i));
+        }
+    }
+
+    private waitSlot(waitPoint: Node, index: number): Vec3 {
+        const origin = waitPoint.worldPosition;
+        _waitBack.set(waitPoint.forward);
+        _waitBack.y = 0;
+        if (_waitBack.lengthSqr() < 1e-6) {
+            _waitBack.set(0, 0, -1);
+        } else {
+            _waitBack.normalize();
+        }
+        _waitPos.set(
+            origin.x + _waitBack.x * WAIT_GAP * index,
+            origin.y,
+            origin.z + _waitBack.z * WAIT_GAP * index,
+        );
+        return _waitPos;
+    }
+
+    private faceWaitLine(node: Node): void {
+        const wait = this._waitPoint;
+        if (!wait) {
+            return;
+        }
+        const look = wait.worldPosition.clone();
+        look.x -= wait.forward.x;
+        look.z -= wait.forward.z;
+        this.face(node, look);
     }
 
     private face(node: Node, world: Vec3): void {

@@ -8,8 +8,19 @@ export type GuestDef = {
 };
 
 
+/** Guest0 / Guest_1 / RegularGuest2 → guest / regularguest。 */
 export function guestTypeFromNode(name: string): string {
-    return name.replace(/_\d+$/, "").toLowerCase();
+    const id = name.toLowerCase();
+    const matched = id.match(/^(.*guest)(?:_\d+|\d+)?$/);
+    if (matched) {
+        return matched[1];
+    }
+    return id.replace(/_\d+$/, "");
+}
+
+export function isGuestNodeName(name: string): boolean {
+    const type = guestTypeFromNode(name);
+    return type === "guest" || type.endsWith("guest");
 }
 
 export function allGuestDefs(): GuestDef[] {

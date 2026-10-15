@@ -1,4 +1,5 @@
 import { Node, Vec3 } from "cc";
+import { guestTypeFromNode, isGuestNodeName } from "../app/GuestCatalog";
 import { StationType } from "../domain/Station";
 import { findNamedDescendant, StationBinding, StationRegistry } from "./StationRegistry";
 
@@ -6,24 +7,33 @@ export interface DiningLayout {
     guestNode: Node;
     guestType: string;
     leavePoint: Node;
-    seatPoint: Node;
-    table: StationBinding;
+    seatPoint: Node | null;
+    table: StationBinding | null;
 }
 
-/** 从关卡收集每位客人与最近空座 / 餐桌 / 离店点，不写玩法。 */
+export interface DiningScan {
+    leavePoint: Node;
+    waitPoint: Node | null;
+    seated: DiningLayout[];
+    waiting: DiningLayout[];
+}
+
+/** 从关卡收集客人、座位、排队点。座位不够的进 waiting。 */
 export function scanDining(
     levelRoot: Node,
     stationRoot: Node,
     registry: StationRegistry,
-): DiningLayout[] {
+): DiningScan | null {
     const leavePoint = findNamedDescendant(levelRoot, "LeavePoint");
+    const waitPoint = findNamedDescendant(levelRoot, "WaitPoint");
     const guests = collectDescendants(levelRoot, (node) => isGuestNodeName(node.name));
+    guests.sort((a, b) => a.name.localeCompare(b.name));
     const seats = collectSeats(stationRoot);
     const tables = registry.all.filter((b) => b.station.type === StationType.Table);
     if (!leavePoint || guests.length === 0 || seats.length === 0 || tables.length === 0) {
-        return [];
+        return null;
     }
-    return assignSeats(guests, seats, tables, leavePoint);
+    return assignSeats(guests, seats, tables, leavePoint, waitPoint);
 }
 
 function assignSeats(
@@ -31,7 +41,8 @@ function assignSeats(
     seats: Node[],
     tables: StationBinding[],
     leavePoint: Node,
-): DiningLayout[] {
+    waitPoint: Node | null,
+): DiningScan {
     const pairs: { guest: Node; seat: Node; dist: number }[] = [];
     for (let i = 0; i < guests.length; i++) {
         for (let j = 0; j < seats.length; j++) {
@@ -46,7 +57,7 @@ function assignSeats(
 
     const usedGuest = new Set<Node>();
     const usedSeat = new Set<Node>();
-    const layouts: DiningLayout[] = [];
+    const seated: DiningLayout[] = [];
     for (let i = 0; i < pairs.length; i++) {
         const pair = pairs[i];
         if (usedGuest.has(pair.guest) || usedSeat.has(pair.seat)) {
@@ -58,15 +69,29 @@ function assignSeats(
         }
         usedGuest.add(pair.guest);
         usedSeat.add(pair.seat);
-        layouts.push({
+        seated.push({
             guestNode: pair.guest,
-            guestType: pair.guest.name.replace(/_\d+$/, "").toLowerCase(),
+            guestType: guestTypeFromNode(pair.guest.name),
             leavePoint,
             seatPoint: pair.seat,
             table,
         });
     }
-    return layouts;
+
+    const waiting: DiningLayout[] = [];
+    for (let i = 0; i < guests.length; i++) {
+        if (usedGuest.has(guests[i])) {
+            continue;
+        }
+        waiting.push({
+            guestNode: guests[i],
+            guestType: guestTypeFromNode(guests[i].name),
+            leavePoint,
+            seatPoint: null,
+            table: null,
+        });
+    }
+    return { leavePoint, waitPoint, seated, waiting };
 }
 
 function collectSeats(stationRoot: Node): Node[] {
@@ -111,11 +136,6 @@ function collectDescendants(root: Node, pred: (node: Node) => boolean, out: Node
         collectDescendants(root.children[i], pred, out);
     }
     return out;
-}
-
-function isGuestNodeName(name: string): boolean {
-    const id = name.replace(/_\d+$/, "").toLowerCase();
-    return id === "guest" || id.endsWith("guest");
 }
 
 function dist2(a: Vec3, b: Vec3): number {

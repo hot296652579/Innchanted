@@ -8,6 +8,14 @@ export class GuestFsm {
         return this.guest.state;
     }
 
+    queue(): void {
+        this.guest.state = "queuing";
+    }
+
+    goSeat(): void {
+        this.guest.state = "entering";
+    }
+
     sit(): void {
         this.guest.state = "seated";
         this.guest.waited = 0;
