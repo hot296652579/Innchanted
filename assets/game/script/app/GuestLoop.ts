@@ -6,7 +6,7 @@ import { ResourceManager } from "../../../framework/resource/ResourceManager";
 import { Guest } from "../domain/Guest";
 import { COIN_ID, ItemStack } from "../domain/ItemStack";
 import { GuestFsm } from "../fsm/GuestFsm";
-import { DiningLayout, scanDining } from "../sim/DiningHall";
+import { DiningLayout, DiningScan, scanDining } from "../sim/DiningHall";
 import { GridAgent } from "../sim/GridAgent";
 import { RecastPathfinder } from "../sim/RecastPathfinder";
 import { StationBinding, StationRegistry } from "../sim/StationRegistry";
@@ -16,7 +16,8 @@ import { PlayerView } from "../view/PlayerView";
 import { findGuestDef } from "./GuestCatalog";
 
 const SEAT_ARRIVE = 1.0;
-const WAIT_GAP = 1.2;
+const QUEUE_ARRIVE = 0.35;
+const WAIT_GAP = 1.6;
 const _waitPos = new Vec3();
 const _waitBack = new Vec3();
 
@@ -35,6 +36,7 @@ export class GuestLoop {
     private readonly _runtimes: GuestRuntime[] = [];
     private readonly _queue: GuestRuntime[] = [];
     private _waitPoint: Node | null = null;
+    private readonly _queueDir = new Vec3(0, 0, -1);
     private _coinPrefab: Prefab | null = null;
     private _yawOffset = 0;
 
@@ -65,6 +67,7 @@ export class GuestLoop {
             return;
         }
         this._waitPoint = scan.waitPoint;
+        this.captureQueueDir(scan);
         for (let i = 0; i < scan.seated.length; i++) {
             this.spawn(scan.seated[i], false);
         }
@@ -75,7 +78,10 @@ export class GuestLoop {
             this.spawn(scan.waiting[i], true);
         }
         this.repackQueue();
-        console.log(`[Guest] 就绪 入座 ${scan.seated.length} 排队 ${scan.waiting.length}`);
+        console.log(
+            `[Guest] 就绪 入座 ${scan.seated.map((g) => g.guestNode.name).join(", ") || "无"}`,
+            `排队 ${scan.waiting.map((g) => g.guestNode.name).join(", ") || "无"}`,
+        );
     }
 
     update(dt: number): void {
@@ -156,11 +162,12 @@ export class GuestLoop {
         const agent = new GridAgent(this.pathfinder, agentId, SEAT_ARRIVE);
         const view = guestNode.getComponent(PlayerView) ?? guestNode.addComponent(PlayerView);
         view.bind(this.pathfinder, agentId, startPos.y - agentPos.y, this._yawOffset, 8);
-        this.setAnimPlaying(guestNode, true);
         const runtime: GuestRuntime = { layout, guest, fsm, view, agent };
         this._runtimes.push(runtime);
+        this.setAnimPlaying(guestNode, true);
         if (waitInLine) {
             fsm.queue();
+            agent.arriveRadius = QUEUE_ARRIVE;
             this._queue.push(runtime);
             console.log("[Guest] 排队", guest.id, "要", guest.orderId);
             return;
@@ -260,6 +267,7 @@ export class GuestLoop {
         waiter.layout.table = table;
         waiter.guest.tableId = table.station.id;
         waiter.fsm.goSeat();
+        waiter.agent.arriveRadius = SEAT_ARRIVE;
         if (waiter.view) {
             waiter.view.enabled = true;
         }
@@ -279,19 +287,33 @@ export class GuestLoop {
         }
     }
 
-    private waitSlot(waitPoint: Node, index: number): Vec3 {
-        const origin = waitPoint.worldPosition;
-        _waitBack.set(waitPoint.forward);
-        _waitBack.y = 0;
-        if (_waitBack.lengthSqr() < 1e-6) {
+    private captureQueueDir(scan: DiningScan): void {
+        const wait = scan.waitPoint;
+        if (!wait) {
+            return;
+        }
+        const tail = scan.waiting[scan.waiting.length - 1] ?? scan.seated[scan.seated.length - 1];
+        const origin = wait.worldPosition;
+        if (tail) {
+            const p = tail.guestNode.worldPosition;
+            _waitBack.set(p.x - origin.x, 0, p.z - origin.z);
+        } else {
+            _waitBack.set(wait.forward.x, 0, wait.forward.z);
+        }
+        if (_waitBack.lengthSqr() < 0.01) {
             _waitBack.set(0, 0, -1);
         } else {
             _waitBack.normalize();
         }
+        this._queueDir.set(_waitBack);
+    }
+
+    private waitSlot(waitPoint: Node, index: number): Vec3 {
+        const origin = waitPoint.worldPosition;
         _waitPos.set(
-            origin.x + _waitBack.x * WAIT_GAP * index,
+            origin.x + this._queueDir.x * WAIT_GAP * index,
             origin.y,
-            origin.z + _waitBack.z * WAIT_GAP * index,
+            origin.z + this._queueDir.z * WAIT_GAP * index,
         );
         return _waitPos;
     }
@@ -302,8 +324,8 @@ export class GuestLoop {
             return;
         }
         const look = wait.worldPosition.clone();
-        look.x -= wait.forward.x;
-        look.z -= wait.forward.z;
+        look.x -= this._queueDir.x;
+        look.z -= this._queueDir.z;
         this.face(node, look);
     }
 

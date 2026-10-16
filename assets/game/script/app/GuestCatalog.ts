@@ -10,7 +10,10 @@ export type GuestDef = {
 
 /** Guest0 / Guest_1 / RegularGuest2 → guest / regularguest。 */
 export function guestTypeFromNode(name: string): string {
-    const id = name.toLowerCase();
+    const id = (name || "").toLowerCase();
+    if (!id) {
+        return "guest";
+    }
     const matched = id.match(/^(.*guest)(?:_\d+|\d+)?$/);
     if (matched) {
         return matched[1];

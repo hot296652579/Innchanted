@@ -26,13 +26,13 @@ export function scanDining(
 ): DiningScan | null {
     const leavePoint = findNamedDescendant(levelRoot, "LeavePoint");
     const waitPoint = findNamedDescendant(levelRoot, "WaitPoint");
-    const guests = collectDescendants(levelRoot, (node) => isGuestNodeName(node.name));
-    guests.sort((a, b) => a.name.localeCompare(b.name));
+    const guests = collectGuests(levelRoot);
     const seats = collectSeats(stationRoot);
     const tables = registry.all.filter((b) => b.station.type === StationType.Table);
     if (!leavePoint || guests.length === 0 || seats.length === 0 || tables.length === 0) {
         return null;
     }
+    console.log("[Guest] 层级顺序", guests.map((node) => node.name).join(", "));
     return assignSeats(guests, seats, tables, leavePoint, waitPoint);
 }
 
@@ -43,46 +43,30 @@ function assignSeats(
     leavePoint: Node,
     waitPoint: Node | null,
 ): DiningScan {
-    const pairs: { guest: Node; seat: Node; dist: number }[] = [];
-    for (let i = 0; i < guests.length; i++) {
-        for (let j = 0; j < seats.length; j++) {
-            pairs.push({
-                guest: guests[i],
-                seat: seats[j],
-                dist: dist2(guests[i].worldPosition, seats[j].worldPosition),
-            });
-        }
-    }
-    pairs.sort((a, b) => a.dist - b.dist);
-
-    const usedGuest = new Set<Node>();
     const usedSeat = new Set<Node>();
     const seated: DiningLayout[] = [];
-    for (let i = 0; i < pairs.length; i++) {
-        const pair = pairs[i];
-        if (usedGuest.has(pair.guest) || usedSeat.has(pair.seat)) {
-            continue;
+    const take = Math.min(guests.length, seats.length);
+    for (let i = 0; i < take; i++) {
+        const seat = nextFreeSeat(seats, usedSeat);
+        if (!seat) {
+            break;
         }
-        const table = nearestTable(pair.seat, tables);
+        const table = nearestTable(seat, tables);
         if (!table) {
-            continue;
+            break;
         }
-        usedGuest.add(pair.guest);
-        usedSeat.add(pair.seat);
+        usedSeat.add(seat);
         seated.push({
-            guestNode: pair.guest,
-            guestType: guestTypeFromNode(pair.guest.name),
+            guestNode: guests[i],
+            guestType: guestTypeFromNode(guests[i].name),
             leavePoint,
-            seatPoint: pair.seat,
+            seatPoint: seat,
             table,
         });
     }
 
     const waiting: DiningLayout[] = [];
-    for (let i = 0; i < guests.length; i++) {
-        if (usedGuest.has(guests[i])) {
-            continue;
-        }
+    for (let i = seated.length; i < guests.length; i++) {
         waiting.push({
             guestNode: guests[i],
             guestType: guestTypeFromNode(guests[i].name),
@@ -92,6 +76,33 @@ function assignSeats(
         });
     }
     return { leavePoint, waitPoint, seated, waiting };
+}
+
+function nextFreeSeat(seats: Node[], used: Set<Node>): Node | null {
+    for (let i = 0; i < seats.length; i++) {
+        if (!used.has(seats[i])) {
+            return seats[i];
+        }
+    }
+    return null;
+}
+
+/** Guests 节点下的直接子节点 = 编辑器层级顺序。 */
+function collectGuests(levelRoot: Node): Node[] {
+    const folder = findNamedDescendant(levelRoot, "Guests");
+    if (folder && folder.children.length > 0) {
+        const guests: Node[] = [];
+        for (let i = 0; i < folder.children.length; i++) {
+            const node = folder.children[i];
+            if (node.active) {
+                guests.push(node);
+            }
+        }
+        if (guests.length > 0) {
+            return guests;
+        }
+    }
+    return collectDescendants(levelRoot, (node) => isGuestNodeName(node.name));
 }
 
 function collectSeats(stationRoot: Node): Node[] {
