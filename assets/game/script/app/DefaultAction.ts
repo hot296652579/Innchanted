@@ -1,5 +1,5 @@
 import { colorFromItemId, isPulp } from "../domain/Barrel";
-import { isCoin, ItemStack } from "../domain/ItemStack";
+import { ITEM_STACK_CAP, isCoin, ItemStack } from "../domain/ItemStack";
 import { Station, StationType } from "../domain/Station";
 import { findCombineRecipe } from "./Combine";
 import { findCookRecipe } from "./Recipe";
@@ -33,6 +33,7 @@ const STATION_RESOLVERS: Record<StationType, StationResolver> = {
     [StationType.Chest]: resolveChest,
     [StationType.OriginalBarrel]: resolveOriginalBarrel,
     [StationType.MagicBarrel]: resolveMagicBarrel,
+    [StationType.ItemStand]: resolveItemStand,
 };
 
 /** 到达台子后该做什么。纯函数：手 + 台子 → 动作名。 */
@@ -130,6 +131,21 @@ function resolveMagicBarrel(hand: ItemStack | null, station: Station): ActionKin
         return "AcceptFill";
     }
     return "RefuseSwap";
+}
+
+function resolveItemStand(hand: ItemStack | null, station: Station): ActionKind {
+    const slot = nonempty(station.slot);
+    if (!slot) {
+        return "MoveOnly";
+    }
+    const held = nonempty(hand);
+    if (!held) {
+        return "Take";
+    }
+    if (held.itemId !== slot.itemId) {
+        return "RefuseSwap";
+    }
+    return held.count < ITEM_STACK_CAP ? "Take" : "MoveOnly";
 }
 
 function resolvePlace(hand: ItemStack | null, station: Station): ActionKind {

@@ -20,6 +20,24 @@ export class ItemHoldView {
         this.transfer(this.hold(stationId), this.playerHold, -1);
     }
 
+    /** 无限材料架：复制一份到手上，不销毁台上的。 */
+    copyToPlayer(stationId: string, count = 1): void {
+        const from = this.hold(stationId);
+        const to = this.playerHold;
+        if (!from || !to || count <= 0 || from.children.length === 0) {
+            return;
+        }
+        const src = from.children[0];
+        const n = Math.min(count, 8);
+        for (let i = 0; i < n; i++) {
+            const clone = instantiate(src);
+            clone.name = src.name;
+            to.addChild(clone);
+            clone.mobility = 2;
+        }
+        this.layout(to);
+    }
+
     place(stationId: string, count = -1): void {
         this.transfer(this.playerHold, this.hold(stationId), count);
     }

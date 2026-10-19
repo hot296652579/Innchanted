@@ -140,6 +140,9 @@ function inferStationType(name: string): StationType {
     if (id.startsWith("barrel")) {
         return StationType.MagicBarrel;
     }
+    if (id.startsWith("itemstand")) {
+        return StationType.ItemStand;
+    }
     return StationType.Place;
 }
 

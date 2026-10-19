@@ -1,7 +1,7 @@
 import { EventManager } from "../../../framework/event/EventManager";
 import { GameEvent } from "../../../framework/event/EventName";
 import { Actor } from "../domain/Actor";
-import { isCoin, ItemStack } from "../domain/ItemStack";
+import { ITEM_STACK_CAP, isCoin, ItemStack } from "../domain/ItemStack";
 import { Station, StationType } from "../domain/Station";
 import { StationBinding } from "../sim/StationRegistry";
 import { ItemHoldView } from "../view/ItemHoldView";
@@ -47,6 +47,10 @@ export class InteractService {
         const events = EventManager.getInstance();
         switch (action) {
             case "Take"://拿取物品
+                if (station.type === StationType.ItemStand) {
+                    this.takeFromStand(binding);
+                    break;
+                }
                 actor.hand = station.slot;
                 station.slot = null;
                 station.cook?.reset();
@@ -168,6 +172,22 @@ export class InteractService {
         return true;
     }
 
+    private takeFromStand(binding: StationBinding): void {
+        const src = binding.station.slot;
+        if (!src || src.empty) {
+            return;
+        }
+        const hand = this.actor.hand;
+        if (!hand || hand.empty) {
+            this.actor.hand = new ItemStack(src.itemId, 1);
+        } else if (hand.itemId === src.itemId && hand.count < ITEM_STACK_CAP) {
+            hand.count += 1;
+        } else {
+            return;
+        }
+        this.holds.copyToPlayer(binding.station.id, 1);
+    }
+
     private dropHand(binding: StationBinding): void {
         binding.station.slot = this.actor.hand;
         this.actor.hand = null;
@@ -205,6 +225,9 @@ function refuseTip(station: Station): string {
             return "桶里还有饮料，先接完再灌";
         }
         return "只有原浆才能灌进魔法桶";
+    }
+    if (station.type === StationType.ItemStand) {
+        return "材料架上的东西不能换，空手来拿";
     }
     if (isCoin(station.slot?.itemId)) {
         return "先拿走金币才能上菜";
