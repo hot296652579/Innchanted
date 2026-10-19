@@ -1,6 +1,7 @@
 import { colorFromItemId, isPulp } from "../domain/Barrel";
 import { isCoin, ItemStack } from "../domain/ItemStack";
 import { Station, StationType } from "../domain/Station";
+import { findCombineRecipe } from "./Combine";
 import { findCookRecipe } from "./Recipe";
 
 export type ActionKind =
@@ -15,7 +16,8 @@ export type ActionKind =
     | "RefuseSwap"
     | "AcceptPulp"
     | "AcceptFill"
-    | "AcceptDrink";
+    | "AcceptDrink"
+    | "Combine";
 
 type StationResolver = (
     hand: ItemStack | null,
@@ -53,7 +55,10 @@ function resolveCook(hand: ItemStack | null, station: Station): ActionKind {
         return "MoveOnly";
     }
     if (state === "ready") {
-        return held ? "MoveOnly" : "Take";
+        if (!held) {
+            return "Take";
+        }
+        return findCombineRecipe(held, station) ? "Combine" : "MoveOnly";
     }
     if (!held) {
         return "MoveOnly";
@@ -138,6 +143,9 @@ function resolvePlace(hand: ItemStack | null, station: Station): ActionKind {
     }
     if (held && slot && held.itemId === slot.itemId) {
         return "Stack";
+    }
+    if (held && slot && findCombineRecipe(held, station)) {
+        return "Combine";
     }
     if (held && slot) {
         return "RefuseSwap";

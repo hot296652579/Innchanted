@@ -1,0 +1,22 @@
+[
+  {
+    "id": "comb_burger_brown",
+    "inputs": [
+      { "itemId": "magicdrink_brown", "count": 1, "from": "hand" },
+      { "itemId": "burgerbaked", "count": 1, "from": "station" }
+    ],
+    "output": { "itemId": "combburgerbrown", "count": 1, "to": "station" },
+    "stationTypes": ["place", "table", "cook"],
+    "prefab": "prefab/items/CombBurgerBrown"
+  },
+  {
+    "id": "comb_burger_green",
+    "inputs": [
+      { "itemId": "magicdrink_green", "count": 1, "from": "hand" },
+      { "itemId": "burgerbaked", "count": 1, "from": "station" }
+    ],
+    "output": { "itemId": "combburgergreen", "count": 1, "to": "station" },
+    "stationTypes": ["place", "table", "cook"],
+    "prefab": "prefab/items/CombBurgerGreen"
+  }
+]

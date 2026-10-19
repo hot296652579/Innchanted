@@ -10,5 +10,7 @@
   { "id": "originalpulp_brown", "stack": 1, "displayName": "棕色原浆" },
   { "id": "originalpulp_green", "stack": 1, "displayName": "绿色原浆" },
   { "id": "magicdrink_brown", "stack": 1, "displayName": "棕色魔法饮料" },
-  { "id": "magicdrink_green", "stack": 1, "displayName": "绿色魔法饮料" }
+  { "id": "magicdrink_green", "stack": 1, "displayName": "绿色魔法饮料" },
+  { "id": "combburgerbrown", "stack": 3, "displayName": "棕色魔法汉堡" },
+  { "id": "combburgergreen", "stack": 3, "displayName": "绿色魔法汉堡" }
 ]

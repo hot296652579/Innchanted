@@ -16,6 +16,7 @@ import { CommandService } from "./CommandService";
 import { EventDirector } from "./EventDirector";
 import { GuestLoop } from "./GuestLoop";
 import { BarrelSystem } from "./BarrelSystem";
+import { CombineCatalog } from "./Combine";
 import { InteractService } from "./InteractService";
 import { ProcessorSystem } from "./ProcessorSystem";
 
@@ -50,6 +51,7 @@ export class ShiftController {
         await ConfigManager.getInstance().loadTable("recipes", BundlesEnum.Table);
         await ConfigManager.getInstance().loadTable("guests", BundlesEnum.Table);
         await ConfigManager.getInstance().loadTable("events", BundlesEnum.Table);
+        await ConfigManager.getInstance().loadTable("combines", BundlesEnum.Table);
 
         this._registry.scan(args.stationRoot);
         this._pathfinder = new RecastPathfinder(args.recast);
@@ -68,7 +70,10 @@ export class ShiftController {
         await this._guests.load();
         this._guests.start(args.levelRoot, args.stationRoot, args.yawOffset);
 
-        this._interact = new InteractService(this._actor!, holds, this._processors, this._barrels, this._guests, this._playerView!);
+        const combines = new CombineCatalog();
+        await combines.load();
+
+        this._interact = new InteractService(this._actor!, holds, this._processors, this._barrels, combines, this._guests, this._playerView!);
         this._events = new EventDirector();
         this._events.start(this._registry, this._processors, args.levelRoot);
         this.bindClick(args);

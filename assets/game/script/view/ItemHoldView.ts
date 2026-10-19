@@ -1,4 +1,4 @@
-import { instantiate, Node, tween, Vec3 } from "cc";
+import { instantiate, Node, Prefab, tween, Vec3 } from "cc";
 import { StationRegistry } from "../sim/StationRegistry";
 
 const STACK_Y = 0.12;
@@ -28,6 +28,22 @@ export class ItemHoldView {
         this.transfer(this.playerHold, this.hold(stationId), moved);
     }
 
+    removeFromPlayer(count: number): void {
+        this.remove(this.playerHold, count);
+    }
+
+    removeFromStation(stationId: string, count: number): void {
+        this.remove(this.hold(stationId), count);
+    }
+
+    spawnOnPlayer(prefab: Prefab, count: number): void {
+        this.spawn(this.playerHold, prefab, count);
+    }
+
+    spawnOnStation(stationId: string, prefab: Prefab, count: number): void {
+        this.spawn(this.hold(stationId), prefab, count);
+    }
+
     /** 手里金币飞进宝箱 HoldPoint 后销毁。 */
     bankInto(stationId: string): void {
         const to = this.hold(stationId);
@@ -52,6 +68,31 @@ export class ItemHoldView {
                 })
                 .start();
         }
+    }
+
+    private remove(hold: Node | null, count: number): void {
+        if (!hold || count <= 0) {
+            return;
+        }
+        const kids = hold.children.slice();
+        const n = Math.min(count, kids.length);
+        for (let i = kids.length - n; i < kids.length; i++) {
+            kids[i].destroy();
+        }
+        this.layout(hold);
+    }
+
+    private spawn(hold: Node | null, prefab: Prefab, count: number): void {
+        if (!hold || count <= 0) {
+            return;
+        }
+        for (let i = 0; i < count; i++) {
+            const item = instantiate(prefab);
+            item.name = prefab.name;
+            hold.addChild(item);
+            item.mobility = 2;
+        }
+        this.layout(hold);
     }
 
     private hold(stationId: string): Node | null {
