@@ -6,6 +6,7 @@ import { Station, StationType } from "../domain/Station";
 import { StationBinding } from "../sim/StationRegistry";
 import { ItemHoldView } from "../view/ItemHoldView";
 import { PlayerView } from "../view/PlayerView";
+import { BarrelSystem } from "./BarrelSystem";
 import { ActionKind, resolveDefaultAction } from "./DefaultAction";
 import { GuestLoop } from "./GuestLoop";
 import { ProcessorSystem } from "./ProcessorSystem";
@@ -16,6 +17,7 @@ export class InteractService {
         private readonly actor: Actor,
         private readonly holds: ItemHoldView,
         private readonly processors: ProcessorSystem,
+        private readonly barrels: BarrelSystem,
         private readonly guests: GuestLoop,
         private readonly playerView: PlayerView,
     ) { }
@@ -63,6 +65,11 @@ export class InteractService {
                     return;
                 }
                 break;
+            case "AcceptPulp":
+            case "AcceptFill":
+            case "AcceptDrink":
+                this.barrels.begin(action, binding);
+                return;
             case "Bank":// 金币存宝箱
                 if (!actor.hand || !isCoin(actor.hand.itemId)) {
                     return;
@@ -128,6 +135,15 @@ function refuseTip(station: Station): string {
     }
     if (station.type === StationType.Chest) {
         return "只有金币才能存进宝箱";
+    }
+    if (station.type === StationType.OriginalBarrel) {
+        return "空手才能接原浆";
+    }
+    if (station.type === StationType.MagicBarrel) {
+        if (station.barrel && station.barrel.charges > 0) {
+            return "桶里还有饮料，先接完再灌";
+        }
+        return "只有原浆才能灌进魔法桶";
     }
     if (isCoin(station.slot?.itemId)) {
         return "先拿走金币才能上菜";

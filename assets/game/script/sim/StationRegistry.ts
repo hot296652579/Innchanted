@@ -1,4 +1,5 @@
 import { Node, Vec3 } from "cc";
+import { originalBarrelColor } from "../domain/Barrel";
 import { ITEM_STACK_CAP, ItemStack } from "../domain/ItemStack";
 import { Station, StationType } from "../domain/Station";
 
@@ -37,8 +38,13 @@ export class StationRegistry {
             const node = stationRoot.children[i];
             const type = inferStationType(node.name);
             let holdPoint = findNamedDescendant(node, HOLD_POINT_NAME);
-            if (!holdPoint && (type === StationType.Table || type === StationType.Chest)) {
-                holdPoint = ensureHoldPoint(node, type === StationType.Chest ? 0.55 : 0.85);
+            if (!holdPoint && (
+                type === StationType.Table
+                || type === StationType.Chest
+                || type === StationType.OriginalBarrel
+                || type === StationType.MagicBarrel
+            )) {
+                holdPoint = ensureHoldPoint(node, type === StationType.Chest ? 0.55 : 0.9);
             }
             if (!holdPoint) {
                 continue;
@@ -48,6 +54,9 @@ export class StationRegistry {
                 id = `${node.name}_${i}`;
             }
             const station = new Station(id, type);
+            if (type === StationType.OriginalBarrel && station.barrel) {
+                station.barrel.color = originalBarrelColor(node.name);
+            }
             station.slot = stackFromHoldPoint(holdPoint);
             const binding: StationBinding = {
                 station,
@@ -124,6 +133,12 @@ function inferStationType(name: string): StationType {
     }
     if (id.includes("treasuer") || id.includes("treasure") || id.startsWith("chest") || id.startsWith("bank")) {
         return StationType.Chest;
+    }
+    if (id.startsWith("originalbarrel")) {
+        return StationType.OriginalBarrel;
+    }
+    if (id.startsWith("barrel")) {
+        return StationType.MagicBarrel;
     }
     return StationType.Place;
 }

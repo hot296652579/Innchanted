@@ -15,6 +15,7 @@ import { ClickHit, ClickPicker } from "./ClickPicker";
 import { CommandService } from "./CommandService";
 import { EventDirector } from "./EventDirector";
 import { GuestLoop } from "./GuestLoop";
+import { BarrelSystem } from "./BarrelSystem";
 import { InteractService } from "./InteractService";
 import { ProcessorSystem } from "./ProcessorSystem";
 
@@ -39,6 +40,7 @@ export class ShiftController {
     private _commands: CommandService | null = null;
     private _playerView: PlayerView | null = null;
     private _processors: ProcessorSystem | null = null;
+    private _barrels: BarrelSystem | null = null;
     private _guests: GuestLoop | null = null;
     private _interact: InteractService | null = null;
     private _events: EventDirector | null = null;
@@ -59,11 +61,14 @@ export class ShiftController {
         this._processors = new ProcessorSystem(args.camera, this._registry);
         await this._processors.load();
 
+        this._barrels = new BarrelSystem(args.camera, this._registry, this._actor!, this.requireHold(args.player), this._playerView!);
+        await this._barrels.load();
+
         this._guests = new GuestLoop(this._pathfinder, this._registry, args.camera);
         await this._guests.load();
         this._guests.start(args.levelRoot, args.stationRoot, args.yawOffset);
 
-        this._interact = new InteractService(this._actor!, holds, this._processors, this._guests, this._playerView!);
+        this._interact = new InteractService(this._actor!, holds, this._processors, this._barrels, this._guests, this._playerView!);
         this._events = new EventDirector();
         this._events.start(this._registry, this._processors, args.levelRoot);
         this.bindClick(args);
@@ -75,12 +80,14 @@ export class ShiftController {
         this._fsm?.update(dt);
         this._processors?.tick(dt);
         this._processors?.update();
+        this._barrels?.tick(dt);
         this._guests?.update(dt);
         this._events?.update(dt);
     }
 
     clear(): void {
         this._events?.clear();
+        this._barrels?.cancel();
         this._processors?.clearLocks();
         this._registry.clear();
     }
@@ -125,6 +132,7 @@ export class ShiftController {
             return;
         }
         if (hit.target.kind === "self") {
+            this._barrels?.cancel();
             this._commands.issue(hit.target, null, null);
             this._playerView?.clearLookTarget();
             return;
@@ -135,10 +143,15 @@ export class ShiftController {
             this._playerView?.clearLookTarget();
         }
         if (hit.target.kind === "place" && this._events?.scareAt(hit.target.stationId)) {
+            this._barrels?.cancel();
             this._playerView?.playAttack();
             EventManager.getInstance().emit(GameEvent.SHOW_TIPS, "赶走了小偷");
             return;
         }
+        if (hit.target.kind === "place" && this._barrels?.isAccepting(hit.target.stationId)) {
+            return;
+        }
+        this._barrels?.cancel();
         this._commands.issue(hit.target, hit.dest, () => this.onArrive(hit));
     }
 

@@ -1,3 +1,4 @@
+import { BarrelTank } from "./Barrel";
 import { CookProcess } from "./CookProcess";
 import { ItemStack } from "./ItemStack";
 
@@ -6,11 +7,14 @@ export enum StationType {
     Cook = "cook",
     Table = "table",
     Chest = "chest",
+    OriginalBarrel = "originalbarrel",
+    MagicBarrel = "magicbarrel",
 }
 
 export class Station {
     public slot: ItemStack | null = null;
     public cook: CookProcess | null = null;
+    public barrel: BarrelTank | null = null;
     public lockRemain = 0;
 
     constructor(
@@ -19,6 +23,9 @@ export class Station {
     ) {
         if (type === StationType.Cook) {
             this.cook = new CookProcess();
+        }
+        if (type === StationType.OriginalBarrel || type === StationType.MagicBarrel) {
+            this.barrel = new BarrelTank();
         }
     }
 

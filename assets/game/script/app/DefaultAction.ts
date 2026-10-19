@@ -1,3 +1,4 @@
+import { colorFromItemId, isPulp } from "../domain/Barrel";
 import { isCoin, ItemStack } from "../domain/ItemStack";
 import { Station, StationType } from "../domain/Station";
 import { findCookRecipe } from "./Recipe";
@@ -11,7 +12,10 @@ export type ActionKind =
     | "Stack"
     | "Serve"
     | "Bank"
-    | "RefuseSwap";
+    | "RefuseSwap"
+    | "AcceptPulp"
+    | "AcceptFill"
+    | "AcceptDrink";
 
 type StationResolver = (
     hand: ItemStack | null,
@@ -25,6 +29,8 @@ const STATION_RESOLVERS: Record<StationType, StationResolver> = {
     [StationType.Table]: resolveTable,
     [StationType.Place]: resolvePlace,
     [StationType.Chest]: resolveChest,
+    [StationType.OriginalBarrel]: resolveOriginalBarrel,
+    [StationType.MagicBarrel]: resolveMagicBarrel,
 };
 
 /** 到达台子后该做什么。纯函数：手 + 台子 → 动作名。 */
@@ -86,6 +92,39 @@ function resolveChest(hand: ItemStack | null): ActionKind {
         return "MoveOnly";
     }
     return isCoin(held.itemId) ? "Bank" : "RefuseSwap";
+}
+
+function resolveOriginalBarrel(hand: ItemStack | null, station: Station): ActionKind {
+    const tank = station.barrel;
+    if (!tank || tank.accepting) {
+        return "MoveOnly";
+    }
+    if (nonempty(hand)) {
+        return "RefuseSwap";
+    }
+    return tank.color ? "AcceptPulp" : "MoveOnly";
+}
+
+function resolveMagicBarrel(hand: ItemStack | null, station: Station): ActionKind {
+    const tank = station.barrel;
+    if (!tank || tank.accepting) {
+        return "MoveOnly";
+    }
+    const held = nonempty(hand);
+    if (!held) {
+        return tank.color && tank.charges > 0 ? "AcceptDrink" : "MoveOnly";
+    }
+    if (isPulp(held.itemId)) {
+        const color = colorFromItemId(held.itemId);
+        if (!color) {
+            return "RefuseSwap";
+        }
+        if (tank.charges > 0) {
+            return "RefuseSwap";
+        }
+        return "AcceptFill";
+    }
+    return "RefuseSwap";
 }
 
 function resolvePlace(hand: ItemStack | null, station: Station): ActionKind {
