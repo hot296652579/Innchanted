@@ -48,6 +48,12 @@ export enum GameEvent {
     SHELL_SPAWNED = "SHELL_SPAWNED",
     /** 金币存进宝箱 */
     SHELL_BANKED = "SHELL_BANKED",
+    /** 本关倒计时（剩余秒，取整） */
+    LEVEL_TIME_CHANGED = "LEVEL_TIME_CHANGED",
+    /** 本关入箱金币变化 */
+    LEVEL_GOLD_CHANGED = "LEVEL_GOLD_CHANGED",
+    /** 本关时间到 */
+    LEVEL_TIME_UP = "LEVEL_TIME_UP",
     /** 客人等待超时生气 */
     GUEST_ANGRY = "GUEST_ANGRY",
     /** 客人走到离店点 */

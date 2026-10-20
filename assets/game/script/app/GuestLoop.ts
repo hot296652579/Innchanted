@@ -14,6 +14,7 @@ import { GuestExpressionView } from "../view/GuestExpressionView";
 import { GuestOrderView } from "../view/GuestOrderView";
 import { PlayerView } from "../view/PlayerView";
 import { findGuestDef } from "./GuestCatalog";
+import { goldOf } from "./ItemCatalog";
 
 const SEAT_ARRIVE = 1.0;
 const QUEUE_ARRIVE = 0.35;
@@ -123,7 +124,7 @@ export class GuestLoop {
                 return false;
             }
             this.clearHold(binding.holdPoint);
-            this.dropCoin(binding);
+            this.dropCoin(binding, runtime.guest.orderId);
             this._orders.hide(runtime.guest.id);
             this.react(runtime, "happy");
             EventManager.getInstance().emit(GameEvent.GUEST_SERVED, runtime.guest.id, runtime.guest.orderId);
@@ -351,8 +352,9 @@ export class GuestLoop {
         }
     }
 
-    private dropCoin(binding: StationBinding): void {
-        binding.station.slot = new ItemStack(COIN_ID, 1);
+    private dropCoin(binding: StationBinding, orderId: string): void {
+        const gold = Math.max(1, goldOf(orderId));
+        binding.station.slot = new ItemStack(COIN_ID, gold);
         const prefab = this._coinPrefab;
         const hold = binding.holdPoint;
         if (!prefab) {

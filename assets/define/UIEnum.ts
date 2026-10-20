@@ -72,6 +72,14 @@ export const UIConfig = {
         cache: true,
     },
 
+    /**顶部常驻UI*/
+    TopWnd: {
+        name: "TopWnd",
+        path: "prefab/ui/TopWnd",
+        bundle: "game",
+        cache: false,
+    },
+
     /** 胜利 */
     WinWnd: {
         name: "WinWnd",

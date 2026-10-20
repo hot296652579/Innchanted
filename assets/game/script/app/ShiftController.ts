@@ -1,9 +1,11 @@
 import { Camera, Component, Node } from "cc";
+import { BattleContext } from "../../../define/BattleContext";
 import { BundlesEnum } from "../../../define/BundlesEnum";
 import { ConfigManager } from "../../../framework/config/ConfigManager";
 import { EventManager } from "../../../framework/event/EventManager";
 import { GameEvent } from "../../../framework/event/EventName";
 import { Actor } from "../domain/Actor";
+import { ShiftScore } from "../domain/ShiftScore";
 import { CommandFsm } from "../fsm/CommandFsm";
 import RecastDetourManager from "../navmesh/recastdetourjs/tool/RecastDetourManager";
 import { GridAgent } from "../sim/GridAgent";
@@ -18,6 +20,7 @@ import { GuestLoop } from "./GuestLoop";
 import { BarrelSystem } from "./BarrelSystem";
 import { CombineCatalog } from "./Combine";
 import { InteractService } from "./InteractService";
+import { findLevel } from "./LevelCatalog";
 import { ProcessorSystem } from "./ProcessorSystem";
 
 export interface ShiftStartArgs {
@@ -45,6 +48,7 @@ export class ShiftController {
     private _guests: GuestLoop | null = null;
     private _interact: InteractService | null = null;
     private _events: EventDirector | null = null;
+    private _score: ShiftScore | null = null;
 
     async start(args: ShiftStartArgs): Promise<void> {
         await ConfigManager.getInstance().loadTable("items", BundlesEnum.Table);
@@ -52,6 +56,7 @@ export class ShiftController {
         await ConfigManager.getInstance().loadTable("guests", BundlesEnum.Table);
         await ConfigManager.getInstance().loadTable("events", BundlesEnum.Table);
         await ConfigManager.getInstance().loadTable("combines", BundlesEnum.Table);
+        await ConfigManager.getInstance().loadTable("levels", BundlesEnum.Table);
 
         this._registry.scan(args.stationRoot);
         this._pathfinder = new RecastPathfinder(args.recast);
@@ -77,7 +82,11 @@ export class ShiftController {
         this._events = new EventDirector();
         this._events.start(this._registry, this._processors, args.levelRoot);
         this.bindClick(args);
-        console.log(`[Shift] 就绪，台子 ${this._registry.all.length} 个`);
+        this.bindScore();
+        const level = findLevel(BattleContext.selectedLevelId);
+        this._score = new ShiftScore(level.duration);
+        this.emitHud();
+        console.log(`[Shift] 就绪 关卡 ${level.id} ${level.duration}s 台子 ${this._registry.all.length} 个`);
     }
 
     update(dt: number): void {
@@ -88,13 +97,16 @@ export class ShiftController {
         this._barrels?.tick(dt);
         this._guests?.update(dt);
         this._events?.update(dt);
+        this.tickScore(dt);
     }
 
     clear(): void {
+        EventManager.getInstance().off(GameEvent.SHELL_BANKED, this.onBanked, this);
         this._events?.clear();
         this._barrels?.cancel();
         this._processors?.clearLocks();
         this._registry.clear();
+        this._score = null;
     }
 
     private spawnPlayer(args: ShiftStartArgs): void {
@@ -168,6 +180,44 @@ export class ShiftController {
         if (binding) {
             this._interact.arrive(binding);
         }
+    }
+
+    private bindScore(): void {
+        EventManager.getInstance().on(GameEvent.SHELL_BANKED, this.onBanked, this);
+    }
+
+    private onBanked(count: number): void {
+        this._score?.bank(count);
+        this.emitGold();
+    }
+
+    private tickScore(dt: number): void {
+        const score = this._score;
+        if (!score) {
+            return;
+        }
+        const { secondChanged, timeUp } = score.tick(dt);
+        if (secondChanged) {
+            EventManager.getInstance().emit(GameEvent.LEVEL_TIME_CHANGED, score.shownRemain, score.duration);
+        }
+        if (timeUp) {
+            EventManager.getInstance().emit(GameEvent.LEVEL_TIME_UP);
+            EventManager.getInstance().emit(GameEvent.SHOW_TIPS, "时间到");
+            console.log("[Shift] 时间到 入箱", score.gold);
+        }
+    }
+
+    private emitHud(): void {
+        const score = this._score;
+        if (!score) {
+            return;
+        }
+        EventManager.getInstance().emit(GameEvent.LEVEL_TIME_CHANGED, score.shownRemain, score.duration);
+        this.emitGold();
+    }
+
+    private emitGold(): void {
+        EventManager.getInstance().emit(GameEvent.LEVEL_GOLD_CHANGED, this._score?.gold ?? 0);
     }
 
     private requireHold(player: Node): Node {

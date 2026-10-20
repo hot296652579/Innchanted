@@ -24,6 +24,7 @@ export class StartScene extends Component {
         uiMgr.registerWindow(UIConfig.BattleWnd.name, UIConfig.BattleWnd.path, UIConfig.BattleWnd.cache, BundlesEnum.UI);
         uiMgr.registerWindow(UIConfig.WinWnd.name, UIConfig.WinWnd.path, UIConfig.WinWnd.cache, BundlesEnum.Game);
         uiMgr.registerWindow(UIConfig.LoseWnd.name, UIConfig.LoseWnd.path, UIConfig.LoseWnd.cache, BundlesEnum.Game);
+        uiMgr.registerWindow(UIConfig.TopWnd.name, UIConfig.TopWnd.path, UIConfig.TopWnd.cache, BundlesEnum.Game);
 
         uiMgr.registerWindow(UIConfig.TipWnd.name, UIConfig.TipWnd.path, UIConfig.TipWnd.cache, BundlesEnum.UI);
         uiMgr.registerWindow(UIConfig.ConfirmWnd.name, UIConfig.ConfirmWnd.path, UIConfig.ConfirmWnd.cache, BundlesEnum.UI);
