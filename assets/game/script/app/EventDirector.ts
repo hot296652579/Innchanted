@@ -4,6 +4,7 @@ import { GameEvent } from "../../../framework/event/EventName";
 import { allEventDefs, EventDef } from "./EventCatalog";
 import { IIncident, IncidentContext } from "./incident/Incident";
 import { CurseIncident } from "./incident/CurseIncident";
+import { IceDragonIncident } from "./incident/IceDragonIncident";
 import { LockIncident } from "./incident/LockIncident";
 import { SkeletonThiefIncident } from "./incident/SkeletonThiefIncident";
 import { ThiefIncident } from "./incident/ThiefIncident";
@@ -16,6 +17,7 @@ const FACTORY: Record<string, IncidentFactory> = {
     skeleton: (def) => new SkeletonThiefIncident(def),
     curse: (def) => new CurseIncident(def),
     lock: (def) => new LockIncident(def),
+    ice: (def) => new IceDragonIncident(def),
 };
 
 function createIncident(def: EventDef): IIncident | null {

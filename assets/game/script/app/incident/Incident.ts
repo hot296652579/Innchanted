@@ -1,4 +1,4 @@
-import { Node } from "cc";
+import { Camera, Node } from "cc";
 import { ProcessorSystem } from "../ProcessorSystem";
 import { IPathfinder } from "../../sim/IPathfinder";
 import { StationRegistry } from "../../sim/StationRegistry";
@@ -11,6 +11,7 @@ export type IncidentContext = {
     pathfinder?: IPathfinder;
     yawOffset?: number;
     stealGold?: (count: number) => number;
+    camera?: Camera;
 };
 
 /** 一条正在跑的突发事件。新类型实现此接口并登记到 EventDirector 的 FACTORY。 */

@@ -67,4 +67,8 @@ export enum GameEvent {
     EVENT_FAIL = "EVENT_FAIL",
     /** 突发事件整段结束（含动画） */
     EVENT_RESOLVED = "EVENT_RESOLVED",
+    /** 地面结冰（秒，默认 1） */
+    GROUND_ICE_FREEZE = "GROUND_ICE_FREEZE",
+    /** 地面解冻（秒，默认 1） */
+    GROUND_ICE_THAW = "GROUND_ICE_THAW",
 }

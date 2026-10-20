@@ -12,6 +12,7 @@ import { GridAgent } from "../sim/GridAgent";
 import { RecastPathfinder } from "../sim/RecastPathfinder";
 import { findNamedDescendant, StationRegistry } from "../sim/StationRegistry";
 import { Enemy } from "../view/Enemy";
+import { GroundIceView } from "../view/GroundIceView";
 import { ItemHoldView } from "../view/ItemHoldView";
 import { PlayerView } from "../view/PlayerView";
 import { BarrelSystem } from "./BarrelSystem";
@@ -54,6 +55,7 @@ export class ShiftController {
     private _huntId: string | null = null;
     private _huntRetarget = 0;
     private _levelRoot: Node | null = null;
+    private _ice: GroundIceView | null = null;
 
     async start(args: ShiftStartArgs): Promise<void> {
         await ConfigManager.getInstance().loadTable("items", BundlesEnum.Table);
@@ -96,9 +98,11 @@ export class ShiftController {
             pathfinder: this._pathfinder!,
             yawOffset: args.yawOffset,
             stealGold: (count) => this.onStolen(count),
+            camera: args.camera,
         });
         this.tagEnemies(args.levelRoot);
         this.bindClick(args);
+        await this.bindIce(args.planeRoot);
         console.log(`[Shift] 就绪 关卡 ${level.id} ${level.duration}s 台子 ${this._registry.all.length} 个`);
     }
 
@@ -111,12 +115,18 @@ export class ShiftController {
         this._guests?.update(dt);
         this._events?.update(dt);
         this.tickHunt(dt);
+        this._ice?.update(dt);
         this.tickScore(dt);
     }
 
     clear(): void {
-        EventManager.getInstance().off(GameEvent.SHELL_BANKED, this.onBanked, this);
+        const events = EventManager.getInstance();
+        events.off(GameEvent.SHELL_BANKED, this.onBanked, this);
+        events.off(GameEvent.GROUND_ICE_FREEZE, this.onIceFreeze, this);
+        events.off(GameEvent.GROUND_ICE_THAW, this.onIceThaw, this);
         this._huntId = null;
+        this._ice?.clear();
+        this._ice = null;
         this._events?.clear();
         this._barrels?.cancel();
         this._processors?.clearLocks();
@@ -272,10 +282,29 @@ export class ShiftController {
         }
     }
 
+    private async bindIce(planeRoot: Node | null): Promise<void> {
+        this._ice = new GroundIceView();
+        await this._ice.bind(planeRoot);
+        const events = EventManager.getInstance();
+        events.on(GameEvent.GROUND_ICE_FREEZE, this.onIceFreeze, this);
+        events.on(GameEvent.GROUND_ICE_THAW, this.onIceThaw, this);
+    }
+
+    private onIceFreeze(duration?: number): void {
+        this._ice?.freeze(typeof duration === "number" ? duration : 1);
+    }
+
+    private onIceThaw(duration?: number): void {
+        this._ice?.thaw(typeof duration === "number" ? duration : 1);
+    }
+
     private tagEnemies(levelRoot: Node): void {
         this._levelRoot = levelRoot;
         const defs = allEventDefs();
         for (let i = 0; i < defs.length; i++) {
+            if (defs[i].category !== "attack") {
+                continue;
+            }
             const name = defs[i].actorName;
             if (!name) {
                 continue;

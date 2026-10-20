@@ -1,0 +1,87 @@
+CCEffect %{
+  techniques:
+  - name: transparent
+    passes:
+    - vert: ice-vs:vert
+      frag: ice-fs:frag
+      rasterizerState:
+        cullMode: none
+      depthStencilState:
+        depthTest: true
+        depthWrite: false
+      blendState:
+        targets:
+        - blend: true
+          blendSrc: src_alpha
+          blendDst: one_minus_src_alpha
+          blendSrcAlpha: src_alpha
+          blendDstAlpha: one_minus_src_alpha
+      properties:
+        iceColor:  { value: [0.78, 0.94, 1.00, 1.00], editor: { type: color } }
+        iceParams: { value: [0.00, 2.20, 12.00, 0.00] }
+        iceCenter: { value: [0.00, 0.00, 0.00, 0.00] }
+}%
+
+CCProgram ice-vs %{
+  precision highp float;
+  #include <legacy/input>
+  #include <builtin/uniforms/cc-global>
+  #include <legacy/local-batch>
+
+  out vec3 v_worldPos;
+
+  vec4 vert () {
+    vec4 position;
+    CCVertInput(position);
+    mat4 matWorld;
+    CCGetWorldMatrix(matWorld);
+    vec4 world = matWorld * position;
+    v_worldPos = world.xyz;
+    return cc_matProj * (cc_matView * world);
+  }
+}%
+
+CCProgram ice-fs %{
+  precision highp float;
+  #include <legacy/output>
+
+  in vec3 v_worldPos;
+
+  uniform Constant {
+    vec4 iceColor;
+    vec4 iceParams;
+    vec4 iceCenter;
+  };
+
+  float hash(vec2 p) {
+    return fract(sin(dot(p, vec2(127.1, 311.7))) * 43758.5453);
+  }
+
+  float noise(vec2 p) {
+    vec2 i = floor(p);
+    vec2 f = fract(p);
+    f = f * f * (3.0 - 2.0 * f);
+    float a = hash(i);
+    float b = hash(i + vec2(1.0, 0.0));
+    float c = hash(i + vec2(0.0, 1.0));
+    float d = hash(i + vec2(1.0, 1.0));
+    return mix(mix(a, b, f.x), mix(c, d, f.x), f.y);
+  }
+
+  vec4 frag () {
+    float freezeAmount = clamp(iceParams.x, 0.0, 1.0);
+    float frostScale = max(iceParams.y, 0.1);
+    float radius = max(iceParams.z, 0.1);
+    vec2 xz = v_worldPos.xz;
+    float dist = length(xz - iceCenter.xz);
+    float edge = radius * freezeAmount;
+    float cover = 1.0 - smoothstep(edge - 1.6, edge + 0.35, dist);
+
+    float n = 0.5 * noise(xz * frostScale) + 0.5 * noise(xz * frostScale * 3.1);
+    float crack = smoothstep(0.55, 0.8, noise(xz * frostScale * 4.2));
+    vec3 col = mix(iceColor.rgb * 0.82, vec3(0.95, 0.98, 1.0), n);
+    col = mix(col, col * 0.7, crack * 0.45);
+    float alpha = cover * mix(0.0, 0.92, freezeAmount);
+    return CCFragOutput(vec4(col, alpha));
+  }
+}%

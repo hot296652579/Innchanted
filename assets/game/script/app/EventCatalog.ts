@@ -57,6 +57,19 @@ const FALLBACK: EventDef[] = [
         freezeTime: 5,
         failText: "未上锁的灶炉被锁住 5 秒！",
     },
+    {
+        id: "ice",
+        kind: "ice",
+        category: "status",
+        delay: 12,
+        duration: 0,
+        freezeTime: 1,
+        actorName: "Dragon",
+        prefab: "prefab/enemys/Dragon",
+        flySpeed: 5,
+        warnText: "冰龙来袭！",
+        failText: "地面被冻结了！",
+    },
 ];
 
 export function allEventDefs(): EventDef[] {
