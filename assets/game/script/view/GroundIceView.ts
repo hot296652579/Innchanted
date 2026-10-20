@@ -28,7 +28,7 @@ export class GroundIceView {
         if (!planeRoot) {
             return;
         }
-        const effect = await ResourceManager.getInstance().load(
+        const effect = await ResourceManager.getInstance().load<EffectAsset>(
             "shader/ice-ground",
             EffectAsset,
             BundlesEnum.Game,
@@ -52,6 +52,8 @@ export class GroundIceView {
         const mesh = utils.MeshUtils.createMesh(primitives.plane({
             width: sizeX,
             length: sizeZ,
+            widthSegments: 1,
+            lengthSegments: 1,
         }));
         if (!mesh) {
             console.warn("[Ice] 创建冰面网格失败");
