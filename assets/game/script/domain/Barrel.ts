@@ -1,20 +1,21 @@
 export enum BarrelColor {
     Brown = "brown",
     Green = "green",
+    Red = "red",
 }
+
+export const BARREL_COLORS: BarrelColor[] = [BarrelColor.Brown, BarrelColor.Green, BarrelColor.Red];
 
 export const BARREL_MAX_CHARGES = 3;
 export const BARREL_ACCEPT_SEC = 1;
 
 export type BarrelAcceptKind = "pulp" | "fill" | "drink";
 
-const ORIGINAL_COLORS: BarrelColor[] = [BarrelColor.Brown, BarrelColor.Green];
-
-/** OriginalBarrel0 → 棕，OriginalBarrel1 → 绿。 */
+/** OriginalBarrel0 → 棕，OriginalBarrel1 → 绿，OriginalBarrel2 → 红。 */
 export function originalBarrelColor(name: string): BarrelColor {
     const matched = name.toLowerCase().match(/^originalbarrel(\d+)/);
     const index = matched ? Number(matched[1]) : 0;
-    return ORIGINAL_COLORS[index] ?? BarrelColor.Green;
+    return BARREL_COLORS[index] ?? BarrelColor.Brown;
 }
 
 export function pulpItemId(color: BarrelColor): string {
@@ -27,11 +28,11 @@ export function drinkItemId(color: BarrelColor): string {
 
 export function colorFromItemId(itemId: string): BarrelColor | null {
     const id = itemId.toLowerCase();
-    if (id.includes(BarrelColor.Brown)) {
-        return BarrelColor.Brown;
-    }
-    if (id.includes(BarrelColor.Green)) {
-        return BarrelColor.Green;
+    for (let i = 0; i < BARREL_COLORS.length; i++) {
+        const color = BARREL_COLORS[i];
+        if (id.endsWith(`_${color}`) || id.includes(color)) {
+            return color;
+        }
     }
     return null;
 }

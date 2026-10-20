@@ -229,6 +229,9 @@ function refuseTip(station: Station): string {
     if (station.type === StationType.ItemStand) {
         return "材料架上的东西不能换，空手来拿";
     }
+    if (station.type === StationType.MagicJar) {
+        return "融合罐只放魔法饮料，两种饮料才能融合";
+    }
     if (isCoin(station.slot?.itemId)) {
         return "先拿走金币才能上菜";
     }

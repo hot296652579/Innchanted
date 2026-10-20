@@ -1,4 +1,4 @@
-import { colorFromItemId, isPulp } from "../domain/Barrel";
+import { colorFromItemId, isMagicDrink, isPulp } from "../domain/Barrel";
 import { ITEM_STACK_CAP, isCoin, ItemStack } from "../domain/ItemStack";
 import { Station, StationType } from "../domain/Station";
 import { findCombineRecipe } from "./Combine";
@@ -34,6 +34,7 @@ const STATION_RESOLVERS: Record<StationType, StationResolver> = {
     [StationType.OriginalBarrel]: resolveOriginalBarrel,
     [StationType.MagicBarrel]: resolveMagicBarrel,
     [StationType.ItemStand]: resolveItemStand,
+    [StationType.MagicJar]: resolveMagicJar,
 };
 
 /** 到达台子后该做什么。纯函数：手 + 台子 → 动作名。 */
@@ -146,6 +147,27 @@ function resolveItemStand(hand: ItemStack | null, station: Station): ActionKind 
         return "RefuseSwap";
     }
     return held.count < ITEM_STACK_CAP ? "Take" : "MoveOnly";
+}
+
+function resolveMagicJar(hand: ItemStack | null, station: Station): ActionKind {
+    const held = nonempty(hand);
+    const slot = nonempty(station.slot);
+    if (!held && slot) {
+        return "Take";
+    }
+    if (held && !isMagicDrink(held.itemId)) {
+        return "RefuseSwap";
+    }
+    if (held && !slot) {
+        return "Place";
+    }
+    if (held && slot && findCombineRecipe(held, station)) {
+        return "Combine";
+    }
+    if (held && slot) {
+        return "RefuseSwap";
+    }
+    return "MoveOnly";
 }
 
 function resolvePlace(hand: ItemStack | null, station: Station): ActionKind {

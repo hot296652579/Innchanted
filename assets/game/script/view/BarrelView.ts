@@ -2,7 +2,7 @@ import { Camera, Color, instantiate, Material, MeshRenderer, Node, Prefab, Progr
 import { BundlesEnum } from "../../../define/BundlesEnum";
 import { ResourceManager } from "../../../framework/resource/ResourceManager";
 import { UILayerRoot, UILayerType } from "../../../framework/ui/UILayer";
-import { BARREL_MAX_CHARGES, BarrelColor } from "../domain/Barrel";
+import { BARREL_COLORS, BARREL_MAX_CHARGES, BarrelColor } from "../domain/Barrel";
 import { StationBinding } from "../sim/StationRegistry";
 
 const BAR_NAME = "AcceptLoading";
@@ -11,6 +11,7 @@ const UI_Y_OFFSET = 80;
 const BAR_TINT: Record<BarrelColor, Color> = {
     [BarrelColor.Brown]: new Color(104, 7, 7, 255),
     [BarrelColor.Green]: new Color(116, 238, 21, 255),
+    [BarrelColor.Red]: new Color(238, 21, 47, 255),
 };
 const _world = new Vec3();
 const _local = new Vec3();
@@ -18,16 +19,19 @@ const _local = new Vec3();
 const MAT_PATH: Record<BarrelColor, string> = {
     [BarrelColor.Brown]: "mat/brown_material",
     [BarrelColor.Green]: "mat/green_material",
+    [BarrelColor.Red]: "mat/red_material",
 };
 
 const PULP_PATH: Record<BarrelColor, string> = {
     [BarrelColor.Brown]: "prefab/items/OriginalPulp_Brown",
     [BarrelColor.Green]: "prefab/items/OriginalPulp_Green",
+    [BarrelColor.Red]: "prefab/items/OriginalPulp_Red",
 };
 
 const DRINK_PATH: Record<BarrelColor, string> = {
     [BarrelColor.Brown]: "prefab/items/MagicDrink_Brown",
     [BarrelColor.Green]: "prefab/items/MagicDrink_Green",
+    [BarrelColor.Red]: "prefab/items/MagicDrink_Red",
 };
 
 interface BarSession {
@@ -54,7 +58,7 @@ export class BarrelView {
         const res = ResourceManager.getInstance();
         this._barPrefab = await res.loadPrefab("prefab/AcceptLoading", BundlesEnum.Game);
         this._white = await res.load("mat/white_material", Material, BundlesEnum.Game);
-        for (const color of [BarrelColor.Brown, BarrelColor.Green]) {
+        for (const color of BARREL_COLORS) {
             const mat = await res.load(MAT_PATH[color], Material, BundlesEnum.Game);
             if (mat) {
                 this._colorMat.set(color, mat as Material);

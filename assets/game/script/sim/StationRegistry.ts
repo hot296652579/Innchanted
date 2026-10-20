@@ -43,6 +43,7 @@ export class StationRegistry {
                 || type === StationType.Chest
                 || type === StationType.OriginalBarrel
                 || type === StationType.MagicBarrel
+                || type === StationType.MagicJar
             )) {
                 holdPoint = ensureHoldPoint(node, type === StationType.Chest ? 0.55 : 0.9);
             }
@@ -142,6 +143,9 @@ function inferStationType(name: string): StationType {
     }
     if (id.startsWith("itemstand")) {
         return StationType.ItemStand;
+    }
+    if (id.startsWith("magicjar")) {
+        return StationType.MagicJar;
     }
     return StationType.Place;
 }

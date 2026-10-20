@@ -50,6 +50,26 @@ const FALLBACK: CombineRecipe[] = [
         stationTypes: [StationType.Place, StationType.Table, StationType.Cook],
         prefab: "prefab/items/CombBurgerGreen",
     },
+    {
+        id: "fuse_yellow",
+        inputs: [
+            { itemId: "magicdrink_green", count: 1 },
+            { itemId: "magicdrink_red", count: 1 },
+        ],
+        output: { itemId: "medicinebottle_yellow", count: 1, to: "station" },
+        stationTypes: [StationType.MagicJar],
+        prefab: "prefab/items/MedicineBottle_Yellow",
+    },
+    {
+        id: "fuse_olive",
+        inputs: [
+            { itemId: "magicdrink_brown", count: 1 },
+            { itemId: "magicdrink_green", count: 1 },
+        ],
+        output: { itemId: "medicinebottle_olivegreen", count: 1, to: "station" },
+        stationTypes: [StationType.MagicJar],
+        prefab: "prefab/items/MedicineBottle_OliveGreen",
+    },
 ];
 
 const DEFAULT_TYPES: string[] = [StationType.Place, StationType.Table, StationType.Cook];

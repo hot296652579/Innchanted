@@ -9,8 +9,12 @@
   { "id": "coin", "stack": 3, "displayName": "金币" },
   { "id": "originalpulp_brown", "stack": 1, "displayName": "棕色原浆" },
   { "id": "originalpulp_green", "stack": 1, "displayName": "绿色原浆" },
+  { "id": "originalpulp_red", "stack": 1, "displayName": "红色原浆" },
   { "id": "magicdrink_brown", "stack": 1, "displayName": "棕色魔法饮料" },
   { "id": "magicdrink_green", "stack": 1, "displayName": "绿色魔法饮料" },
+  { "id": "magicdrink_red", "stack": 1, "displayName": "红色魔法饮料" },
   { "id": "combburgerbrown", "stack": 3, "displayName": "棕色魔法汉堡", "gold": 12 },
-  { "id": "combburgergreen", "stack": 3, "displayName": "绿色魔法汉堡", "gold": 12 }
+  { "id": "combburgergreen", "stack": 3, "displayName": "绿色魔法汉堡", "gold": 12 },
+  { "id": "medicinebottle_yellow", "stack": 1, "displayName": "黄色药剂" },
+  { "id": "medicinebottle_olivegreen", "stack": 1, "displayName": "橄榄绿药剂" }
 ]

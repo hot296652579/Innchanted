@@ -10,6 +10,7 @@ export enum StationType {
     OriginalBarrel = "originalbarrel",
     MagicBarrel = "magicbarrel",
     ItemStand = "itemstand",
+    MagicJar = "magicjar",
 }
 
 export class Station {
