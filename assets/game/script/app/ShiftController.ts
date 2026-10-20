@@ -1,4 +1,4 @@
-import { Camera, Component, Node } from "cc";
+import { Camera, Component, Node, Vec3 } from "cc";
 import { BattleContext } from "../../../define/BattleContext";
 import { BundlesEnum } from "../../../define/BundlesEnum";
 import { ConfigManager } from "../../../framework/config/ConfigManager";
@@ -13,12 +13,12 @@ import { RecastPathfinder } from "../sim/RecastPathfinder";
 import { StationRegistry } from "../sim/StationRegistry";
 import { ItemHoldView } from "../view/ItemHoldView";
 import { PlayerView } from "../view/PlayerView";
+import { BarrelSystem } from "./BarrelSystem";
 import { ClickHit, ClickPicker } from "./ClickPicker";
+import { CombineCatalog } from "./Combine";
 import { CommandService } from "./CommandService";
 import { EventDirector } from "./EventDirector";
 import { GuestLoop } from "./GuestLoop";
-import { BarrelSystem } from "./BarrelSystem";
-import { CombineCatalog } from "./Combine";
 import { InteractService } from "./InteractService";
 import { findLevel } from "./LevelCatalog";
 import { ProcessorSystem } from "./ProcessorSystem";
@@ -49,6 +49,8 @@ export class ShiftController {
     private _interact: InteractService | null = null;
     private _events: EventDirector | null = null;
     private _score: ShiftScore | null = null;
+    private _huntId: string | null = null;
+    private _huntRetarget = 0;
 
     async start(args: ShiftStartArgs): Promise<void> {
         await ConfigManager.getInstance().loadTable("items", BundlesEnum.Table);
@@ -79,13 +81,20 @@ export class ShiftController {
         await combines.load();
 
         this._interact = new InteractService(this._actor!, holds, this._processors, this._barrels, combines, this._guests, this._playerView!);
-        this._events = new EventDirector();
-        this._events.start(this._registry, this._processors, args.levelRoot);
-        this.bindClick(args);
         this.bindScore();
         const level = findLevel(BattleContext.selectedLevelId);
         this._score = new ShiftScore(level.duration);
         this.emitHud();
+        this._events = new EventDirector();
+        this._events.start({
+            registry: this._registry,
+            processors: this._processors!,
+            levelRoot: args.levelRoot,
+            pathfinder: this._pathfinder!,
+            yawOffset: args.yawOffset,
+            stealGold: (count) => this.onStolen(count),
+        });
+        this.bindClick(args);
         console.log(`[Shift] 就绪 关卡 ${level.id} ${level.duration}s 台子 ${this._registry.all.length} 个`);
     }
 
@@ -97,11 +106,13 @@ export class ShiftController {
         this._barrels?.tick(dt);
         this._guests?.update(dt);
         this._events?.update(dt);
+        this.tickHunt(dt);
         this.tickScore(dt);
     }
 
     clear(): void {
         EventManager.getInstance().off(GameEvent.SHELL_BANKED, this.onBanked, this);
+        this._huntId = null;
         this._events?.clear();
         this._barrels?.cancel();
         this._processors?.clearLocks();
@@ -140,7 +151,10 @@ export class ShiftController {
         picker.player = args.player;
         picker.stationRoot = args.stationRoot;
         picker.planeRoot = args.planeRoot;
+        picker.levelRoot = args.levelRoot;
         picker.registry = this._registry;
+        picker.findEnemyRoot = (hit) => this._events?.ownsEnemy(hit) ?? null;
+        picker.listEnemies = () => this._events?.enemyRoots() ?? [];
         picker.onHit = (hit) => this.onClick(hit);
     }
 
@@ -149,6 +163,7 @@ export class ShiftController {
             return;
         }
         if (hit.target.kind === "self") {
+            this._huntId = null;
             this._barrels?.cancel();
             this._commands.issue(hit.target, null, null);
             this._playerView?.clearLookTarget();
@@ -159,6 +174,16 @@ export class ShiftController {
         } else {
             this._playerView?.clearLookTarget();
         }
+        if (hit.target.kind === "enemy") {
+            this._barrels?.cancel();
+            const enemyId = hit.target.enemyId;
+            this._huntId = enemyId;
+            this._huntRetarget = 0;
+            const dest = this.enemyStand(enemyId) ?? hit.dest;
+            this._commands.issue(hit.target, dest, () => this.onArriveEnemy(enemyId));
+            return;
+        }
+        this._huntId = null;
         if (hit.target.kind === "place" && this._events?.scareAt(hit.target.stationId)) {
             this._barrels?.cancel();
             this._playerView?.playAttack();
@@ -173,6 +198,10 @@ export class ShiftController {
     }
 
     private onArrive(hit: ClickHit): void {
+        if (hit.target.kind === "enemy") {
+            this.onArriveEnemy(hit.target.enemyId);
+            return;
+        }
         if (!this._interact || hit.target.kind !== "place") {
             return;
         }
@@ -182,6 +211,81 @@ export class ShiftController {
         }
     }
 
+    private tickHunt(dt: number): void {
+        if (!this._huntId || !this._commands) {
+            return;
+        }
+        this._huntRetarget -= dt;
+        if (this._huntRetarget > 0) {
+            return;
+        }
+        this._huntRetarget = 0.2;
+        const enemyId = this._huntId;
+        const root = this._events?.enemyNamed(enemyId);
+        const player = this._playerView?.node;
+        if (!root || !player) {
+            this._huntId = null;
+            return;
+        }
+        const dx = player.worldPosition.x - root.worldPosition.x;
+        const dz = player.worldPosition.z - root.worldPosition.z;
+        if (dx * dx + dz * dz <= 4) {
+            this.onArriveEnemy(enemyId);
+            return;
+        }
+        const dest = this.enemyStand(enemyId);
+        if (!dest) {
+            this._huntId = null;
+            return;
+        }
+        this._playerView?.setLookTarget(root.worldPosition);
+        this._commands.issue({ kind: "enemy", enemyId }, dest, () => this.onArriveEnemy(enemyId));
+    }
+
+    private onArriveEnemy(enemyId: string): void {
+        const root = this._events?.enemyNamed(enemyId);
+        const player = this._playerView?.node;
+        if (!root || !player || !this._commands) {
+            this._huntId = null;
+            return;
+        }
+        const from = player.worldPosition;
+        const center = root.worldPosition;
+        const dx = from.x - center.x;
+        const dz = from.z - center.z;
+        const dist = Math.sqrt(dx * dx + dz * dz);
+        if (dist > 2) {
+            const dest = this.enemyStand(enemyId);
+            if (dest) {
+                this._playerView?.setLookTarget(center);
+                this._commands.issue({ kind: "enemy", enemyId }, dest, () => this.onArriveEnemy(enemyId));
+            }
+            return;
+        }
+        this._huntId = null;
+        this._playerView?.setLookTarget(center);
+        this._playerView?.playAttack();
+        if (this._events?.strike(root)) {
+            EventManager.getInstance().emit(GameEvent.SHOW_TIPS, "击退了小偷");
+        }
+    }
+
+    private enemyStand(enemyId: string): Vec3 | null {
+        const root = this._events?.enemyNamed(enemyId);
+        const player = this._playerView?.node;
+        if (!root || !player) {
+            return null;
+        }
+        const from = player.worldPosition;
+        const center = root.worldPosition;
+        const dx = from.x - center.x;
+        const dz = from.z - center.z;
+        const dist = Math.sqrt(dx * dx + dz * dz);
+        const nx = dist < 0.001 ? 0 : dx / dist;
+        const nz = dist < 0.001 ? 1 : dz / dist;
+        return new Vec3(center.x + nx * 1.2, from.y, center.z + nz * 1.2);
+    }
+
     private bindScore(): void {
         EventManager.getInstance().on(GameEvent.SHELL_BANKED, this.onBanked, this);
     }
@@ -189,6 +293,14 @@ export class ShiftController {
     private onBanked(count: number): void {
         this._score?.bank(count);
         this.emitGold();
+    }
+
+    private onStolen(count: number): number {
+        const took = this._score?.steal(count) ?? 0;
+        if (took > 0) {
+            this.emitGold();
+        }
+        return took;
     }
 
     private tickScore(dt: number): void {

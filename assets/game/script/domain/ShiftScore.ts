@@ -32,6 +32,12 @@ export class ShiftScore {
         }
     }
 
+    steal(count: number): number {
+        const n = Math.min(this.gold, Math.max(0, Math.floor(count)));
+        this.gold -= n;
+        return n;
+    }
+
     get shownRemain(): number {
         return Math.max(0, Math.ceil(this.remain));
     }

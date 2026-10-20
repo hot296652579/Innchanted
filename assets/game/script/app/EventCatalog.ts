@@ -8,6 +8,7 @@ export type EventDef = {
     delay: number;
     duration: number;
     stealCount?: number;
+    stealGold?: number;
     freezeTime?: number;
     actorName?: string;
     prefab?: string;
@@ -19,10 +20,25 @@ export type EventDef = {
 
 const FALLBACK: EventDef[] = [
     {
+        id: "skeleton",
+        kind: "skeleton",
+        category: "attack",
+        delay: 0,
+        duration: 8,
+        stealCount: 5,
+        stealGold: 5,
+        actorName: "Skeleton",
+        prefab: "prefab/enemys/Skeleton",
+        flySpeed: 0.9,
+        hoverTime: 1,
+        warnText: "骷髅小偷冲向宝箱！",
+        failText: "骷髅偷走了金币！",
+    },
+    {
         id: "thief",
         kind: "thief",
         category: "attack",
-        delay: 12,
+        delay: 25,
         duration: 20,
         stealCount: 2,
         actorName: "Bat",

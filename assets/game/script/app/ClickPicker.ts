@@ -30,7 +30,10 @@ export class ClickPicker extends Component {
     player: Node | null = null;
     stationRoot: Node | null = null;
     planeRoot: Node | null = null;
+    levelRoot: Node | null = null;
     registry: StationRegistry | null = null;
+    findEnemyRoot: ((hit: Node) => Node | null) | null = null;
+    listEnemies: (() => readonly Node[]) | null = null;
     onHit: ((hit: ClickHit) => void) | null = null;
 
     onEnable(): void {
@@ -87,6 +90,10 @@ export class ClickPicker extends Component {
         if (this.hitPlayer(ray)) {
             return { target: { kind: "self" }, dest: null, lookAt: null };
         }
+        const enemy = this.pickEnemy(ray);
+        if (enemy) {
+            return enemy;
+        }
         if (this.stationRoot && this.registry) {
             const stationNode = this.raycastMeshes(ray, this.stationRoot);
             if (stationNode) {
@@ -139,6 +146,60 @@ export class ClickPicker extends Component {
         return this.planeRoot.worldPosition.y;
     }
 
+    private pickEnemy(ray: geometry.Ray): ClickHit | null {
+        const enemies = this.listEnemies?.() ?? [];
+        let bestDist = Number.MAX_VALUE;
+        let bestRoot: Node | null = null;
+        for (let i = 0; i < enemies.length; i++) {
+            const root = enemies[i];
+            if (!root.activeInHierarchy) {
+                continue;
+            }
+            const dist = this.hitEnemyDist(ray, root);
+            if (dist !== null && dist < bestDist) {
+                bestDist = dist;
+                bestRoot = root;
+            }
+        }
+        if (!bestRoot) {
+            return null;
+        }
+        const from = this.player?.worldPosition ?? null;
+        const playerY = from ? from.y : bestRoot.worldPosition.y;
+        return {
+            target: { kind: "enemy", enemyId: bestRoot.name },
+            dest: standBeside(from, bestRoot.worldPosition, playerY, 1.2),
+            lookAt: bestRoot.worldPosition.clone(),
+        };
+    }
+
+    /** 蒙皮网格包围盒经常不准，网格没命中时用角色球体兜底。 */
+    private hitEnemyDist(ray: geometry.Ray, root: Node): number | null {
+        const renderers = root.getComponentsInChildren(MeshRenderer);
+        let best: number | null = null;
+        for (let i = 0; i < renderers.length; i++) {
+            const model = renderers[i].model;
+            if (!model) {
+                continue;
+            }
+            const dist = geometry.intersect.rayModel(ray, model, {
+                mode: geometry.ERaycastMode.CLOSEST,
+                doubleSided: true,
+                distance: Number.MAX_SAFE_INTEGER,
+            });
+            if (dist && (best === null || dist < best)) {
+                best = dist;
+            }
+        }
+        const p = root.worldPosition;
+        const sphere = new geometry.Sphere(p.x, p.y + 0.6, p.z, 1.2);
+        const hit = geometry.intersect.raySphere(ray, sphere);
+        if (hit && (best === null || hit < best)) {
+            best = hit;
+        }
+        return best;
+    }
+
     private hitPlayer(ray: geometry.Ray): boolean {
         if (!this.player) {
             return false;
@@ -178,4 +239,18 @@ export class ClickPicker extends Component {
         }
         return false;
     }
+}
+
+function standBeside(from: Vec3 | null, center: Vec3, playerY: number, dist: number): Vec3 {
+    let dx = from ? from.x - center.x : 0;
+    let dz = from ? from.z - center.z : 1;
+    const len = Math.sqrt(dx * dx + dz * dz);
+    if (len < 0.001) {
+        dx = 0;
+        dz = 1;
+    } else {
+        dx /= len;
+        dz /= len;
+    }
+    return new Vec3(center.x + dx * dist, playerY, center.z + dz * dist);
 }
