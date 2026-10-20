@@ -3,6 +3,7 @@ import { EventManager } from "../../../../framework/event/EventManager";
 import { GameEvent } from "../../../../framework/event/EventName";
 import { StationType } from "../../domain/Station";
 import { findNamedDescendant } from "../../sim/StationRegistry";
+import { Enemy } from "../../view/Enemy";
 import { SkeletonThiefView } from "../../view/SkeletonThiefView";
 import { EventDef } from "../EventCatalog";
 import { IIncident, IncidentContext } from "./Incident";
@@ -22,13 +23,6 @@ export class SkeletonThiefIncident implements IIncident {
 
     get done(): boolean {
         return this._phase === "done";
-    }
-
-    get actorNode(): Node | null {
-        if (this._phase === "done" || this._phase === "dying") {
-            return null;
-        }
-        return this._actor;
     }
 
     begin(ctx: IncidentContext): void {
@@ -53,6 +47,7 @@ export class SkeletonThiefIncident implements IIncident {
         }
         this._actor = actor;
         actor.active = true;
+        Enemy.ensure(actor);
         this._view.bind(actor, ctx.pathfinder, ctx.yawOffset ?? 0, this.def.flySpeed ?? 0.9);
         const events = EventManager.getInstance();
         events.emit(GameEvent.EVENT_WARN, this.def.id, 0);

@@ -1,6 +1,8 @@
+import { Node } from "cc";
 import { EventManager } from "../../../../framework/event/EventManager";
 import { GameEvent } from "../../../../framework/event/EventName";
 import { StationBinding, findNamedDescendant } from "../../sim/StationRegistry";
+import { Enemy } from "../../view/Enemy";
 import { ThiefView } from "../../view/ThiefView";
 import { EventDef } from "../EventCatalog";
 import { isCookedOutput } from "../Recipe";
@@ -11,6 +13,7 @@ type Phase = "warning" | "toFood" | "hover" | "toHome" | "attack" | "done";
 /** 小偷来袭：飞到台后停留，未被驱赶才偷走；回巢 Hit 后销毁。 */
 export class ThiefIncident implements IIncident {
     private _ctx: IncidentContext | null = null;
+    private _actor: Node | null = null;
     private readonly _view = new ThiefView();
     private _phase: Phase = "done";
     private _remain = 0;
@@ -38,8 +41,39 @@ export class ThiefIncident implements IIncident {
             this._phase = "done";
             return;
         }
+        this._actor = actor;
+        Enemy.ensure(actor);
         this._view.bind(actor);
         this.restartWarn();
+    }
+
+    ownsNode(hit: Node): Node | null {
+        const actor = this._actor;
+        if (!actor || this._phase === "done") {
+            return null;
+        }
+        let current: Node | null = hit;
+        while (current) {
+            if (current === actor) {
+                return actor;
+            }
+            current = current.parent;
+        }
+        return null;
+    }
+
+    strike(): boolean {
+        if (this._phase === "done" || this._phase === "toHome" || this._phase === "attack") {
+            return false;
+        }
+        this._scared = true;
+        this._carrying = false;
+        this._hoverStationId = null;
+        this._view.discardHeld();
+        this._view.flyHome(this.def.flySpeed ?? 6);
+        this._phase = "toHome";
+        console.log("[Event] 击退", this.def.id);
+        return true;
     }
 
     scareAt(stationId: string): boolean {

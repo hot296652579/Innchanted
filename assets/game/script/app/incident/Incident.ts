@@ -24,8 +24,6 @@ export interface IIncident {
     scareAt?(stationId: string): boolean;
     /** 点击命中属于本事件的敌人时，返回敌人根节点。 */
     ownsNode?(hit: Node): Node | null;
-    /** 可被点击追打的敌人根节点。 */
-    actorNode?: Node | null;
     /** 玩家走到跟前攻击。成功返回 true。 */
     strike?(): boolean;
 }

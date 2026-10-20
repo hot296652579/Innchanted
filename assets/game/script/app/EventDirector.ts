@@ -1,7 +1,6 @@
 import { Node } from "cc";
 import { EventManager } from "../../../framework/event/EventManager";
 import { GameEvent } from "../../../framework/event/EventName";
-import { findNamedDescendant } from "../sim/StationRegistry";
 import { allEventDefs, EventDef } from "./EventCatalog";
 import { IIncident, IncidentContext } from "./incident/Incident";
 import { CurseIncident } from "./incident/CurseIncident";
@@ -66,31 +65,6 @@ export class EventDirector {
             }
         }
         return false;
-    }
-
-    enemyNamed(name: string): Node | null {
-        const roots = this.enemyRoots();
-        for (let i = 0; i < roots.length; i++) {
-            if (roots[i].name === name) {
-                return roots[i];
-            }
-        }
-        if (!this._ctx) {
-            return null;
-        }
-        const node = findNamedDescendant(this._ctx.levelRoot, name);
-        return node ? this.ownsEnemy(node) : null;
-    }
-
-    enemyRoots(): Node[] {
-        const list: Node[] = [];
-        for (let i = 0; i < this._running.length; i++) {
-            const node = this._running[i].actorNode;
-            if (node && node.activeInHierarchy) {
-                list.push(node);
-            }
-        }
-        return list;
     }
 
     start(ctx: IncidentContext): void {

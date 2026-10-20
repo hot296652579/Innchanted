@@ -15,6 +15,7 @@ import {
 } from "cc";
 import { CommandTarget } from "../domain/Command";
 import { StationRegistry } from "../sim/StationRegistry";
+import { Enemy } from "../view/Enemy";
 
 const { ccclass } = _decorator;
 
@@ -32,8 +33,6 @@ export class ClickPicker extends Component {
     planeRoot: Node | null = null;
     levelRoot: Node | null = null;
     registry: StationRegistry | null = null;
-    findEnemyRoot: ((hit: Node) => Node | null) | null = null;
-    listEnemies: (() => readonly Node[]) | null = null;
     onHit: ((hit: ClickHit) => void) | null = null;
 
     onEnable(): void {
@@ -147,11 +146,14 @@ export class ClickPicker extends Component {
     }
 
     private pickEnemy(ray: geometry.Ray): ClickHit | null {
-        const enemies = this.listEnemies?.() ?? [];
+        if (!this.levelRoot) {
+            return null;
+        }
+        const tags = this.levelRoot.getComponentsInChildren(Enemy);
         let bestDist = Number.MAX_VALUE;
         let bestRoot: Node | null = null;
-        for (let i = 0; i < enemies.length; i++) {
-            const root = enemies[i];
+        for (let i = 0; i < tags.length; i++) {
+            const root = tags[i].node;
             if (!root.activeInHierarchy) {
                 continue;
             }

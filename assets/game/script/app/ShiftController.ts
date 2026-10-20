@@ -10,13 +10,15 @@ import { CommandFsm } from "../fsm/CommandFsm";
 import RecastDetourManager from "../navmesh/recastdetourjs/tool/RecastDetourManager";
 import { GridAgent } from "../sim/GridAgent";
 import { RecastPathfinder } from "../sim/RecastPathfinder";
-import { StationRegistry } from "../sim/StationRegistry";
+import { findNamedDescendant, StationRegistry } from "../sim/StationRegistry";
+import { Enemy } from "../view/Enemy";
 import { ItemHoldView } from "../view/ItemHoldView";
 import { PlayerView } from "../view/PlayerView";
 import { BarrelSystem } from "./BarrelSystem";
 import { ClickHit, ClickPicker } from "./ClickPicker";
 import { CombineCatalog } from "./Combine";
 import { CommandService } from "./CommandService";
+import { allEventDefs } from "./EventCatalog";
 import { EventDirector } from "./EventDirector";
 import { GuestLoop } from "./GuestLoop";
 import { InteractService } from "./InteractService";
@@ -51,6 +53,7 @@ export class ShiftController {
     private _score: ShiftScore | null = null;
     private _huntId: string | null = null;
     private _huntRetarget = 0;
+    private _levelRoot: Node | null = null;
 
     async start(args: ShiftStartArgs): Promise<void> {
         await ConfigManager.getInstance().loadTable("items", BundlesEnum.Table);
@@ -94,6 +97,7 @@ export class ShiftController {
             yawOffset: args.yawOffset,
             stealGold: (count) => this.onStolen(count),
         });
+        this.tagEnemies(args.levelRoot);
         this.bindClick(args);
         console.log(`[Shift] 就绪 关卡 ${level.id} ${level.duration}s 台子 ${this._registry.all.length} 个`);
     }
@@ -153,8 +157,6 @@ export class ShiftController {
         picker.planeRoot = args.planeRoot;
         picker.levelRoot = args.levelRoot;
         picker.registry = this._registry;
-        picker.findEnemyRoot = (hit) => this._events?.ownsEnemy(hit) ?? null;
-        picker.listEnemies = () => this._events?.enemyRoots() ?? [];
         picker.onHit = (hit) => this.onClick(hit);
     }
 
@@ -221,7 +223,7 @@ export class ShiftController {
         }
         this._huntRetarget = 0.2;
         const enemyId = this._huntId;
-        const root = this._events?.enemyNamed(enemyId);
+        const root = this.findEnemyNode(enemyId);
         const player = this._playerView?.node;
         if (!root || !player) {
             this._huntId = null;
@@ -243,7 +245,7 @@ export class ShiftController {
     }
 
     private onArriveEnemy(enemyId: string): void {
-        const root = this._events?.enemyNamed(enemyId);
+        const root = this.findEnemyNode(enemyId);
         const player = this._playerView?.node;
         if (!root || !player || !this._commands) {
             this._huntId = null;
@@ -270,8 +272,37 @@ export class ShiftController {
         }
     }
 
+    private tagEnemies(levelRoot: Node): void {
+        this._levelRoot = levelRoot;
+        const defs = allEventDefs();
+        for (let i = 0; i < defs.length; i++) {
+            const name = defs[i].actorName;
+            if (!name) {
+                continue;
+            }
+            const node = findNamedDescendant(levelRoot, name);
+            if (node) {
+                Enemy.ensure(node);
+            }
+        }
+    }
+
+    private findEnemyNode(enemyId: string): Node | null {
+        if (!this._levelRoot) {
+            return null;
+        }
+        const tags = this._levelRoot.getComponentsInChildren(Enemy);
+        for (let i = 0; i < tags.length; i++) {
+            const node = tags[i].node;
+            if (node.name === enemyId && node.activeInHierarchy) {
+                return node;
+            }
+        }
+        return null;
+    }
+
     private enemyStand(enemyId: string): Vec3 | null {
-        const root = this._events?.enemyNamed(enemyId);
+        const root = this.findEnemyNode(enemyId);
         const player = this._playerView?.node;
         if (!root || !player) {
             return null;
