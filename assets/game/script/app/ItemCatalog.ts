@@ -5,6 +5,8 @@ export type ItemDef = {
     stack: number;
     displayName: string;
     gold?: number;
+    use?: string;
+    effects?: string[];
 };
 
 export function findItemDef(itemId: string): ItemDef | null {
@@ -27,4 +29,13 @@ export function goldOf(itemId: string): number {
         return 1;
     }
     return Math.max(0, gold);
+}
+
+/** 点自身可喝掉。新药在 items.json 加 use: drink。 */
+export function isDrinkable(itemId: string): boolean {
+    return findItemDef(itemId)?.use === "drink";
+}
+
+export function itemEffects(itemId: string): string[] {
+    return findItemDef(itemId)?.effects ?? [];
 }

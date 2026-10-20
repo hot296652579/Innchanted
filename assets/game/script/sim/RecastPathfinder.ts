@@ -1,4 +1,5 @@
 import { Vec3 } from "cc";
+import { IAgentParameters } from "../navmesh/navigation/INavigationEngine";
 import RecastDetourManager from "../navmesh/recastdetourjs/tool/RecastDetourManager";
 import { AgentMoveParams, IPathfinder } from "./IPathfinder";
 
@@ -38,5 +39,9 @@ export class RecastPathfinder implements IPathfinder {
 
     getNextPoint(agentId: number): Vec3 {
         return this.recast.crowd!.getAgentNextTargetPath(agentId);
+    }
+
+    setMaxSpeed(agentId: number, speed: number): void {
+        this.recast.crowd?.updateAgentParameters(agentId, { maxSpeed: Math.max(0.2, speed) } as IAgentParameters);
     }
 }

@@ -56,6 +56,7 @@ export class ShiftController {
     private _huntRetarget = 0;
     private _levelRoot: Node | null = null;
     private _ice: GroundIceView | null = null;
+    private _playerAgentId = -1;
 
     async start(args: ShiftStartArgs): Promise<void> {
         await ConfigManager.getInstance().loadTable("items", BundlesEnum.Table);
@@ -125,6 +126,7 @@ export class ShiftController {
         events.off(GameEvent.GROUND_ICE_FREEZE, this.onIceFreeze, this);
         events.off(GameEvent.GROUND_ICE_THAW, this.onIceThaw, this);
         this._huntId = null;
+        this._playerAgentId = -1;
         this._ice?.clear();
         this._ice = null;
         this._events?.clear();
@@ -137,22 +139,23 @@ export class ShiftController {
     private spawnPlayer(args: ShiftStartArgs): void {
         const pathfinder = this._pathfinder!;
         const startPos = args.player.worldPosition.clone();
+        this._actor = new Actor("player");
         const agentId = pathfinder.addAgent(startPos, {
             radius: 0.45,
             height: 1.6,
             maxAcceleration: 12,
-            maxSpeed: 4.5,
+            maxSpeed: this._actor.speed,
             collisionQueryRange: 1.2,
             pathOptimizationRange: 4,
             separationWeight: 1,
         });
+        this._playerAgentId = agentId;
         const agentPos = pathfinder.getPosition(agentId);
         const yOffset = startPos.y - agentPos.y;
         args.player.setWorldPosition(agentPos.x, agentPos.y + yOffset, agentPos.z);
         args.player.mobility = 2;
 
         const agent = new GridAgent(pathfinder, agentId);
-        this._actor = new Actor("player");
         this._fsm = new CommandFsm(agent);
         this._commands = new CommandService(this._fsm);
         this._playerView = args.player.getComponent(PlayerView) ?? args.player.addComponent(PlayerView);
@@ -175,12 +178,16 @@ export class ShiftController {
             return;
         }
         if (hit.target.kind === "self") {
+            console.log("[Drink] onClick self", "interact", !!this._interact, "hand", this._actor.hand);
             this._huntId = null;
             this._barrels?.cancel();
             this._commands.issue(hit.target, null, null);
-            this._playerView?.clearLookTarget();
+            this._playerView?.lockFacing();
+            const drank = this._interact?.useSelf() ?? false;
+            console.log("[Drink] useSelf 结果", drank);
             return;
         }
+        this._playerView?.unlockFacing();
         if (hit.lookAt) {
             this._playerView?.setLookTarget(hit.lookAt);
         } else {
@@ -292,10 +299,27 @@ export class ShiftController {
 
     private onIceFreeze(duration?: number): void {
         this._ice?.freeze(typeof duration === "number" ? duration : 1);
+        this.applyWalkScale(this.iceSlowScale());
     }
 
     private onIceThaw(duration?: number): void {
         this._ice?.thaw(typeof duration === "number" ? duration : 1);
+        this.applyWalkScale(1);
+    }
+
+    private applyWalkScale(scale: number): void {
+        const base = this._actor?.speed ?? 4.5;
+        this._pathfinder?.setMaxSpeed?.(this._playerAgentId, base * scale);
+    }
+
+    private iceSlowScale(): number {
+        const defs = allEventDefs();
+        for (let i = 0; i < defs.length; i++) {
+            if (defs[i].kind === "ice") {
+                return defs[i].slowScale ?? 0.4;
+            }
+        }
+        return 0.4;
     }
 
     private tagEnemies(levelRoot: Node): void {

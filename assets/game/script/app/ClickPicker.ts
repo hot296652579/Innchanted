@@ -19,6 +19,8 @@ import { Enemy } from "../view/Enemy";
 
 const { ccclass } = _decorator;
 
+const PLAYER_SPHERE_R = 0.7;
+
 export type ClickHit = {
     target: CommandTarget;
     dest: Vec3 | null;
@@ -86,30 +88,17 @@ export class ClickPicker extends Component {
     }
 
     private pick(ray: geometry.Ray): ClickHit | null {
-        if (this.hitPlayer(ray)) {
-            return { target: { kind: "self" }, dest: null, lookAt: null };
-        }
         const enemy = this.pickEnemy(ray);
         if (enemy) {
             return enemy;
         }
-        if (this.stationRoot && this.registry) {
-            const stationNode = this.raycastMeshes(ray, this.stationRoot);
-            if (stationNode) {
-                const binding = this.registry.findByHitNode(stationNode, this.stationRoot);
-                if (binding) {
-                    const from = this.player?.worldPosition ?? null;
-                    const playerY = from
-                        ? from.y
-                        : (binding.interactPos ?? binding.node).worldPosition.y;
-                    const dest = this.registry.standPoint(binding, playerY, from);
-                    return {
-                        target: { kind: "place", stationId: binding.station.id },
-                        dest,
-                        lookAt: binding.node.worldPosition.clone(),
-                    };
-                }
-            }
+        const place = this.pickStation(ray);
+        if (place) {
+            return place;
+        }
+        if (this.hitPlayer(ray)) {
+            console.log("[Drink] 点选自身");
+            return { target: { kind: "self" }, dest: null, lookAt: null };
         }
         const dest = this.pickGround(ray);
         if (dest) {
@@ -120,6 +109,29 @@ export class ClickPicker extends Component {
             };
         }
         return null;
+    }
+
+    private pickStation(ray: geometry.Ray): ClickHit | null {
+        if (!this.stationRoot || !this.registry) {
+            return null;
+        }
+        const stationNode = this.raycastMeshes(ray, this.stationRoot);
+        if (!stationNode) {
+            return null;
+        }
+        const binding = this.registry.findByHitNode(stationNode, this.stationRoot);
+        if (!binding) {
+            return null;
+        }
+        const from = this.player?.worldPosition ?? null;
+        const playerY = from
+            ? from.y
+            : (binding.interactPos ?? binding.node).worldPosition.y;
+        return {
+            target: { kind: "place", stationId: binding.station.id },
+            dest: this.registry.standPoint(binding, playerY, from),
+            lookAt: binding.node.worldPosition.clone(),
+        };
     }
 
     private pickGround(ray: geometry.Ray): Vec3 | null {
@@ -206,7 +218,12 @@ export class ClickPicker extends Component {
         if (!this.player) {
             return false;
         }
-        return this.raycastMeshes(ray, this.player) !== null;
+        if (this.raycastMeshes(ray, this.player)) {
+            return true;
+        }
+        const p = this.player.worldPosition;
+        const sphere = new geometry.Sphere(p.x, p.y + 0.85, p.z, PLAYER_SPHERE_R);
+        return !!geometry.intersect.raySphere(ray, sphere);
     }
 
     private raycastMeshes(ray: geometry.Ray, root: Node): Node | null {

@@ -45,6 +45,7 @@
     "delay": 3,
     "duration": 0,
     "freezeTime": 1,
+    "slowScale": 0.4,
     "actorName": "Dragon",
     "prefab": "prefab/enemys/Dragon",
     "flySpeed": 5,

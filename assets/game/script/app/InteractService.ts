@@ -17,6 +17,7 @@ import {
 } from "./Combine";
 import { ActionKind, resolveDefaultAction } from "./DefaultAction";
 import { GuestLoop } from "./GuestLoop";
+import { findItemDef, isDrinkable, itemEffects } from "./ItemCatalog";
 import { ProcessorSystem } from "./ProcessorSystem";
 
 /** 到达台子后：先决策再执行。不负责寻路。 */
@@ -30,6 +31,35 @@ export class InteractService {
         private readonly guests: GuestLoop,
         private readonly playerView: PlayerView,
     ) { }
+
+    /** 点自身：喝掉手里的药剂。新药只改 items.json 的 use / effects。 */
+    useSelf(): boolean {
+        const hand = this.actor.hand;
+        const drinkable = !!hand && !hand.empty && isDrinkable(hand.itemId);
+        console.log("[Drink] useSelf", "hand", hand, "drinkable", drinkable, "def", hand ? findItemDef(hand.itemId) : null);
+        if (!drinkable || !hand) {
+            return false;
+        }
+        const itemId = hand.itemId;
+        const def = findItemDef(itemId);
+        hand.count -= 1;
+        this.holds.removeFromPlayer(1);
+        if (hand.empty) {
+            this.actor.hand = null;
+        }
+        this.playerView.playDrink();
+        const events = EventManager.getInstance();
+        events.emit(GameEvent.ITEM_HELD_CHANGED, this.actor.id, this.actor.hand);
+        const effects = itemEffects(itemId);
+        for (let i = 0; i < effects.length; i++) {
+            if (effects[i] === "thaw") {
+                events.emit(GameEvent.GROUND_ICE_THAW, 1);
+            }
+        }
+        events.emit(GameEvent.SHOW_TIPS, `喝了${def?.displayName ?? "药剂"}`);
+        console.log("[Player] 喝药", itemId, effects);
+        return true;
+    }
 
     arrive(binding: StationBinding): void {
         const action = resolveDefaultAction(

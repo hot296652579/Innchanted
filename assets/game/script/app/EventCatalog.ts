@@ -10,6 +10,7 @@ export type EventDef = {
     stealCount?: number;
     stealGold?: number;
     freezeTime?: number;
+    slowScale?: number;
     actorName?: string;
     spawnName?: string;
     prefab?: string;
@@ -66,6 +67,7 @@ const FALLBACK: EventDef[] = [
         delay: 12,
         duration: 0,
         freezeTime: 1,
+        slowScale: 0.4,
         actorName: "Dragon",
         prefab: "prefab/enemys/Dragon",
         flySpeed: 5,
