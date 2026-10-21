@@ -61,7 +61,7 @@ function resolveCook(hand: ItemStack | null, station: Station): ActionKind {
         if (!held) {
             return "Take";
         }
-        return findCombineRecipe(held, station) ? "Combine" : "MoveOnly";
+        return findCombineRecipe(held, station) ? "Combine" : "RefuseSwap";
     }
     if (!held) {
         return "MoveOnly";
@@ -80,10 +80,7 @@ function resolveTable(
     const held = nonempty(hand);
     const slot = nonempty(station.slot);
     if (slot && isCoin(slot.itemId)) {
-        if (!held) {
-            return "Take";
-        }
-        return "RefuseSwap";
+        return resolveCollect(hand, station.slot) ?? "RefuseSwap";
     }
     if (held && !slot && wantedItemId && held.itemId === wantedItemId) {
         return "Serve";
@@ -133,18 +130,7 @@ function resolveMagicBarrel(hand: ItemStack | null, station: Station): ActionKin
 }
 
 function resolveItemStand(hand: ItemStack | null, station: Station): ActionKind {
-    const slot = nonempty(station.slot);
-    if (!slot) {
-        return "MoveOnly";
-    }
-    const held = nonempty(hand);
-    if (!held) {
-        return "Take";
-    }
-    if (held.itemId !== slot.itemId) {
-        return "RefuseSwap";
-    }
-    return held.count < ITEM_STACK_CAP ? "Take" : "MoveOnly";
+    return resolveCollect(hand, station.slot) ?? "MoveOnly";
 }
 
 function resolveMagicJar(hand: ItemStack | null, station: Station): ActionKind {
@@ -171,16 +157,30 @@ function resolveMagicJar(hand: ItemStack | null, station: Station): ActionKind {
 function resolvePlace(hand: ItemStack | null, station: Station): ActionKind {
     const held = nonempty(hand);
     const slot = nonempty(station.slot);
-    if (!held && slot) {
-        return "Take";
+    const collect = resolveCollect(hand, station.slot);
+    if (collect) {
+        return collect;
     }
     if (held && !slot) {
         return "Place";
     }
-    if (held && slot) {
-        return "RefuseSwap";
-    }
     return "MoveOnly";
+}
+
+/** 空手才能拿。只有手里已是金币时，才能再叠台上的金币。 */
+function resolveCollect(hand: ItemStack | null, slot: ItemStack | null): ActionKind | null {
+    const goods = nonempty(slot);
+    if (!goods) {
+        return null;
+    }
+    const held = nonempty(hand);
+    if (!held) {
+        return "Take";
+    }
+    if (isCoin(held.itemId) && isCoin(goods.itemId)) {
+        return held.count < ITEM_STACK_CAP ? "Take" : "RefuseSwap";
+    }
+    return "RefuseSwap";
 }
 
 function nonempty(stack: ItemStack | null): ItemStack | null {

@@ -4,6 +4,7 @@ import { GameEvent } from "../../../framework/event/EventName";
 import { Actor } from "../domain/Actor";
 import { ItemStack } from "../domain/ItemStack";
 import { StationBinding, StationRegistry } from "../sim/StationRegistry";
+import { FxView } from "../view/FxView";
 import { LockView } from "../view/LockView";
 import { ProcessorView } from "../view/ProcessorView";
 import { findCookRecipe, isCookedOutput } from "./Recipe";
@@ -16,6 +17,7 @@ export class ProcessorSystem {
     constructor(
         camera: Camera | null,
         private readonly registry: StationRegistry,
+        private readonly fx: FxView,
     ) {
         this._view = new ProcessorView(camera);
         this._locks = new LockView(camera);
@@ -80,6 +82,7 @@ export class ProcessorSystem {
             }
             binding.station.slot = new ItemStack(cook.outputId, 1);
             this._view.showReady(binding, cook.outputId);
+            this.fx.attach(binding.station.id, binding.node, "smoke", binding.holdPoint);
             EventManager.getInstance().emit(GameEvent.PROCESSOR_READY, binding.station.id, cook.outputId);
             EventManager.getInstance().emit(GameEvent.STATION_SLOT_CHANGED, binding.station.id);
             console.log("[Cook] 完成", binding.station.id, cook.outputId);
@@ -135,6 +138,7 @@ export class ProcessorSystem {
             station.slot = null;
             station.cook?.reset();
             this._view.hideBar(binding);
+            this.fx.stop(station.id);
         }
         EventManager.getInstance().emit(GameEvent.STATION_SLOT_CHANGED, station.id);
         return true;
@@ -158,6 +162,7 @@ export class ProcessorSystem {
         }
         cook.start(recipe.input, recipe.output, recipe.duration);
         this._view.begin(binding);
+        this.fx.attach(binding.station.id, binding.node, "fire", binding.holdPoint);
         console.log("[Cook] 开始烘培", recipe.input, "→", recipe.output, recipe.duration, "s");
         return true;
     }

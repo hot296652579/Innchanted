@@ -12,6 +12,7 @@ import { GridAgent } from "../sim/GridAgent";
 import { RecastPathfinder } from "../sim/RecastPathfinder";
 import { findNamedDescendant, StationRegistry } from "../sim/StationRegistry";
 import { Enemy } from "../view/Enemy";
+import { FxView } from "../view/FxView";
 import { GroundIceView } from "../view/GroundIceView";
 import { ItemHoldView } from "../view/ItemHoldView";
 import { PlayerView } from "../view/PlayerView";
@@ -56,6 +57,7 @@ export class ShiftController {
     private _huntRetarget = 0;
     private _levelRoot: Node | null = null;
     private _ice: GroundIceView | null = null;
+    private _fx: FxView | null = null;
     private _playerAgentId = -1;
 
     async start(args: ShiftStartArgs): Promise<void> {
@@ -73,7 +75,10 @@ export class ShiftController {
         const holds = new ItemHoldView(this.requireHold(args.player));
         holds.capture(this._registry);
 
-        this._processors = new ProcessorSystem(args.camera, this._registry);
+        this._fx = new FxView();
+        await this._fx.load();
+
+        this._processors = new ProcessorSystem(args.camera, this._registry, this._fx);
         await this._processors.load();
 
         this._barrels = new BarrelSystem(args.camera, this._registry, this._actor!, this.requireHold(args.player), this._playerView!);
@@ -86,7 +91,7 @@ export class ShiftController {
         const combines = new CombineCatalog();
         await combines.load();
 
-        this._interact = new InteractService(this._actor!, holds, this._processors, this._barrels, combines, this._guests, this._playerView!);
+        this._interact = new InteractService(this._actor!, holds, this._processors, this._barrels, combines, this._guests, this._playerView!, this._fx);
         this.bindScore();
         const level = findLevel(BattleContext.selectedLevelId);
         this._score = new ShiftScore(level.duration);
@@ -117,6 +122,7 @@ export class ShiftController {
         this._events?.update(dt);
         this.tickHunt(dt);
         this._ice?.update(dt);
+        this._fx?.tick(dt);
         this.tickScore(dt);
     }
 
@@ -129,6 +135,8 @@ export class ShiftController {
         this._playerAgentId = -1;
         this._ice?.clear();
         this._ice = null;
+        this._fx?.clear();
+        this._fx = null;
         this._events?.clear();
         this._barrels?.cancel();
         this._processors?.clearLocks();
@@ -197,6 +205,10 @@ export class ShiftController {
             this._playerView?.clearLookTarget();
         }
         if (hit.target.kind === "enemy") {
+            if (this.handsBusy()) {
+                EventManager.getInstance().emit(GameEvent.SHOW_TIPS, "先把手里的东西放下再打");
+                return;
+            }
             this._barrels?.cancel();
             const enemyId = hit.target.enemyId;
             this._huntId = enemyId;
@@ -213,7 +225,7 @@ export class ShiftController {
             this._commands.issue(hit.target, hit.dest, () => this._guests?.beginConfirmHold(guestId));
             return;
         }
-        if (hit.target.kind === "place" && this._events?.scareAt(hit.target.stationId)) {
+        if (hit.target.kind === "place" && !this.handsBusy() && this._events?.scareAt(hit.target.stationId)) {
             this._barrels?.cancel();
             this._playerView?.playAttack();
             EventManager.getInstance().emit(GameEvent.SHOW_TIPS, "赶走了小偷");
@@ -250,6 +262,10 @@ export class ShiftController {
 
     private tickHunt(dt: number): void {
         if (!this._huntId || !this._commands) {
+            return;
+        }
+        if (this.handsBusy()) {
+            this._huntId = null;
             return;
         }
         this._huntRetarget -= dt;
@@ -299,12 +315,22 @@ export class ShiftController {
             }
             return;
         }
+        if (this.handsBusy()) {
+            this._huntId = null;
+            EventManager.getInstance().emit(GameEvent.SHOW_TIPS, "先把手里的东西放下再打");
+            return;
+        }
         this._huntId = null;
         this._playerView?.setLookTarget(center);
         this._playerView?.playAttack();
         if (this._events?.strike(root)) {
             EventManager.getInstance().emit(GameEvent.SHOW_TIPS, "击退了小偷");
         }
+    }
+
+    private handsBusy(): boolean {
+        const hand = this._actor?.hand;
+        return !!hand && !hand.empty;
     }
 
     private async bindIce(planeRoot: Node | null): Promise<void> {

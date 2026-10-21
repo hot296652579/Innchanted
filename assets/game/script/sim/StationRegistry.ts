@@ -184,17 +184,20 @@ export function itemIdFromNode(node: Node): string {
 
 export function stackFromHoldPoint(holdPoint: Node): ItemStack | null {
     const kids = holdPoint.children;
-    if (kids.length === 0) {
-        return null;
-    }
-    const itemId = itemIdFromNode(kids[0]);
+    let itemId = "";
     let count = 0;
     for (let i = 0; i < kids.length; i++) {
+        if (kids[i].name.startsWith("Fx_")) {
+            continue;
+        }
+        if (!itemId) {
+            itemId = itemIdFromNode(kids[i]);
+        }
         if (itemIdFromNode(kids[i]) === itemId) {
             count++;
         }
     }
-    if (count <= 0) {
+    if (!itemId || count <= 0) {
         return null;
     }
     return new ItemStack(itemId, Math.min(count, ITEM_STACK_CAP));

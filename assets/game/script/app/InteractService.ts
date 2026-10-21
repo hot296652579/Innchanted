@@ -4,6 +4,7 @@ import { Actor } from "../domain/Actor";
 import { ITEM_STACK_CAP, isCoin, ItemStack } from "../domain/ItemStack";
 import { Station, StationType } from "../domain/Station";
 import { stackFromHoldPoint, StationBinding } from "../sim/StationRegistry";
+import { FxView } from "../view/FxView";
 import { ItemHoldView } from "../view/ItemHoldView";
 import { PlayerView } from "../view/PlayerView";
 import { BarrelSystem } from "./BarrelSystem";
@@ -30,6 +31,7 @@ export class InteractService {
         private readonly combines: CombineCatalog,
         private readonly guests: GuestLoop,
         private readonly playerView: PlayerView,
+        private readonly fx: FxView,
     ) { }
 
     /** 点自身：喝掉手里的药剂。新药只改 items.json 的 use / effects。 */
@@ -48,6 +50,8 @@ export class InteractService {
             this.actor.hand = null;
         }
         this.playerView.playDrink();
+        const drinkAt = this.playerView.node.getChildByName("HoldPoint") ?? this.playerView.node;
+        this.fx.burst(this.playerView.node, "drink", 1, drinkAt);
         const events = EventManager.getInstance();
         events.emit(GameEvent.ITEM_HELD_CHANGED, this.actor.id, this.actor.hand);
         const effects = itemEffects(itemId);
@@ -78,15 +82,9 @@ export class InteractService {
         const events = EventManager.getInstance();
         switch (action) {
             case "Take"://拿取物品
-                if (station.type === StationType.ItemStand) {
-                    this.takeFromStand(binding);
-                    break;
+                if (!this.take(binding)) {
+                    return;
                 }
-                actor.hand = station.slot;
-                station.slot = null;
-                station.cook?.reset();
-                this.holds.take(station.id);
-                this.processors.hideBar(binding);
                 break;
             case "Place":// 灶炉：开烘培；其他台：空手台才能放
                 if (this.occupied(binding) && station.type !== StationType.Cook) {
@@ -101,6 +99,9 @@ export class InteractService {
                     break;
                 }
                 this.dropHand(binding);
+                if (station.type === StationType.Place) {
+                    this.fx.burst(binding.node, "place", 0.5, binding.holdPoint);
+                }
                 if (station.type === StationType.Table) {
                     this.tryServe(binding);
                 }
@@ -131,6 +132,7 @@ export class InteractService {
                     const count = actor.hand.count;
                     actor.hand = null;
                     this.holds.bankInto(station.id);
+                    this.fx.burst(binding.node, "bank", 1, binding.holdPoint);
                     events.emit(GameEvent.SHELL_BANKED, count);
                     events.emit(GameEvent.SHOW_TIPS, "金币已存入宝箱");
                 }
@@ -139,14 +141,14 @@ export class InteractService {
                 events.emit(GameEvent.SHOW_TIPS, "台上已经有东西了");
                 return;
             case "RefuseSwap":// 拒绝交换
-                const tip = refuseTip(station);
+                const tip = refuseTip(station, actor.hand);
                 events.emit(GameEvent.SHOW_TIPS, tip);
                 console.warn("[Player]", tip);
                 return;
             default:
                 return;
         }
-        if (action === "Take" || action === "Place" || action === "Stack" || action === "Combine") {
+        if (action === "Take" || action === "Place" || action === "Combine") {
             this.playerView.playThrow();
         }
         events.emit(GameEvent.ITEM_HELD_CHANGED, actor.id, actor.hand);
@@ -201,20 +203,52 @@ export class InteractService {
         return true;
     }
 
-    private takeFromStand(binding: StationBinding): void {
-        const src = binding.station.slot;
-        if (!src || src.empty) {
-            return;
+    private take(binding: StationBinding): boolean {
+        if (binding.station.type === StationType.ItemStand) {
+            return this.takeFromStand(binding);
+        }
+        const slot = binding.station.slot;
+        if (!slot || slot.empty) {
+            return false;
         }
         const hand = this.actor.hand;
-        if (!hand || hand.empty) {
-            this.actor.hand = new ItemStack(src.itemId, 1);
-        } else if (hand.itemId === src.itemId && hand.count < ITEM_STACK_CAP) {
-            hand.count += 1;
-        } else {
-            return;
+        if (hand && !hand.empty) {
+            if (!isCoin(hand.itemId) || !isCoin(slot.itemId)) {
+                EventManager.getInstance().emit(GameEvent.SHOW_TIPS, "先把手里的东西放下再拿");
+                return false;
+            }
+            const before = hand.count;
+            hand.absorb(slot);
+            const moved = hand.count - before;
+            if (moved <= 0) {
+                EventManager.getInstance().emit(GameEvent.SHOW_TIPS, "金币拿满了");
+                return false;
+            }
+            if (slot.empty) {
+                binding.station.slot = null;
+                this.holds.take(binding.station.id);
+            }
+            return true;
         }
+        this.actor.hand = slot;
+        binding.station.slot = null;
+        binding.station.cook?.reset();
+        this.holds.take(binding.station.id);
+        this.processors.hideBar(binding);
+        this.fx.stop(binding.station.id);
+        return true;
+    }
+
+    private takeFromStand(binding: StationBinding): boolean {
+        const src = binding.station.slot;
+        const hand = this.actor.hand;
+        if (!src || src.empty || (hand && !hand.empty)) {
+            EventManager.getInstance().emit(GameEvent.SHOW_TIPS, "先把手里的东西放下再拿");
+            return false;
+        }
+        this.actor.hand = new ItemStack(src.itemId, 1);
         this.holds.copyToPlayer(binding.station.id, 1);
+        return true;
     }
 
     private dropHand(binding: StationBinding): void {
@@ -253,9 +287,20 @@ export class InteractService {
     }
 }
 
-function refuseTip(station: Station): string {
+function refuseTip(station: Station, hand?: ItemStack | null): string {
     if (station.locked) {
         return "灶炉被锁住了";
+    }
+    const held = hand && !hand.empty ? hand : null;
+    const slot = station.slot && !station.slot.empty ? station.slot : null;
+    if (held && slot) {
+        if (isCoin(held.itemId) && isCoin(slot.itemId) && held.count >= ITEM_STACK_CAP) {
+            return "金币拿满了";
+        }
+        if (station.type === StationType.ItemStand) {
+            return "材料架上的东西不能换，空手来拿";
+        }
+        return "先把手里的东西放下再拿";
     }
     if (station.type === StationType.Cook) {
         return "这个不能放进炉灶";
