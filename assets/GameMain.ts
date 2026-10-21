@@ -1,4 +1,5 @@
 // main.ts
+import { patchWechatTexture } from "./framework/adapter/patchWechatTexture";
 import { ConfigManager } from "./framework/config/ConfigManager";
 import { EventManager } from "./framework/event/EventManager";
 import { PoolManager } from "./framework/pool/PoolManager";
@@ -9,6 +10,7 @@ import { UIManager } from "./framework/ui/UIManager";
 
 export class GameMain {
     public async initAllFramework(): Promise<void> {
+        patchWechatTexture();
         console.log("===== 商业框架初始化开始 =====");
         await ResourceManager.getInstance().init();
         await EventManager.getInstance().init();

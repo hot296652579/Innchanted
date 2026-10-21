@@ -22,7 +22,7 @@
         "visible": false,
         "minfilter": "linear",
         "magfilter": "linear",
-        "mipfilter": "nearest",
+        "mipfilter": "none",
         "anisotropy": 0
       },
       "ver": "1.0.22",
@@ -37,6 +37,9 @@
     "type": "texture",
     "hasAlpha": true,
     "fixAlphaTransparencyArtifacts": false,
-    "redirect": "9ba1efc6-2210-42b2-99a1-bfb5627b93db@6c48a"
+    "redirect": "9ba1efc6-2210-42b2-99a1-bfb5627b93db@6c48a",
+    "compressSettings": {
+      "useCompressTexture": false
+    }
   }
 }

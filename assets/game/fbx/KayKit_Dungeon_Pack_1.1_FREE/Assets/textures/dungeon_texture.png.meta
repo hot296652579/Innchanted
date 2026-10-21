@@ -37,6 +37,9 @@
     "type": "texture",
     "hasAlpha": true,
     "fixAlphaTransparencyArtifacts": false,
-    "redirect": "df7a8f43-b918-4970-9206-57d42c2ba412@6c48a"
+    "redirect": "df7a8f43-b918-4970-9206-57d42c2ba412@6c48a",
+    "compressSettings": {
+      "useCompressTexture": false
+    }
   }
 }

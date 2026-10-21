@@ -44,6 +44,7 @@ function patchWechatgameOutput(dest) {
     const virtualNames = listVirtualCcFiles(dest);
     const kept = injectKeepRequire(dest, virtualNames);
     const settings = patchProjectConfig(dest);
+    const macros = patchCleanupImageCache(dest);
     const parts = [];
     if (renamed.length) {
         parts.push(`renamed ${renamed.join(', ')}`);
@@ -52,6 +53,7 @@ function patchWechatgameOutput(dest) {
     }
     parts.push(kept ? `kept ${virtualNames.join(', ')}` : 'keep-require skipped');
     parts.push(settings ? 'disabled unused-file filtering' : 'project.config.json missing');
+    parts.push(macros ? 'disabled CLEANUP_IMAGE_CACHE' : 'CLEANUP_IMAGE_CACHE patch skipped');
     return parts.join('; ');
 }
 
@@ -141,6 +143,32 @@ function replaceInDir(dir, from, to, filesOnly) {
         }
         fs.writeFileSync(current, text.split(from).join(to), 'utf8');
     }
+}
+
+function patchCleanupImageCache(dest) {
+    let patched = false;
+    const settingsJson = path.join(dest, 'src', 'settings.json');
+    if (fs.existsSync(settingsJson)) {
+        const json = JSON.parse(fs.readFileSync(settingsJson, 'utf8'));
+        json.macros = json.macros || {};
+        json.macros.CLEANUP_IMAGE_CACHE = false;
+        fs.writeFileSync(settingsJson, JSON.stringify(json, null, 2), 'utf8');
+        patched = true;
+    }
+    const settingsJs = path.join(dest, 'src', 'settings.js');
+    if (fs.existsSync(settingsJs)) {
+        let text = fs.readFileSync(settingsJs, 'utf8');
+        const next = text
+            .replace(/CLEANUP_IMAGE_CACHE"\s*:\s*true/g, 'CLEANUP_IMAGE_CACHE": false')
+            .replace(/CLEANUP_IMAGE_CACHE'\s*:\s*true/g, "CLEANUP_IMAGE_CACHE': false")
+            .replace(/CLEANUP_IMAGE_CACHE:\s*!0/g, 'CLEANUP_IMAGE_CACHE: !1')
+            .replace(/CLEANUP_IMAGE_CACHE:\s*true/g, 'CLEANUP_IMAGE_CACHE: false');
+        if (next !== text) {
+            fs.writeFileSync(settingsJs, next, 'utf8');
+            patched = true;
+        }
+    }
+    return patched;
 }
 
 function patchProjectConfig(dest) {

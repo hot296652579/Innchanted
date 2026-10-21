@@ -4,13 +4,17 @@ import { BundlesEnum } from '../define/BundlesEnum';
 import { UIConfig } from '../define/UIEnum';
 import { UILayerRoot } from '../framework/ui/UILayer';
 import { UIManager } from '../framework/ui/UIManager';
+import { patchWechatTexture } from '../framework/adapter/patchWechatTexture';
 import { GameMain } from '../GameMain';
 const { ccclass, property } = _decorator;
+
+patchWechatTexture();
 
 @ccclass('StartScene')
 export class StartScene extends Component {
 
     async start() {
+        patchWechatTexture();
         const gameMain = new GameMain();
         await gameMain.initAllFramework();
 
