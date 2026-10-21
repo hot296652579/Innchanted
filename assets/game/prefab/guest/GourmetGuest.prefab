@@ -22,13 +22,13 @@
         "__id__": 2
       },
       {
-        "__id__": 17
+        "__id__": 16
       }
     ],
     "_active": true,
     "_components": [],
     "_prefab": {
-      "__id__": 19
+      "__id__": 18
     },
     "_lpos": {
       "__type__": "cc.Vec3",
@@ -76,10 +76,10 @@
       "__id__": 2
     },
     "asset": {
-      "__uuid__": "f6502e33-c1a2-4578-a133-2fcfe29d5919@e9bed",
+      "__uuid__": "8633b273-b082-4626-967e-1effd80fc315@6f280",
       "__expectedType__": "cc.Prefab"
     },
-    "fileId": "baj/IpKlFbiq6FViBj1hHO",
+    "fileId": "b7tq7l43ZUNJpT579L7SXt",
     "instance": {
       "__id__": 4
     },
@@ -87,7 +87,7 @@
   },
   {
     "__type__": "cc.PrefabInstance",
-    "fileId": "7cEC5IrMFETKcEI3Wbtkb0",
+    "fileId": "85UWIcAslP2K/BsZ6hJn60",
     "prefabRootNode": {
       "__id__": 1
     },
@@ -120,9 +120,6 @@
       },
       {
         "__id__": 15
-      },
-      {
-        "__id__": 16
       }
     ],
     "removedComponents": []
@@ -135,12 +132,12 @@
     "propertyPath": [
       "_name"
     ],
-    "value": "Mage"
+    "value": "Ranger"
   },
   {
     "__type__": "cc.TargetInfo",
     "localID": [
-      "baj/IpKlFbiq6FViBj1hHO"
+      "b7tq7l43ZUNJpT579L7SXt"
     ]
   },
   {
@@ -203,7 +200,7 @@
   {
     "__type__": "cc.TargetInfo",
     "localID": [
-      "a8S7cy2/lch7TsQEfEG81u"
+      "98SESEd7JWlb2DYjJkPBSc"
     ]
   },
   {
@@ -214,19 +211,6 @@
     "propertyPath": [
       "_clips",
       "0"
-    ],
-    "value": {
-      "__uuid__": "886b0911-4644-4948-bef4-79fda345a4fd@47c14",
-      "__expectedType__": "cc.AnimationClip"
-    }
-  },
-  {
-    "__type__": "CCPropertyOverrideInfo",
-    "targetInfo": {
-      "__id__": 11
-    },
-    "propertyPath": [
-      "_defaultClip"
     ],
     "value": {
       "__uuid__": "886b0911-4644-4948-bef4-79fda345a4fd@47c14",
@@ -267,8 +251,7 @@
       "__id__": 11
     },
     "propertyPath": [
-      "_clips",
-      "3"
+      "_defaultClip"
     ],
     "value": {
       "__uuid__": "886b0911-4644-4948-bef4-79fda345a4fd@47c14",
@@ -287,7 +270,7 @@
     "_active": true,
     "_components": [],
     "_prefab": {
-      "__id__": 18
+      "__id__": 17
     },
     "_lpos": {
       "__type__": "cc.Vec3",

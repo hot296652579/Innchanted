@@ -178,7 +178,7 @@ export function itemIdFromNode(node: Node): string {
     return node.name.replace(/_\d+$/, "").toLowerCase();
 }
 
-function stackFromHoldPoint(holdPoint: Node): ItemStack | null {
+export function stackFromHoldPoint(holdPoint: Node): ItemStack | null {
     const kids = holdPoint.children;
     if (kids.length === 0) {
         return null;

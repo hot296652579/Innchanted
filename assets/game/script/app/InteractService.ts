@@ -3,7 +3,7 @@ import { GameEvent } from "../../../framework/event/EventName";
 import { Actor } from "../domain/Actor";
 import { ITEM_STACK_CAP, isCoin, ItemStack } from "../domain/ItemStack";
 import { Station, StationType } from "../domain/Station";
-import { StationBinding } from "../sim/StationRegistry";
+import { stackFromHoldPoint, StationBinding } from "../sim/StationRegistry";
 import { ItemHoldView } from "../view/ItemHoldView";
 import { PlayerView } from "../view/PlayerView";
 import { BarrelSystem } from "./BarrelSystem";
@@ -62,6 +62,7 @@ export class InteractService {
     }
 
     arrive(binding: StationBinding): void {
+        this.syncSlot(binding);
         const action = resolveDefaultAction(
             this.actor.hand,
             binding.station,
@@ -87,7 +88,11 @@ export class InteractService {
                 this.holds.take(station.id);
                 this.processors.hideBar(binding);
                 break;
-            case "Place":// 灶炉：开烘培；其他台：放手物品
+            case "Place":// 灶炉：开烘培；其他台：空手台才能放
+                if (this.occupied(binding) && station.type !== StationType.Cook) {
+                    events.emit(GameEvent.SHOW_TIPS, "台上已经有东西了");
+                    return;
+                }
                 if (station.type === StationType.Cook) {
                     if (!this.processors.startFromHand(actor, binding)) {
                         return;
@@ -130,15 +135,9 @@ export class InteractService {
                     events.emit(GameEvent.SHOW_TIPS, "金币已存入宝箱");
                 }
                 break;
-            case "Stack":// 堆叠物品
-                if (actor.hand && station.slot) {
-                    const moved = actor.hand.count - station.slot.absorb(actor.hand);
-                    if (actor.hand.empty) {
-                        actor.hand = null;
-                    }
-                    this.holds.stack(station.id, moved);
-                }
-                break;
+            case "Stack":
+                events.emit(GameEvent.SHOW_TIPS, "台上已经有东西了");
+                return;
             case "RefuseSwap":// 拒绝交换
                 const tip = refuseTip(station);
                 events.emit(GameEvent.SHOW_TIPS, tip);
@@ -224,6 +223,23 @@ export class InteractService {
         this.holds.place(binding.station.id);
     }
 
+    /** HoldPoint 上已有模型时补回 slot，避免看起来有货、逻辑却当成空台。 */
+    private syncSlot(binding: StationBinding): void {
+        const slot = binding.station.slot;
+        if (slot && !slot.empty) {
+            return;
+        }
+        binding.station.slot = stackFromHoldPoint(binding.holdPoint);
+    }
+
+    private occupied(binding: StationBinding): boolean {
+        const slot = binding.station.slot;
+        if (slot && !slot.empty) {
+            return true;
+        }
+        return binding.holdPoint.children.length > 0;
+    }
+
     private tryServe(binding: StationBinding): boolean {
         if (this.guests.tryServe(binding)) {
             EventManager.getInstance().emit(GameEvent.SHOW_TIPS, "客人吃完离开了");
@@ -264,6 +280,9 @@ function refuseTip(station: Station): string {
     }
     if (isCoin(station.slot?.itemId)) {
         return "先拿走金币才能上菜";
+    }
+    if (station.slot && !station.slot.empty) {
+        return "台上已经有东西了";
     }
     return "不能和台上的交换";
 }

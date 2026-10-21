@@ -82,9 +82,6 @@ function resolveTable(
         if (!held) {
             return "Take";
         }
-        if (isCoin(held.itemId)) {
-            return "Stack";
-        }
         return "RefuseSwap";
     }
     if (held && !slot && wantedItemId && held.itemId === wantedItemId) {
@@ -178,12 +175,6 @@ function resolvePlace(hand: ItemStack | null, station: Station): ActionKind {
     }
     if (held && !slot) {
         return "Place";
-    }
-    if (held && slot && held.itemId === slot.itemId) {
-        return "Stack";
-    }
-    if (held && slot && findCombineRecipe(held, station)) {
-        return "Combine";
     }
     if (held && slot) {
         return "RefuseSwap";
