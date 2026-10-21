@@ -17,7 +17,7 @@ export class GuestFsm {
     }
 
     confirmEscort(): void {
-        if (this.guest.state === "waitingEscort") {
+        if (this.guest.state === "queuing" || this.guest.state === "waitingEscort") {
             this.guest.state = "escorted";
         }
     }

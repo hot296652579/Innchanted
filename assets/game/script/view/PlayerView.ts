@@ -103,12 +103,16 @@ export class PlayerView extends Component {
         this.tickAnim(dt, velocity.lengthSqr() > MOVE_SPEED_SQ);
     }
 
+    /** 入座后再起身走路时，强制按当前速度重选站立/移动剪辑。 */
+    resumeLoco(): void {
+        this._actionLeft = 0;
+        this._loco = -1;
+    }
+
     private bindClips(): void {
         const anim = this.getComponentInChildren(SkeletalAnimation) ?? this.getComponentInChildren(Animation);
         const clips = anim?.clips?.filter((clip) => !!clip) ?? [];
-        console.log("[Drink] bindClips", anim?.node?.name ?? "无动画", "数量", clips.length, clips.map((clip) => clip.name));
-        if (!anim || clips.length < 4) {
-            console.warn("[Drink] 动画不够 4 条，喝药播不了");
+        if (!anim || clips.length < 2) {
             return;
         }
         this._anim = anim;
@@ -172,7 +176,6 @@ export class PlayerView extends Component {
     private playByName(name: string | undefined, loop: boolean): number {
         const anim = this._anim;
         if (!anim || !name) {
-            console.warn("[Drink] playByName 失败", "anim", !!anim, "name", name);
             return 0;
         }
         anim.play(name);
@@ -180,9 +183,7 @@ export class PlayerView extends Component {
         if (state) {
             state.wrapMode = loop ? AnimationClip.WrapMode.Loop : AnimationClip.WrapMode.Normal;
         }
-        const duration = state?.duration > 0 ? state.duration : 0.4;
-        console.log("[Drink] 播放", name, "loop", loop, "duration", duration, "hasState", !!state);
-        return duration;
+        return state?.duration > 0 ? state.duration : 0.4;
     }
 
     private faceXZ(dirX: number, dirZ: number): void {
