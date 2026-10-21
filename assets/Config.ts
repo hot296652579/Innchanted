@@ -16,7 +16,3 @@ export const Config = {
         1: 'game-hotupdate',
     }
 }
-
-// @assets/game/prefab/guest/soldier/SoldierGuest.prefab @assets/game/prefab/guest/mage/MageGuest.prefab 
-// 我现在添加了需要引入的客人，已经摆放在关卡中了，它们需要玩家走到客人面前，大约停留0.5s，然后该类型的客人就会一定距离跟随玩家。
-// 当玩家靠近餐桌时，客人会自动上桌，并开始吃饭。
