@@ -6,6 +6,7 @@ export enum StationType {
     Place = "place",
     Cook = "cook",
     Table = "table",
+    RoundTable = "roundtable",
     Chest = "chest",
     OriginalBarrel = "originalbarrel",
     MagicBarrel = "magicbarrel",

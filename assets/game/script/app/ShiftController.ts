@@ -81,7 +81,7 @@ export class ShiftController {
 
         this._guests = new GuestLoop(this._pathfinder, this._registry, args.camera);
         await this._guests.load();
-        this._guests.start(args.levelRoot, args.stationRoot, args.yawOffset);
+        this._guests.start(args.levelRoot, args.stationRoot, args.yawOffset, args.player);
 
         const combines = new CombineCatalog();
         await combines.load();
@@ -169,6 +169,8 @@ export class ShiftController {
         picker.stationRoot = args.stationRoot;
         picker.planeRoot = args.planeRoot;
         picker.levelRoot = args.levelRoot;
+        picker.guestRoot = findNamedDescendant(args.levelRoot, "Guests");
+        picker.canPickGuest = (node) => this._guests?.canEscortPick(node) ?? false;
         picker.registry = this._registry;
         picker.onHit = (hit) => this.onClick(hit);
     }
@@ -178,6 +180,7 @@ export class ShiftController {
             return;
         }
         if (hit.target.kind === "self") {
+            this._guests?.cancelHold();
             console.log("[Drink] onClick self", "interact", !!this._interact, "hand", this._actor.hand);
             this._huntId = null;
             this._barrels?.cancel();
@@ -203,6 +206,13 @@ export class ShiftController {
             return;
         }
         this._huntId = null;
+        this._guests?.cancelHold();
+        if (hit.target.kind === "guest") {
+            this._barrels?.cancel();
+            const guestId = hit.target.guestId;
+            this._commands.issue(hit.target, hit.dest, () => this._guests?.beginConfirmHold(guestId));
+            return;
+        }
         if (hit.target.kind === "place" && this._events?.scareAt(hit.target.stationId)) {
             this._barrels?.cancel();
             this._playerView?.playAttack();
@@ -221,13 +231,21 @@ export class ShiftController {
             this.onArriveEnemy(hit.target.enemyId);
             return;
         }
+        if (hit.target.kind === "guest") {
+            this._guests?.beginConfirmHold(hit.target.guestId);
+            return;
+        }
         if (!this._interact || hit.target.kind !== "place") {
             return;
         }
         const binding = this._registry.get(hit.target.stationId);
-        if (binding) {
-            this._interact.arrive(binding);
+        if (!binding) {
+            return;
         }
+        if (this._guests?.beginSeatHold(binding)) {
+            return;
+        }
+        this._interact.arrive(binding);
     }
 
     private tickHunt(dt: number): void {

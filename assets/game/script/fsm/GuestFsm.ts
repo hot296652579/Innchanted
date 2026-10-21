@@ -12,6 +12,16 @@ export class GuestFsm {
         this.guest.state = "queuing";
     }
 
+    waitEscort(): void {
+        this.guest.state = "waitingEscort";
+    }
+
+    confirmEscort(): void {
+        if (this.guest.state === "waitingEscort") {
+            this.guest.state = "escorted";
+        }
+    }
+
     goSeat(): void {
         this.guest.state = "entering";
     }

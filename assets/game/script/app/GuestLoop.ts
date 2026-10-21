@@ -6,19 +6,22 @@ import { ResourceManager } from "../../../framework/resource/ResourceManager";
 import { Guest } from "../domain/Guest";
 import { COIN_ID, ItemStack } from "../domain/ItemStack";
 import { GuestFsm } from "../fsm/GuestFsm";
+import { StationType } from "../domain/Station";
 import { DiningLayout, DiningScan, scanDining } from "../sim/DiningHall";
 import { GridAgent } from "../sim/GridAgent";
 import { RecastPathfinder } from "../sim/RecastPathfinder";
-import { StationBinding, StationRegistry } from "../sim/StationRegistry";
+import { findNamedDescendant, StationBinding, StationRegistry } from "../sim/StationRegistry";
+import { EscortView } from "../view/EscortView";
 import { GuestExpressionView } from "../view/GuestExpressionView";
 import { GuestOrderView } from "../view/GuestOrderView";
 import { PlayerView } from "../view/PlayerView";
-import { findGuestDef } from "./GuestCatalog";
+import { findGuestDef, isEscortGuest } from "./GuestCatalog";
 import { goldOf } from "./ItemCatalog";
 
 const SEAT_ARRIVE = 1.0;
 const QUEUE_ARRIVE = 0.35;
 const WAIT_GAP = 1.6;
+const HOLD_RANGE = 2.2;
 const _waitPos = new Vec3();
 const _waitBack = new Vec3();
 
@@ -36,10 +39,15 @@ export class GuestLoop {
     private readonly _faces: GuestExpressionView;
     private readonly _runtimes: GuestRuntime[] = [];
     private readonly _queue: GuestRuntime[] = [];
+    private readonly _freeSeats: { seat: Node; table: StationBinding }[] = [];
     private _waitPoint: Node | null = null;
     private readonly _queueDir = new Vec3(0, 0, -1);
     private _coinPrefab: Prefab | null = null;
     private _yawOffset = 0;
+    private _player: Node | null = null;
+    private readonly _escort: EscortView;
+    private _hold: { kind: "confirm" | "seat"; guestId: string; tableId?: string; elapsed: number; duration: number } | null = null;
+    private _escortId: string | null = null;
 
     constructor(
         private readonly pathfinder: RecastPathfinder,
@@ -47,21 +55,28 @@ export class GuestLoop {
         camera: Camera | null,
     ) {
         this._faces = new GuestExpressionView(camera);
+        this._escort = new EscortView(camera);
     }
 
     async load(): Promise<void> {
         await this._orders.load();
         await this._faces.load();
+        await this._escort.load();
         this._coinPrefab = await ResourceManager.getInstance().loadPrefab("prefab/items/Coin", BundlesEnum.Game);
         if (!this._coinPrefab) {
             console.warn("[Guest] 未找到 prefab/items/Coin");
         }
     }
 
-    start(levelRoot: Node, stationRoot: Node, yawOffset: number): void {
+    start(levelRoot: Node, stationRoot: Node, yawOffset: number, player?: Node | null): void {
         this._yawOffset = yawOffset;
+        this._player = player ?? null;
         this._runtimes.length = 0;
         this._queue.length = 0;
+        this._freeSeats.length = 0;
+        this._hold = null;
+        this._escortId = null;
+        this._escort.clear();
         const scan = scanDining(levelRoot, stationRoot, this.registry);
         if (!scan) {
             console.warn("[Guest] 缺少 Guest / Table / SeatPoint / LeavePoint");
@@ -88,9 +103,74 @@ export class GuestLoop {
     update(dt: number): void {
         this._faces.tick(dt);
         this._faces.update();
+        this._escort.update();
+        this.tickHold(dt);
         for (let i = 0; i < this._runtimes.length; i++) {
             this.tickRuntime(this._runtimes[i], dt);
+            const table = this._runtimes[i].layout.table;
+            if (table) {
+                this._escort.followMark(table.station.id, table.node);
+            }
         }
+    }
+
+    canEscortPick(node: Node): boolean {
+        const runtime = this.findByNode(node);
+        if (!runtime || !isEscortGuest(runtime.layout.guestType)) {
+            return false;
+        }
+        const state = runtime.guest.state;
+        return state === "queuing" || state === "waitingEscort" || state === "escorted";
+    }
+
+    beginConfirmHold(guestId: string): boolean {
+        const runtime = this.findById(guestId);
+        if (!runtime || !this.canEscortPick(runtime.layout.guestNode)) {
+            return false;
+        }
+        const def = findGuestDef(runtime.layout.guestType);
+        this._hold = {
+            kind: "confirm",
+            guestId,
+            elapsed: 0,
+            duration: def?.confirmTime ?? 0.5,
+        };
+        this._escort.showBar(runtime.layout.guestNode, 0);
+        console.log("[Guest] 引座确认", guestId, this._hold.duration, "s");
+        return true;
+    }
+
+    beginSeatHold(binding: StationBinding): boolean {
+        if (binding.station.type !== StationType.RoundTable) {
+            return false;
+        }
+        const runtime = this._escortId ? this.findById(this._escortId) : null;
+        if (!runtime || runtime.guest.state !== "escorted") {
+            return false;
+        }
+        if (this.tableBusy(binding.station.id)) {
+            EventManager.getInstance().emit(GameEvent.SHOW_TIPS, "这张圆桌已经有客人了");
+            return true;
+        }
+        const def = findGuestDef(runtime.layout.guestType);
+        this._hold = {
+            kind: "seat",
+            guestId: runtime.guest.id,
+            tableId: binding.station.id,
+            elapsed: 0,
+            duration: def?.seatTime ?? 1,
+        };
+        this._escort.showBar(binding.node, 0);
+        console.log("[Guest] 圆桌引座", binding.station.id, this._hold.duration, "s");
+        return true;
+    }
+
+    cancelHold(): void {
+        if (!this._hold) {
+            return;
+        }
+        this._hold = null;
+        this._escort.hideBar();
     }
 
     wantedAt(tableId: string, itemId?: string | null): string | null {
@@ -166,11 +246,14 @@ export class GuestLoop {
         const runtime: GuestRuntime = { layout, guest, fsm, view, agent };
         this._runtimes.push(runtime);
         this.setAnimPlaying(guestNode, true);
+        if (isEscortGuest(layout.guestType) && def.markPrefab) {
+            void this._escort.ensureMark(def.markPrefab);
+        }
         if (waitInLine) {
             fsm.queue();
             agent.arriveRadius = QUEUE_ARRIVE;
             this._queue.push(runtime);
-            console.log("[Guest] 排队", guest.id, "要", guest.orderId);
+            console.log("[Guest] 排队", guest.id, isEscortGuest(layout.guestType) ? "等引座" : "要", guest.orderId);
             return;
         }
         if (!layout.seatPoint) {
@@ -181,7 +264,9 @@ export class GuestLoop {
     }
 
     private tickRuntime(runtime: GuestRuntime, dt: number): void {
-        if (runtime.fsm.state === "queuing" && runtime.agent.arrived()) {
+        if ((runtime.fsm.state === "queuing" || runtime.fsm.state === "waitingEscort" || runtime.fsm.state === "escorted")
+            && !runtime.layout.table
+            && runtime.agent.arrived()) {
             runtime.agent.stop();
             this.faceWaitLine(runtime.layout.guestNode);
             return;
@@ -239,6 +324,9 @@ export class GuestLoop {
         const seat = runtime.layout.seatPoint;
         const table = runtime.layout.table;
         runtime.fsm.leave();
+        if (this._escortId === runtime.guest.id) {
+            this._escortId = null;
+        }
         this._faces.hide(runtime.guest.id);
         if (runtime.view) {
             runtime.view.enabled = true;
@@ -246,7 +334,10 @@ export class GuestLoop {
         this.setAnimPlaying(runtime.layout.guestNode, true);
         runtime.agent.goto(leave.worldPosition);
         console.log("[Guest] 离席", runtime.guest.id, runtime.guest.leaveReason);
-        if (seat && table) {
+        if (table) {
+            this._escort.hideMark(table.station.id);
+        }
+        if (seat && table && table.station.type === StationType.Table) {
             this.admitNext(seat, table);
         }
     }
@@ -260,22 +351,64 @@ export class GuestLoop {
     }
 
     private admitNext(seat: Node, table: StationBinding): void {
-        const waiter = this._queue.shift();
-        if (!waiter) {
-            return;
+        this._freeSeats.push({ seat, table });
+        this.flushFreeSeats();
+    }
+
+    /** 引座客人离开等待点后，把还空着的普通餐桌交给队首的普通人。 */
+    private gatherEmptyRegularSeats(): void {
+        const taken = new Set<string>();
+        for (let i = 0; i < this._freeSeats.length; i++) {
+            taken.add(this._freeSeats[i].table.station.id);
         }
-        waiter.layout.seatPoint = seat;
-        waiter.layout.table = table;
-        waiter.guest.tableId = table.station.id;
-        waiter.fsm.goSeat();
-        waiter.agent.arriveRadius = SEAT_ARRIVE;
-        if (waiter.view) {
-            waiter.view.enabled = true;
+        for (let i = 0; i < this._runtimes.length; i++) {
+            const guest = this._runtimes[i].guest;
+            const table = this._runtimes[i].layout.table;
+            if (!table || table.station.type !== StationType.Table) {
+                continue;
+            }
+            if (guest.state === "entering" || guest.state === "seated" || guest.state === "reacting") {
+                taken.add(table.station.id);
+            }
         }
-        this.setAnimPlaying(waiter.layout.guestNode, true);
-        waiter.agent.goto(seat.worldPosition);
-        this.repackQueue();
-        console.log("[Guest] 补位入座", waiter.guest.id, table.station.id);
+        const all = this.registry.all;
+        for (let i = 0; i < all.length; i++) {
+            const binding = all[i];
+            if (binding.station.type !== StationType.Table || taken.has(binding.station.id)) {
+                continue;
+            }
+            const seat = findNamedDescendant(binding.node, "SeatPoint");
+            if (seat) {
+                this._freeSeats.push({ seat, table: binding });
+            }
+        }
+    }
+
+    /** 队首是引座客人时，后面的人不能插队去空桌。引走队首后再补位。 */
+    private flushFreeSeats(): void {
+        while (this._freeSeats.length > 0) {
+            const head = this._queue[0];
+            if (!head || isEscortGuest(head.layout.guestType)) {
+                return;
+            }
+            const slot = this._freeSeats.shift();
+            if (!slot) {
+                return;
+            }
+            this._queue.shift();
+            head.layout.seatPoint = slot.seat;
+            head.layout.table = slot.table;
+            head.guest.tableId = slot.table.station.id;
+            head.fsm.goSeat();
+            head.agent.arriveRadius = SEAT_ARRIVE;
+            if (head.view) {
+                head.view.enabled = true;
+            }
+            this.setAnimPlaying(head.layout.guestNode, true);
+            head.agent.goto(slot.seat.worldPosition);
+            this.repackQueue();
+            console.log("[Guest] 补位入座", head.guest.id, slot.table.station.id);
+        }
     }
 
     private repackQueue(): void {
@@ -372,5 +505,133 @@ export class GuestLoop {
         for (let i = 0; i < kids.length; i++) {
             kids[i].destroy();
         }
+    }
+
+    private tickHold(dt: number): void {
+        const hold = this._hold;
+        if (!hold) {
+            return;
+        }
+        const runtime = this.findById(hold.guestId);
+        const follow = hold.kind === "seat"
+            ? (hold.tableId ? this.registry.get(hold.tableId)?.node : null)
+            : runtime?.layout.guestNode;
+        if (!runtime || !follow || this.playerTooFar(follow)) {
+            this.cancelHold();
+            return;
+        }
+        hold.elapsed += dt;
+        this._escort.setProgress(hold.elapsed / hold.duration);
+        if (hold.elapsed < hold.duration) {
+            return;
+        }
+        this._escort.hideBar();
+        this._hold = null;
+        if (hold.kind === "confirm") {
+            this.confirmEscort(runtime);
+            return;
+        }
+        if (hold.tableId) {
+            this.seatEscort(runtime, hold.tableId);
+        }
+    }
+
+    private confirmEscort(runtime: GuestRuntime): void {
+        runtime.fsm.waitEscort();
+        runtime.fsm.confirmEscort();
+        runtime.agent.stop();
+        this._escortId = runtime.guest.id;
+        EventManager.getInstance().emit(GameEvent.SHOW_TIPS, "已确认引座，带到空圆桌");
+        console.log("[Guest] 已确认引座", runtime.guest.id);
+    }
+
+    private leaveQueue(runtime: GuestRuntime): void {
+        const index = this._queue.indexOf(runtime);
+        if (index >= 0) {
+            this._queue.splice(index, 1);
+        }
+    }
+
+    private seatEscort(runtime: GuestRuntime, tableId: string): void {
+        const table = this.registry.get(tableId);
+        if (!table || this.tableBusy(tableId)) {
+            EventManager.getInstance().emit(GameEvent.SHOW_TIPS, "这张圆桌已经有客人了");
+            return;
+        }
+        const seat = findNamedDescendant(table.node, "SeatPoint");
+        if (!seat) {
+            console.warn("[Guest] 圆桌没有 SeatPoint", tableId);
+            return;
+        }
+        const def = findGuestDef(runtime.layout.guestType);
+        runtime.layout.seatPoint = seat;
+        runtime.layout.table = table;
+        runtime.guest.tableId = table.station.id;
+        runtime.fsm.goSeat();
+        runtime.agent.arriveRadius = SEAT_ARRIVE;
+        if (runtime.view) {
+            runtime.view.enabled = true;
+        }
+        this.setAnimPlaying(runtime.layout.guestNode, true);
+        this.leaveQueue(runtime);
+        runtime.agent.goto(seat.worldPosition);
+        this.repackQueue();
+        this.gatherEmptyRegularSeats();
+        this.flushFreeSeats();
+        if (def?.markPrefab) {
+            this._escort.showMark(tableId, def.markPrefab, table.node);
+        }
+        if (this._escortId === runtime.guest.id) {
+            this._escortId = null;
+        }
+        EventManager.getInstance().emit(GameEvent.SHOW_TIPS, "客人正在入座");
+        console.log("[Guest] 引座入座", runtime.guest.id, tableId);
+    }
+
+    private tableBusy(tableId: string): boolean {
+        for (let i = 0; i < this._runtimes.length; i++) {
+            const guest = this._runtimes[i].guest;
+            if (guest.tableId !== tableId) {
+                continue;
+            }
+            if (guest.state === "entering" || guest.state === "seated" || guest.state === "reacting") {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private playerTooFar(target: Node): boolean {
+        const player = this._player;
+        if (!player) {
+            return false;
+        }
+        const a = player.worldPosition;
+        const b = target.worldPosition;
+        const dx = a.x - b.x;
+        const dz = a.z - b.z;
+        return dx * dx + dz * dz > HOLD_RANGE * HOLD_RANGE;
+    }
+
+    private findById(guestId: string): GuestRuntime | null {
+        for (let i = 0; i < this._runtimes.length; i++) {
+            if (this._runtimes[i].guest.id === guestId) {
+                return this._runtimes[i];
+            }
+        }
+        return null;
+    }
+
+    private findByNode(hit: Node): GuestRuntime | null {
+        let current: Node | null = hit;
+        while (current) {
+            for (let i = 0; i < this._runtimes.length; i++) {
+                if (this._runtimes[i].layout.guestNode === current) {
+                    return this._runtimes[i];
+                }
+            }
+            current = current.parent;
+        }
+        return null;
     }
 }

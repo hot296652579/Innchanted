@@ -35,6 +35,8 @@ export class ClickPicker extends Component {
     planeRoot: Node | null = null;
     levelRoot: Node | null = null;
     registry: StationRegistry | null = null;
+    guestRoot: Node | null = null;
+    canPickGuest: ((node: Node) => boolean) | null = null;
     onHit: ((hit: ClickHit) => void) | null = null;
 
     onEnable(): void {
@@ -92,6 +94,10 @@ export class ClickPicker extends Component {
         if (enemy) {
             return enemy;
         }
+        const guest = this.pickGuest(ray);
+        if (guest) {
+            return guest;
+        }
         const place = this.pickStation(ray);
         if (place) {
             return place;
@@ -109,6 +115,36 @@ export class ClickPicker extends Component {
             };
         }
         return null;
+    }
+
+    private pickGuest(ray: geometry.Ray): ClickHit | null {
+        if (!this.guestRoot || !this.canPickGuest) {
+            return null;
+        }
+        let bestDist = Number.MAX_VALUE;
+        let bestRoot: Node | null = null;
+        const guests = this.guestRoot.children;
+        for (let i = 0; i < guests.length; i++) {
+            const root = guests[i];
+            if (!root.activeInHierarchy || !this.canPickGuest(root)) {
+                continue;
+            }
+            const dist = this.hitEnemyDist(ray, root);
+            if (dist !== null && dist < bestDist) {
+                bestDist = dist;
+                bestRoot = root;
+            }
+        }
+        if (!bestRoot) {
+            return null;
+        }
+        const from = this.player?.worldPosition ?? null;
+        const playerY = from ? from.y : bestRoot.worldPosition.y;
+        return {
+            target: { kind: "guest", guestId: bestRoot.name },
+            dest: standBeside(from, bestRoot.worldPosition, playerY, 1.1),
+            lookAt: bestRoot.worldPosition.clone(),
+        };
     }
 
     private pickStation(ray: geometry.Ray): ClickHit | null {

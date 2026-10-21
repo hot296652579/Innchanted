@@ -1,5 +1,5 @@
 import { Node, Vec3 } from "cc";
-import { guestTypeFromNode, isGuestNodeName } from "../app/GuestCatalog";
+import { guestTypeFromNode, isEscortGuest, isGuestNodeName } from "../app/GuestCatalog";
 import { StationType } from "../domain/Station";
 import { findNamedDescendant, StationBinding, StationRegistry } from "./StationRegistry";
 
@@ -33,8 +33,9 @@ export function scanDining(
     const waitPoint = findNamedDescendant(levelRoot, "WaitPoint");
     const guests = collectGuests(levelRoot);
     const tables = registry.all.filter((b) => b.station.type === StationType.Table);
+    const rounds = registry.all.filter((b) => b.station.type === StationType.RoundTable);
     const slots = collectSeatSlots(tables, stationRoot);
-    if (!leavePoint || guests.length === 0 || slots.length === 0 || tables.length === 0) {
+    if (!leavePoint || guests.length === 0 || (tables.length === 0 && rounds.length === 0)) {
         return null;
     }
     console.log("[Guest] 层级顺序", guests.map((node) => node.name).join(", "));
@@ -52,26 +53,29 @@ function assignSeats(
     waitPoint: Node | null,
 ): DiningScan {
     const seated: DiningLayout[] = [];
-    const take = Math.min(guests.length, slots.length);
-    for (let i = 0; i < take; i++) {
-        seated.push({
-            guestNode: guests[i],
-            guestType: guestTypeFromNode(guests[i].name),
-            leavePoint,
-            seatPoint: slots[i].seat,
-            table: slots[i].table,
-        });
-    }
-
     const waiting: DiningLayout[] = [];
-    for (let i = seated.length; i < guests.length; i++) {
-        waiting.push({
+    let slotIndex = 0;
+    let blocked = false;
+    for (let i = 0; i < guests.length; i++) {
+        const type = guestTypeFromNode(guests[i].name);
+        const layout: DiningLayout = {
             guestNode: guests[i],
-            guestType: guestTypeFromNode(guests[i].name),
+            guestType: type,
             leavePoint,
             seatPoint: null,
             table: null,
-        });
+        };
+        if (isEscortGuest(type) || blocked || slotIndex >= slots.length) {
+            if (isEscortGuest(type)) {
+                blocked = true;
+            }
+            waiting.push(layout);
+            continue;
+        }
+        layout.seatPoint = slots[slotIndex].seat;
+        layout.table = slots[slotIndex].table;
+        slotIndex += 1;
+        seated.push(layout);
     }
     return { leavePoint, waitPoint, seated, waiting };
 }

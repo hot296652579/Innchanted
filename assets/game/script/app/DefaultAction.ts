@@ -29,6 +29,7 @@ type StationResolver = (
 const STATION_RESOLVERS: Record<StationType, StationResolver> = {
     [StationType.Cook]: resolveCook,
     [StationType.Table]: resolveTable,
+    [StationType.RoundTable]: resolveTable,
     [StationType.Place]: resolvePlace,
     [StationType.Chest]: resolveChest,
     [StationType.OriginalBarrel]: resolveOriginalBarrel,

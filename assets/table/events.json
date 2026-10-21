@@ -42,7 +42,7 @@
     "id": "ice",
     "kind": "ice",
     "category": "status",
-    "delay": 3,
+    "delay": 30,
     "duration": 0,
     "freezeTime": 1,
     "slowScale": 0.4,

@@ -5,6 +5,10 @@ export type GuestDef = {
     waitTime: number;
     orderId: string;
     orderPrefab: string;
+    escort?: boolean;
+    confirmTime?: number;
+    seatTime?: number;
+    markPrefab?: string;
 };
 
 
@@ -38,4 +42,8 @@ export function findGuestDef(typeId: string): GuestDef | null {
         }
     }
     return null;
+}
+
+export function isEscortGuest(typeId: string): boolean {
+    return !!findGuestDef(typeId)?.escort;
 }

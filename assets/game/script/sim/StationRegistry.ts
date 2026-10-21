@@ -40,6 +40,7 @@ export class StationRegistry {
             let holdPoint = findNamedDescendant(node, HOLD_POINT_NAME);
             if (!holdPoint && (
                 type === StationType.Table
+                || type === StationType.RoundTable
                 || type === StationType.Chest
                 || type === StationType.OriginalBarrel
                 || type === StationType.MagicBarrel
@@ -128,6 +129,9 @@ function inferStationType(name: string): StationType {
     const id = name.toLowerCase();
     if (id.startsWith("stove") || id.startsWith("cook")) {
         return StationType.Cook;
+    }
+    if (id.startsWith("roundtable")) {
+        return StationType.RoundTable;
     }
     if (id === "table" || id.startsWith("table-") || id.startsWith("table_")) {
         return StationType.Table;

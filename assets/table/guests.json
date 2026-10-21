@@ -1,5 +1,25 @@
 [
   { "id": "guest", "waitTime": 25, "orderId": "chickenlegbaked", "orderPrefab": "prefab/items/ChickenLegBaked" },
   { "id": "regularguest", "waitTime": 25, "orderId": "chickenlegbaked", "orderPrefab": "prefab/items/ChickenLegBaked" },
-  { "id": "gourmetguest", "waitTime": 15, "orderId": "burgerbaked", "orderPrefab": "prefab/items/BurgerBaked" }
+  { "id": "gourmetguest", "waitTime": 15, "orderId": "burgerbaked", "orderPrefab": "prefab/items/BurgerBaked" },
+  {
+    "id": "soldierguest",
+    "waitTime": 25,
+    "orderId": "chickenlegbaked",
+    "orderPrefab": "prefab/items/ChickenLegBaked",
+    "escort": true,
+    "confirmTime": 0.5,
+    "seatTime": 1,
+    "markPrefab": "prefab/ui/SoldierMark"
+  },
+  {
+    "id": "mageguest",
+    "waitTime": 15,
+    "orderId": "burgerbaked",
+    "orderPrefab": "prefab/items/BurgerBaked",
+    "escort": true,
+    "confirmTime": 0.5,
+    "seatTime": 1,
+    "markPrefab": "prefab/ui/MageMark"
+  }
 ]
