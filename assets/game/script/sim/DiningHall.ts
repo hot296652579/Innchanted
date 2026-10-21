@@ -18,6 +18,11 @@ export interface DiningScan {
     waiting: DiningLayout[];
 }
 
+type SeatSlot = {
+    seat: Node;
+    table: StationBinding;
+};
+
 /** 从关卡收集客人、座位、排队点。座位不够的进 waiting。 */
 export function scanDining(
     levelRoot: Node,
@@ -27,41 +32,34 @@ export function scanDining(
     const leavePoint = findNamedDescendant(levelRoot, "LeavePoint");
     const waitPoint = findNamedDescendant(levelRoot, "WaitPoint");
     const guests = collectGuests(levelRoot);
-    const seats = collectSeats(stationRoot);
     const tables = registry.all.filter((b) => b.station.type === StationType.Table);
-    if (!leavePoint || guests.length === 0 || seats.length === 0 || tables.length === 0) {
+    const slots = collectSeatSlots(tables, stationRoot);
+    if (!leavePoint || guests.length === 0 || slots.length === 0 || tables.length === 0) {
         return null;
     }
     console.log("[Guest] 层级顺序", guests.map((node) => node.name).join(", "));
-    return assignSeats(guests, seats, tables, leavePoint, waitPoint);
+    console.log(
+        "[Guest] 座位归属",
+        slots.map((slot) => `${slot.seat.parent?.name ?? slot.seat.name}→${slot.table.station.id}`).join(", "),
+    );
+    return assignSeats(guests, slots, leavePoint, waitPoint);
 }
 
 function assignSeats(
     guests: Node[],
-    seats: Node[],
-    tables: StationBinding[],
+    slots: SeatSlot[],
     leavePoint: Node,
     waitPoint: Node | null,
 ): DiningScan {
-    const usedSeat = new Set<Node>();
     const seated: DiningLayout[] = [];
-    const take = Math.min(guests.length, seats.length);
+    const take = Math.min(guests.length, slots.length);
     for (let i = 0; i < take; i++) {
-        const seat = nextFreeSeat(seats, usedSeat);
-        if (!seat) {
-            break;
-        }
-        const table = nearestTable(seat, tables);
-        if (!table) {
-            break;
-        }
-        usedSeat.add(seat);
         seated.push({
             guestNode: guests[i],
             guestType: guestTypeFromNode(guests[i].name),
             leavePoint,
-            seatPoint: seat,
-            table,
+            seatPoint: slots[i].seat,
+            table: slots[i].table,
         });
     }
 
@@ -76,15 +74,6 @@ function assignSeats(
         });
     }
     return { leavePoint, waitPoint, seated, waiting };
-}
-
-function nextFreeSeat(seats: Node[], used: Set<Node>): Node | null {
-    for (let i = 0; i < seats.length; i++) {
-        if (!used.has(seats[i])) {
-            return seats[i];
-        }
-    }
-    return null;
 }
 
 /** Guests 节点下的直接子节点 = 编辑器层级顺序。 */
@@ -105,7 +94,29 @@ function collectGuests(levelRoot: Node): Node[] {
     return collectDescendants(levelRoot, (node) => isGuestNodeName(node.name));
 }
 
-function collectSeats(stationRoot: Node): Node[] {
+/** 每张餐桌下的 SeatPoint 归这张桌。没有的再扫独立 Chair。 */
+function collectSeatSlots(tables: StationBinding[], stationRoot: Node): SeatSlot[] {
+    const slots: SeatSlot[] = [];
+    const used = new Set<Node>();
+    for (let i = 0; i < tables.length; i++) {
+        const table = tables[i];
+        const seats = collectDescendants(table.node, (node) => node.name === "SeatPoint");
+        for (let s = 0; s < seats.length; s++) {
+            used.add(seats[s]);
+            slots.push({ seat: seats[s], table });
+        }
+    }
+    const orphans = collectOrphanChairs(stationRoot, used);
+    for (let i = 0; i < orphans.length; i++) {
+        const table = nearestTable(orphans[i], tables);
+        if (table) {
+            slots.push({ seat: orphans[i], table });
+        }
+    }
+    return slots;
+}
+
+function collectOrphanChairs(stationRoot: Node, used: Set<Node>): Node[] {
     const seats: Node[] = [];
     for (let i = 0; i < stationRoot.children.length; i++) {
         const node = stationRoot.children[i];
@@ -113,13 +124,7 @@ function collectSeats(stationRoot: Node): Node[] {
             continue;
         }
         const seat = findNamedDescendant(node, "SeatPoint");
-        if (seat) {
-            seats.push(seat);
-        }
-    }
-    if (seats.length === 0) {
-        const seat = findNamedDescendant(stationRoot, "SeatPoint");
-        if (seat) {
+        if (seat && !used.has(seat)) {
             seats.push(seat);
         }
     }
