@@ -1,12 +1,33 @@
 [
-  { "id": "guest", "waitTime": 25, "orderId": "chickenlegbaked", "orderPrefab": "prefab/items/ChickenLegBaked" },
-  { "id": "regularguest", "waitTime": 25, "orderId": "chickenlegbaked", "orderPrefab": "prefab/items/ChickenLegBaked" },
-  { "id": "gourmetguest", "waitTime": 15, "orderId": "burgerbaked", "orderPrefab": "prefab/items/BurgerBaked" },
+  {
+    "id": "guest",
+    "waitTime": 25,
+    "orders": [
+      { "orderId": "chickenlegbaked", "orderPrefab": "prefab/items/ChickenLegBaked" }
+    ]
+  },
+  {
+    "id": "regularguest",
+    "waitTime": 25,
+    "orders": [
+      { "orderId": "chickenlegbaked", "orderPrefab": "prefab/items/ChickenLegBaked" }
+    ]
+  },
+  {
+    "id": "gourmetguest",
+    "waitTime": 25,
+    "orders": [
+      { "orderId": "magicdrink_green", "orderPrefab": "prefab/items/MagicDrink_Green" },
+      { "orderId": "chickenlegbaked", "orderPrefab": "prefab/items/ChickenLegBaked" },
+      { "orderId": "burgerbaked", "orderPrefab": "prefab/items/BurgerBaked" }
+    ]
+  },
   {
     "id": "soldierguest",
-    "waitTime": 25,
-    "orderId": "chickenlegbaked",
-    "orderPrefab": "prefab/items/ChickenLegBaked",
+    "waitTime": 15,
+    "orders": [
+      { "orderId": "chickenlegbaked", "orderPrefab": "prefab/items/ChickenLegBaked" }
+    ],
     "escort": true,
     "confirmTime": 0.5,
     "seatTime": 1,
@@ -15,8 +36,9 @@
   {
     "id": "mageguest",
     "waitTime": 15,
-    "orderId": "burgerbaked",
-    "orderPrefab": "prefab/items/BurgerBaked",
+    "orders": [
+      { "orderId": "burgerbaked", "orderPrefab": "prefab/items/BurgerBaked" }
+    ],
     "escort": true,
     "confirmTime": 0.5,
     "seatTime": 1,

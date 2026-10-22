@@ -1,15 +1,23 @@
 import { ConfigManager } from "../../../framework/config/ConfigManager";
 
+export type GuestOrderDef = {
+    orderId: string;
+    orderPrefab: string;
+};
+
 export type GuestDef = {
     id: string;
     waitTime: number;
-    orderId: string;
-    orderPrefab: string;
+    orders: GuestOrderDef[];
     escort?: boolean;
     confirmTime?: number;
     seatTime?: number;
     markPrefab?: string;
 };
+
+export function guestOrders(def: GuestDef): GuestOrderDef[] {
+    return def.orders ?? [];
+}
 
 
 /** Guest0 / Guest_1 / RegularGuest2 → guest / regularguest。 */

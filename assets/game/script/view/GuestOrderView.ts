@@ -1,7 +1,7 @@
 import { instantiate, Node, Prefab } from "cc";
 import { BundlesEnum } from "../../../define/BundlesEnum";
 import { ResourceManager } from "../../../framework/resource/ResourceManager";
-import { allGuestDefs } from "../app/GuestCatalog";
+import { allGuestDefs, guestOrders } from "../app/GuestCatalog";
 
 const ORDER_NAME = "OrderPoint";
 const ORDER_Y = 2.5;
@@ -16,17 +16,20 @@ export class GuestOrderView {
         const defs = allGuestDefs();
         const seen = new Set<string>();
         for (let i = 0; i < defs.length; i++) {
-            const def = defs[i];
-            if (seen.has(def.orderId)) {
-                continue;
+            const orders = guestOrders(defs[i]);
+            for (let j = 0; j < orders.length; j++) {
+                const order = orders[j];
+                if (seen.has(order.orderId)) {
+                    continue;
+                }
+                seen.add(order.orderId);
+                const prefab = await res.loadPrefab(order.orderPrefab, BundlesEnum.Game);
+                if (!prefab) {
+                    console.warn("[Guest] 未找到订单预设", order.orderPrefab);
+                    continue;
+                }
+                this._prefabs.set(order.orderId, prefab);
             }
-            seen.add(def.orderId);
-            const prefab = await res.loadPrefab(def.orderPrefab, BundlesEnum.Game);
-            if (!prefab) {
-                console.warn("[Guest] 未找到订单预设", def.orderPrefab);
-                continue;
-            }
-            this._prefabs.set(def.orderId, prefab);
         }
     }
 

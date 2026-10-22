@@ -275,8 +275,12 @@ export class InteractService {
     }
 
     private tryServe(binding: StationBinding): boolean {
-        if (this.guests.tryServe(binding)) {
+        const result = this.guests.tryServe(binding);
+        if (result === "done") {
             EventManager.getInstance().emit(GameEvent.SHOW_TIPS, "客人吃完离开了");
+            return true;
+        }
+        if (result === "next") {
             return true;
         }
         const slot = binding.station.slot;

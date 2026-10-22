@@ -168,28 +168,35 @@ export class GuestLoop {
         return this.wantedAt(tableId) !== null;
     }
 
-    tryServe(binding: StationBinding): boolean {
+    tryServe(binding: StationBinding): "next" | "done" | null {
         const slot = binding.station.slot;
         if (!slot) {
-            return false;
+            return null;
         }
         for (let i = 0; i < this._runtimes.length; i++) {
             const runtime = this._runtimes[i];
-            if (runtime.guest.tableId !== binding.station.id || !runtime.guest.canAccept(slot.itemId)) {
+            const guest = runtime.guest;
+            if (guest.tableId !== binding.station.id || !guest.canAccept(slot.itemId)) {
                 continue;
             }
-            if (!runtime.fsm.serve()) {
-                return false;
-            }
             this.clearKids(binding.holdPoint);
-            this.dropCoin(binding, runtime.guest.orderId);
-            this._orders.hide(runtime.guest.id);
+            binding.station.slot = null;
+            if (guest.advanceOrder()) {
+                this._orders.show(guest.id, guest.orderId);
+                EventManager.getInstance().emit(GameEvent.ORDER_SHOWN, guest.id, guest.orderId);
+                return "next";
+            }
+            if (!runtime.fsm.serve()) {
+                return null;
+            }
+            this.dropCoin(binding, guest.orderIds);
+            this._orders.hide(guest.id);
             this.eatThenLeave(runtime);
-            EventManager.getInstance().emit(GameEvent.GUEST_SERVED, runtime.guest.id, runtime.guest.orderId);
+            EventManager.getInstance().emit(GameEvent.GUEST_SERVED, guest.id, guest.orderId);
             EventManager.getInstance().emit(GameEvent.SHELL_SPAWNED, binding.station.id);
-            return true;
+            return "done";
         }
-        return false;
+        return null;
     }
 
     private spawn(layout: DiningLayout, waitInLine: boolean): void {
@@ -530,8 +537,12 @@ export class GuestLoop {
         return state?.duration > 0 ? state.duration : 0.4;
     }
 
-    private dropCoin(binding: StationBinding, orderId: string): void {
-        const gold = Math.max(1, goldOf(orderId));
+    private dropCoin(binding: StationBinding, orderIds: string[]): void {
+        let gold = 0;
+        for (let i = 0; i < orderIds.length; i++) {
+            gold += goldOf(orderIds[i]);
+        }
+        gold = Math.max(1, gold);
         binding.station.slot = new ItemStack(COIN_ID, gold);
         if (!this._coinPrefab) {
             return;
