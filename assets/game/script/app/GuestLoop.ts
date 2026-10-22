@@ -45,7 +45,7 @@ type Hold = { kind: "confirm" | "seat"; guestId: string; tableId?: string; elaps
 
 /** 客人：普通桌自动入座；引座客挡住队尾，入座离开等待点后普通客再去空桌。 */
 export class GuestLoop {
-    private readonly _orders = new GuestOrderView();
+    private readonly _orders: GuestOrderView;
     private readonly _faces: GuestExpressionView;
     private readonly _escort: EscortView;
     private readonly _runtimes: GuestRuntime[] = [];
@@ -64,6 +64,7 @@ export class GuestLoop {
         private readonly registry: StationRegistry,
         camera: Camera | null,
     ) {
+        this._orders = new GuestOrderView(camera);
         this._faces = new GuestExpressionView(camera);
         this._escort = new EscortView(camera);
     }
@@ -107,6 +108,8 @@ export class GuestLoop {
     }
 
     update(dt: number): void {
+        this._orders.tick(dt);
+        this._orders.update();
         this._faces.tick(dt);
         this._faces.update();
         this._escort.update();
@@ -182,8 +185,7 @@ export class GuestLoop {
             this.clearKids(binding.holdPoint);
             binding.station.slot = null;
             if (guest.advanceOrder()) {
-                this._orders.show(guest.id, guest.orderId);
-                EventManager.getInstance().emit(GameEvent.ORDER_SHOWN, guest.id, guest.orderId);
+                this.showOrder(runtime);
                 return "next";
             }
             if (!runtime.fsm.serve()) {
@@ -274,7 +276,7 @@ export class GuestLoop {
     }
 
     private sit(runtime: GuestRuntime): void {
-        const { layout, guest, fsm, view, agent } = runtime;
+        const { layout, fsm, view, agent } = runtime;
         if (!layout.seatPoint || !layout.table) {
             return;
         }
@@ -287,9 +289,14 @@ export class GuestLoop {
         this.face(layout.guestNode, layout.table.node.worldPosition);
         this.playClip(layout.guestNode, CLIP_STAND, true);
         fsm.sit();
-        this._orders.show(guest.id, guest.orderId);
-        EventManager.getInstance().emit(GameEvent.ORDER_SHOWN, guest.id, guest.orderId);
+        this.showOrder(runtime);
         this.tryServe(layout.table);
+    }
+
+    private showOrder(runtime: GuestRuntime): void {
+        const def = findGuestDef(runtime.layout.guestType);
+        this._orders.show(runtime.guest.id, runtime.guest.orderId, def?.hintPrefab, def?.hintTime ?? 0);
+        EventManager.getInstance().emit(GameEvent.ORDER_SHOWN, runtime.guest.id, runtime.guest.orderId);
     }
 
     private eatThenLeave(runtime: GuestRuntime): void {

@@ -13,6 +13,8 @@ export type GuestDef = {
     confirmTime?: number;
     seatTime?: number;
     markPrefab?: string;
+    hintTime?: number;
+    hintPrefab?: string;
 };
 
 export function guestOrders(def: GuestDef): GuestOrderDef[] {
