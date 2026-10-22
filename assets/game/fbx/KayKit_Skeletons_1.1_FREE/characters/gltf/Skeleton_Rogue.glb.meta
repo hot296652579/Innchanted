@@ -1,0 +1,350 @@
+{
+  "ver": "2.3.14",
+  "importer": "gltf",
+  "imported": true,
+  "uuid": "9cd226d8-7414-406d-b1cd-a0439c9db6de",
+  "files": [],
+  "subMetas": {
+    "90276": {
+      "importer": "gltf-mesh",
+      "uuid": "9cd226d8-7414-406d-b1cd-a0439c9db6de@90276",
+      "displayName": "",
+      "id": "90276",
+      "name": "Skeleton_Rogue_Jaw.mesh",
+      "userData": {
+        "gltfIndex": 7,
+        "triangleCount": 124
+      },
+      "ver": "1.1.1",
+      "imported": true,
+      "files": [
+        ".bin",
+        ".json"
+      ],
+      "subMetas": {}
+    },
+    "eae13": {
+      "importer": "gltf-mesh",
+      "uuid": "9cd226d8-7414-406d-b1cd-a0439c9db6de@eae13",
+      "displayName": "",
+      "id": "eae13",
+      "name": "Skeleton_Rogue_ArmLeft.mesh",
+      "userData": {
+        "gltfIndex": 0,
+        "triangleCount": 692
+      },
+      "ver": "1.1.1",
+      "imported": true,
+      "files": [
+        ".bin",
+        ".json"
+      ],
+      "subMetas": {}
+    },
+    "bcfb2": {
+      "importer": "gltf-mesh",
+      "uuid": "9cd226d8-7414-406d-b1cd-a0439c9db6de@bcfb2",
+      "displayName": "",
+      "id": "bcfb2",
+      "name": "Skeleton_Rogue_Hood.mesh",
+      "userData": {
+        "gltfIndex": 1,
+        "triangleCount": 490
+      },
+      "ver": "1.1.1",
+      "imported": true,
+      "files": [
+        ".bin",
+        ".json"
+      ],
+      "subMetas": {}
+    },
+    "32cb2": {
+      "importer": "gltf-mesh",
+      "uuid": "9cd226d8-7414-406d-b1cd-a0439c9db6de@32cb2",
+      "displayName": "",
+      "id": "32cb2",
+      "name": "Skeleton_Rogue_Cape.mesh",
+      "userData": {
+        "gltfIndex": 2,
+        "triangleCount": 84
+      },
+      "ver": "1.1.1",
+      "imported": true,
+      "files": [
+        ".bin",
+        ".json"
+      ],
+      "subMetas": {}
+    },
+    "9ca92": {
+      "importer": "gltf-mesh",
+      "uuid": "9cd226d8-7414-406d-b1cd-a0439c9db6de@9ca92",
+      "displayName": "",
+      "id": "9ca92",
+      "name": "Skeleton_Rogue_ArmRight.mesh",
+      "userData": {
+        "gltfIndex": 3,
+        "triangleCount": 692
+      },
+      "ver": "1.1.1",
+      "imported": true,
+      "files": [
+        ".bin",
+        ".json"
+      ],
+      "subMetas": {}
+    },
+    "e40bb": {
+      "importer": "gltf-mesh",
+      "uuid": "9cd226d8-7414-406d-b1cd-a0439c9db6de@e40bb",
+      "displayName": "",
+      "id": "e40bb",
+      "name": "Skeleton_Rogue_Body.mesh",
+      "userData": {
+        "gltfIndex": 4,
+        "triangleCount": 1250
+      },
+      "ver": "1.1.1",
+      "imported": true,
+      "files": [
+        ".bin",
+        ".json"
+      ],
+      "subMetas": {}
+    },
+    "262e7": {
+      "importer": "gltf-mesh",
+      "uuid": "9cd226d8-7414-406d-b1cd-a0439c9db6de@262e7",
+      "displayName": "",
+      "id": "262e7",
+      "name": "Skeleton_Rogue_Eyes.mesh",
+      "userData": {
+        "gltfIndex": 5,
+        "triangleCount": 132
+      },
+      "ver": "1.1.1",
+      "imported": true,
+      "files": [
+        ".bin",
+        ".json"
+      ],
+      "subMetas": {}
+    },
+    "38ed8": {
+      "importer": "gltf-mesh",
+      "uuid": "9cd226d8-7414-406d-b1cd-a0439c9db6de@38ed8",
+      "displayName": "",
+      "id": "38ed8",
+      "name": "Skeleton_Rogue_Head.mesh",
+      "userData": {
+        "gltfIndex": 6,
+        "triangleCount": 414
+      },
+      "ver": "1.1.1",
+      "imported": true,
+      "files": [
+        ".bin",
+        ".json"
+      ],
+      "subMetas": {}
+    },
+    "d6f00": {
+      "importer": "gltf-mesh",
+      "uuid": "9cd226d8-7414-406d-b1cd-a0439c9db6de@d6f00",
+      "displayName": "",
+      "id": "d6f00",
+      "name": "Skeleton_Rogue_LegLeft.mesh",
+      "userData": {
+        "gltfIndex": 8,
+        "triangleCount": 700
+      },
+      "ver": "1.1.1",
+      "imported": true,
+      "files": [
+        ".bin",
+        ".json"
+      ],
+      "subMetas": {}
+    },
+    "3eedb": {
+      "importer": "gltf-mesh",
+      "uuid": "9cd226d8-7414-406d-b1cd-a0439c9db6de@3eedb",
+      "displayName": "",
+      "id": "3eedb",
+      "name": "Skeleton_Rogue_LegRight.mesh",
+      "userData": {
+        "gltfIndex": 9,
+        "triangleCount": 700
+      },
+      "ver": "1.1.1",
+      "imported": true,
+      "files": [
+        ".bin",
+        ".json"
+      ],
+      "subMetas": {}
+    },
+    "65d2c": {
+      "importer": "gltf-skeleton",
+      "uuid": "9cd226d8-7414-406d-b1cd-a0439c9db6de@65d2c",
+      "displayName": "",
+      "id": "65d2c",
+      "name": "Rig_Medium.skeleton",
+      "userData": {
+        "gltfIndex": 0,
+        "jointsLength": 23
+      },
+      "ver": "1.0.1",
+      "imported": true,
+      "files": [
+        ".json"
+      ],
+      "subMetas": {}
+    },
+    "f868b": {
+      "importer": "gltf-embeded-image",
+      "uuid": "9cd226d8-7414-406d-b1cd-a0439c9db6de@f868b",
+      "displayName": "",
+      "id": "f868b",
+      "name": "skeleton_texture.image",
+      "userData": {
+        "gltfIndex": 0,
+        "fixAlphaTransparencyArtifacts": true,
+        "hasAlpha": true,
+        "type": "texture"
+      },
+      "ver": "1.0.3",
+      "imported": true,
+      "files": [
+        ".json",
+        ".png"
+      ],
+      "subMetas": {}
+    },
+    "e39f7": {
+      "importer": "texture",
+      "uuid": "9cd226d8-7414-406d-b1cd-a0439c9db6de@e39f7",
+      "displayName": "",
+      "id": "e39f7",
+      "name": "UnnamedTexture.texture",
+      "userData": {
+        "wrapModeS": "repeat",
+        "wrapModeT": "repeat",
+        "minfilter": "linear",
+        "magfilter": "linear",
+        "mipfilter": "linear",
+        "anisotropy": 0,
+        "isUuid": true,
+        "imageUuidOrDatabaseUri": "9cd226d8-7414-406d-b1cd-a0439c9db6de@f868b"
+      },
+      "ver": "1.0.22",
+      "imported": true,
+      "files": [
+        ".json"
+      ],
+      "subMetas": {}
+    },
+    "c96cf": {
+      "importer": "gltf-material",
+      "uuid": "9cd226d8-7414-406d-b1cd-a0439c9db6de@c96cf",
+      "displayName": "",
+      "id": "c96cf",
+      "name": "skeleton.material",
+      "userData": {
+        "gltfIndex": 0
+      },
+      "ver": "1.0.14",
+      "imported": true,
+      "files": [
+        ".json"
+      ],
+      "subMetas": {}
+    },
+    "c7836": {
+      "importer": "gltf-material",
+      "uuid": "9cd226d8-7414-406d-b1cd-a0439c9db6de@c7836",
+      "displayName": "",
+      "id": "c7836",
+      "name": "Glow.material",
+      "userData": {
+        "gltfIndex": 1
+      },
+      "ver": "1.0.14",
+      "imported": true,
+      "files": [
+        ".json"
+      ],
+      "subMetas": {}
+    },
+    "68ee3": {
+      "importer": "gltf-scene",
+      "uuid": "9cd226d8-7414-406d-b1cd-a0439c9db6de@68ee3",
+      "displayName": "",
+      "id": "68ee3",
+      "name": "Skeleton_Rogue.prefab",
+      "userData": {
+        "gltfIndex": 0
+      },
+      "ver": "1.0.14",
+      "imported": true,
+      "files": [
+        ".json"
+      ],
+      "subMetas": {}
+    }
+  },
+  "userData": {
+    "imageMetas": [
+      {
+        "name": "skeleton_texture",
+        "uri": "9cd226d8-7414-406d-b1cd-a0439c9db6de@f868b"
+      }
+    ],
+    "lods": {
+      "enable": false,
+      "hasBuiltinLOD": false,
+      "options": [
+        {
+          "screenRatio": 0.25,
+          "faceCount": 1
+        },
+        {
+          "screenRatio": 0.125,
+          "faceCount": 0.25
+        },
+        {
+          "screenRatio": 0.01,
+          "faceCount": 0.1
+        }
+      ]
+    },
+    "assetFinder": {
+      "meshes": [
+        "9cd226d8-7414-406d-b1cd-a0439c9db6de@eae13",
+        "9cd226d8-7414-406d-b1cd-a0439c9db6de@bcfb2",
+        "9cd226d8-7414-406d-b1cd-a0439c9db6de@32cb2",
+        "9cd226d8-7414-406d-b1cd-a0439c9db6de@9ca92",
+        "9cd226d8-7414-406d-b1cd-a0439c9db6de@e40bb",
+        "9cd226d8-7414-406d-b1cd-a0439c9db6de@262e7",
+        "9cd226d8-7414-406d-b1cd-a0439c9db6de@38ed8",
+        "9cd226d8-7414-406d-b1cd-a0439c9db6de@90276",
+        "9cd226d8-7414-406d-b1cd-a0439c9db6de@d6f00",
+        "9cd226d8-7414-406d-b1cd-a0439c9db6de@3eedb"
+      ],
+      "skeletons": [
+        "9cd226d8-7414-406d-b1cd-a0439c9db6de@65d2c"
+      ],
+      "textures": [
+        "9cd226d8-7414-406d-b1cd-a0439c9db6de@e39f7"
+      ],
+      "materials": [
+        "9cd226d8-7414-406d-b1cd-a0439c9db6de@c96cf",
+        "9cd226d8-7414-406d-b1cd-a0439c9db6de@c7836"
+      ],
+      "scenes": [
+        "9cd226d8-7414-406d-b1cd-a0439c9db6de@68ee3"
+      ]
+    }
+  }
+}

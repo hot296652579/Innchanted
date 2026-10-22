@@ -1,0 +1,350 @@
+{
+  "ver": "2.3.14",
+  "importer": "gltf",
+  "imported": true,
+  "uuid": "39342fce-ace9-46fa-a2d2-c8bc0c1f8c0c",
+  "files": [],
+  "subMetas": {
+    "42316": {
+      "importer": "gltf-mesh",
+      "uuid": "39342fce-ace9-46fa-a2d2-c8bc0c1f8c0c@42316",
+      "displayName": "",
+      "id": "42316",
+      "name": "Skeleton_Warrior_Jaw.mesh",
+      "userData": {
+        "gltfIndex": 7,
+        "triangleCount": 124
+      },
+      "ver": "1.1.1",
+      "imported": true,
+      "files": [
+        ".bin",
+        ".json"
+      ],
+      "subMetas": {}
+    },
+    "3367d": {
+      "importer": "gltf-mesh",
+      "uuid": "39342fce-ace9-46fa-a2d2-c8bc0c1f8c0c@3367d",
+      "displayName": "",
+      "id": "3367d",
+      "name": "Skeleton_Warrior_ArmLeft.mesh",
+      "userData": {
+        "gltfIndex": 0,
+        "triangleCount": 692
+      },
+      "ver": "1.1.1",
+      "imported": true,
+      "files": [
+        ".bin",
+        ".json"
+      ],
+      "subMetas": {}
+    },
+    "bd8a3": {
+      "importer": "gltf-mesh",
+      "uuid": "39342fce-ace9-46fa-a2d2-c8bc0c1f8c0c@bd8a3",
+      "displayName": "",
+      "id": "bd8a3",
+      "name": "Skeleton_Warrior_Helmet.mesh",
+      "userData": {
+        "gltfIndex": 1,
+        "triangleCount": 830
+      },
+      "ver": "1.1.1",
+      "imported": true,
+      "files": [
+        ".bin",
+        ".json"
+      ],
+      "subMetas": {}
+    },
+    "eacdd": {
+      "importer": "gltf-mesh",
+      "uuid": "39342fce-ace9-46fa-a2d2-c8bc0c1f8c0c@eacdd",
+      "displayName": "",
+      "id": "eacdd",
+      "name": "Skeleton_Warrior_ArmRight.mesh",
+      "userData": {
+        "gltfIndex": 2,
+        "triangleCount": 692
+      },
+      "ver": "1.1.1",
+      "imported": true,
+      "files": [
+        ".bin",
+        ".json"
+      ],
+      "subMetas": {}
+    },
+    "6609a": {
+      "importer": "gltf-mesh",
+      "uuid": "39342fce-ace9-46fa-a2d2-c8bc0c1f8c0c@6609a",
+      "displayName": "",
+      "id": "6609a",
+      "name": "Skeleton_Warrior_Body.mesh",
+      "userData": {
+        "gltfIndex": 3,
+        "triangleCount": 1130
+      },
+      "ver": "1.1.1",
+      "imported": true,
+      "files": [
+        ".bin",
+        ".json"
+      ],
+      "subMetas": {}
+    },
+    "6c476": {
+      "importer": "gltf-mesh",
+      "uuid": "39342fce-ace9-46fa-a2d2-c8bc0c1f8c0c@6c476",
+      "displayName": "",
+      "id": "6c476",
+      "name": "Skeleton_Warrior_Cloak.mesh",
+      "userData": {
+        "gltfIndex": 4,
+        "triangleCount": 348
+      },
+      "ver": "1.1.1",
+      "imported": true,
+      "files": [
+        ".bin",
+        ".json"
+      ],
+      "subMetas": {}
+    },
+    "76fd1": {
+      "importer": "gltf-mesh",
+      "uuid": "39342fce-ace9-46fa-a2d2-c8bc0c1f8c0c@76fd1",
+      "displayName": "",
+      "id": "76fd1",
+      "name": "Skeleton_Warrior_Eyes.mesh",
+      "userData": {
+        "gltfIndex": 5,
+        "triangleCount": 132
+      },
+      "ver": "1.1.1",
+      "imported": true,
+      "files": [
+        ".bin",
+        ".json"
+      ],
+      "subMetas": {}
+    },
+    "e11a5": {
+      "importer": "gltf-mesh",
+      "uuid": "39342fce-ace9-46fa-a2d2-c8bc0c1f8c0c@e11a5",
+      "displayName": "",
+      "id": "e11a5",
+      "name": "Skeleton_Warrior_Head.mesh",
+      "userData": {
+        "gltfIndex": 6,
+        "triangleCount": 394
+      },
+      "ver": "1.1.1",
+      "imported": true,
+      "files": [
+        ".bin",
+        ".json"
+      ],
+      "subMetas": {}
+    },
+    "9f10a": {
+      "importer": "gltf-mesh",
+      "uuid": "39342fce-ace9-46fa-a2d2-c8bc0c1f8c0c@9f10a",
+      "displayName": "",
+      "id": "9f10a",
+      "name": "Skeleton_Warrior_LegLeft.mesh",
+      "userData": {
+        "gltfIndex": 8,
+        "triangleCount": 892
+      },
+      "ver": "1.1.1",
+      "imported": true,
+      "files": [
+        ".bin",
+        ".json"
+      ],
+      "subMetas": {}
+    },
+    "d9e66": {
+      "importer": "gltf-mesh",
+      "uuid": "39342fce-ace9-46fa-a2d2-c8bc0c1f8c0c@d9e66",
+      "displayName": "",
+      "id": "d9e66",
+      "name": "Skeleton_Warrior_LegRight.mesh",
+      "userData": {
+        "gltfIndex": 9,
+        "triangleCount": 700
+      },
+      "ver": "1.1.1",
+      "imported": true,
+      "files": [
+        ".bin",
+        ".json"
+      ],
+      "subMetas": {}
+    },
+    "65d2c": {
+      "importer": "gltf-skeleton",
+      "uuid": "39342fce-ace9-46fa-a2d2-c8bc0c1f8c0c@65d2c",
+      "displayName": "",
+      "id": "65d2c",
+      "name": "Rig_Medium.skeleton",
+      "userData": {
+        "gltfIndex": 0,
+        "jointsLength": 23
+      },
+      "ver": "1.0.1",
+      "imported": true,
+      "files": [
+        ".json"
+      ],
+      "subMetas": {}
+    },
+    "f868b": {
+      "importer": "gltf-embeded-image",
+      "uuid": "39342fce-ace9-46fa-a2d2-c8bc0c1f8c0c@f868b",
+      "displayName": "",
+      "id": "f868b",
+      "name": "skeleton_texture.image",
+      "userData": {
+        "gltfIndex": 0,
+        "fixAlphaTransparencyArtifacts": true,
+        "hasAlpha": true,
+        "type": "texture"
+      },
+      "ver": "1.0.3",
+      "imported": true,
+      "files": [
+        ".json",
+        ".png"
+      ],
+      "subMetas": {}
+    },
+    "e39f7": {
+      "importer": "texture",
+      "uuid": "39342fce-ace9-46fa-a2d2-c8bc0c1f8c0c@e39f7",
+      "displayName": "",
+      "id": "e39f7",
+      "name": "UnnamedTexture.texture",
+      "userData": {
+        "wrapModeS": "repeat",
+        "wrapModeT": "repeat",
+        "minfilter": "linear",
+        "magfilter": "linear",
+        "mipfilter": "linear",
+        "anisotropy": 0,
+        "isUuid": true,
+        "imageUuidOrDatabaseUri": "39342fce-ace9-46fa-a2d2-c8bc0c1f8c0c@f868b"
+      },
+      "ver": "1.0.22",
+      "imported": true,
+      "files": [
+        ".json"
+      ],
+      "subMetas": {}
+    },
+    "c96cf": {
+      "importer": "gltf-material",
+      "uuid": "39342fce-ace9-46fa-a2d2-c8bc0c1f8c0c@c96cf",
+      "displayName": "",
+      "id": "c96cf",
+      "name": "skeleton.material",
+      "userData": {
+        "gltfIndex": 0
+      },
+      "ver": "1.0.14",
+      "imported": true,
+      "files": [
+        ".json"
+      ],
+      "subMetas": {}
+    },
+    "c7836": {
+      "importer": "gltf-material",
+      "uuid": "39342fce-ace9-46fa-a2d2-c8bc0c1f8c0c@c7836",
+      "displayName": "",
+      "id": "c7836",
+      "name": "Glow.material",
+      "userData": {
+        "gltfIndex": 1
+      },
+      "ver": "1.0.14",
+      "imported": true,
+      "files": [
+        ".json"
+      ],
+      "subMetas": {}
+    },
+    "c045d": {
+      "importer": "gltf-scene",
+      "uuid": "39342fce-ace9-46fa-a2d2-c8bc0c1f8c0c@c045d",
+      "displayName": "",
+      "id": "c045d",
+      "name": "Skeleton_Warrior.prefab",
+      "userData": {
+        "gltfIndex": 0
+      },
+      "ver": "1.0.14",
+      "imported": true,
+      "files": [
+        ".json"
+      ],
+      "subMetas": {}
+    }
+  },
+  "userData": {
+    "imageMetas": [
+      {
+        "name": "skeleton_texture",
+        "uri": "39342fce-ace9-46fa-a2d2-c8bc0c1f8c0c@f868b"
+      }
+    ],
+    "lods": {
+      "enable": false,
+      "hasBuiltinLOD": false,
+      "options": [
+        {
+          "screenRatio": 0.25,
+          "faceCount": 1
+        },
+        {
+          "screenRatio": 0.125,
+          "faceCount": 0.25
+        },
+        {
+          "screenRatio": 0.01,
+          "faceCount": 0.1
+        }
+      ]
+    },
+    "assetFinder": {
+      "meshes": [
+        "39342fce-ace9-46fa-a2d2-c8bc0c1f8c0c@3367d",
+        "39342fce-ace9-46fa-a2d2-c8bc0c1f8c0c@bd8a3",
+        "39342fce-ace9-46fa-a2d2-c8bc0c1f8c0c@eacdd",
+        "39342fce-ace9-46fa-a2d2-c8bc0c1f8c0c@6609a",
+        "39342fce-ace9-46fa-a2d2-c8bc0c1f8c0c@6c476",
+        "39342fce-ace9-46fa-a2d2-c8bc0c1f8c0c@76fd1",
+        "39342fce-ace9-46fa-a2d2-c8bc0c1f8c0c@e11a5",
+        "39342fce-ace9-46fa-a2d2-c8bc0c1f8c0c@42316",
+        "39342fce-ace9-46fa-a2d2-c8bc0c1f8c0c@9f10a",
+        "39342fce-ace9-46fa-a2d2-c8bc0c1f8c0c@d9e66"
+      ],
+      "skeletons": [
+        "39342fce-ace9-46fa-a2d2-c8bc0c1f8c0c@65d2c"
+      ],
+      "textures": [
+        "39342fce-ace9-46fa-a2d2-c8bc0c1f8c0c@e39f7"
+      ],
+      "materials": [
+        "39342fce-ace9-46fa-a2d2-c8bc0c1f8c0c@c96cf",
+        "39342fce-ace9-46fa-a2d2-c8bc0c1f8c0c@c7836"
+      ],
+      "scenes": [
+        "39342fce-ace9-46fa-a2d2-c8bc0c1f8c0c@c045d"
+      ]
+    }
+  }
+}

@@ -1,0 +1,458 @@
+{
+  "ver": "2.3.14",
+  "importer": "fbx",
+  "imported": true,
+  "uuid": "350fff91-03d4-4025-a389-7daa412f59c2",
+  "files": [],
+  "subMetas": {
+    "30732": {
+      "importer": "gltf-skeleton",
+      "uuid": "350fff91-03d4-4025-a389-7daa412f59c2@30732",
+      "displayName": "",
+      "id": "30732",
+      "name": "UnnamedSkeleton-0.skeleton",
+      "userData": {
+        "gltfIndex": 0,
+        "jointsLength": 23
+      },
+      "ver": "1.0.1",
+      "imported": true,
+      "files": [
+        ".json"
+      ],
+      "subMetas": {}
+    },
+    "62756": {
+      "importer": "gltf-skeleton",
+      "uuid": "350fff91-03d4-4025-a389-7daa412f59c2@62756",
+      "displayName": "",
+      "id": "62756",
+      "name": "UnnamedSkeleton-5.skeleton",
+      "userData": {
+        "gltfIndex": 5,
+        "jointsLength": 23
+      },
+      "ver": "1.0.1",
+      "imported": true,
+      "files": [
+        ".json"
+      ],
+      "subMetas": {}
+    },
+    "70ee7": {
+      "importer": "gltf-mesh",
+      "uuid": "350fff91-03d4-4025-a389-7daa412f59c2@70ee7",
+      "displayName": "",
+      "id": "70ee7",
+      "name": "Skeleton_Minion_ArmLeft.mesh",
+      "userData": {
+        "gltfIndex": 0,
+        "triangleCount": 644
+      },
+      "ver": "1.1.1",
+      "imported": true,
+      "files": [
+        ".bin",
+        ".json"
+      ],
+      "subMetas": {}
+    },
+    "b45e0": {
+      "importer": "gltf-mesh",
+      "uuid": "350fff91-03d4-4025-a389-7daa412f59c2@b45e0",
+      "displayName": "",
+      "id": "b45e0",
+      "name": "Skeleton_Minion_ArmRight.mesh",
+      "userData": {
+        "gltfIndex": 1,
+        "triangleCount": 644
+      },
+      "ver": "1.1.1",
+      "imported": true,
+      "files": [
+        ".bin",
+        ".json"
+      ],
+      "subMetas": {}
+    },
+    "0d9d4": {
+      "importer": "gltf-mesh",
+      "uuid": "350fff91-03d4-4025-a389-7daa412f59c2@0d9d4",
+      "displayName": "",
+      "id": "0d9d4",
+      "name": "Skeleton_Minion_Body.mesh",
+      "userData": {
+        "gltfIndex": 2,
+        "triangleCount": 1768
+      },
+      "ver": "1.1.1",
+      "imported": true,
+      "files": [
+        ".bin",
+        ".json"
+      ],
+      "subMetas": {}
+    },
+    "04321": {
+      "importer": "gltf-mesh",
+      "uuid": "350fff91-03d4-4025-a389-7daa412f59c2@04321",
+      "displayName": "",
+      "id": "04321",
+      "name": "Skeleton_Minion_Cloak.mesh",
+      "userData": {
+        "gltfIndex": 3,
+        "triangleCount": 348
+      },
+      "ver": "1.1.1",
+      "imported": true,
+      "files": [
+        ".bin",
+        ".json"
+      ],
+      "subMetas": {}
+    },
+    "fd6a9": {
+      "importer": "gltf-mesh",
+      "uuid": "350fff91-03d4-4025-a389-7daa412f59c2@fd6a9",
+      "displayName": "",
+      "id": "fd6a9",
+      "name": "Skeleton_Minion_Eyes.mesh",
+      "userData": {
+        "gltfIndex": 4,
+        "triangleCount": 132
+      },
+      "ver": "1.1.1",
+      "imported": true,
+      "files": [
+        ".bin",
+        ".json"
+      ],
+      "subMetas": {}
+    },
+    "8fab3": {
+      "importer": "gltf-mesh",
+      "uuid": "350fff91-03d4-4025-a389-7daa412f59c2@8fab3",
+      "displayName": "",
+      "id": "8fab3",
+      "name": "Skeleton_Minion_Head.mesh",
+      "userData": {
+        "gltfIndex": 5,
+        "triangleCount": 442
+      },
+      "ver": "1.1.1",
+      "imported": true,
+      "files": [
+        ".bin",
+        ".json"
+      ],
+      "subMetas": {}
+    },
+    "a286e": {
+      "importer": "gltf-mesh",
+      "uuid": "350fff91-03d4-4025-a389-7daa412f59c2@a286e",
+      "displayName": "",
+      "id": "a286e",
+      "name": "Skeleton_Minion_Jaw.mesh",
+      "userData": {
+        "gltfIndex": 6,
+        "triangleCount": 106
+      },
+      "ver": "1.1.1",
+      "imported": true,
+      "files": [
+        ".bin",
+        ".json"
+      ],
+      "subMetas": {}
+    },
+    "b27e0": {
+      "importer": "gltf-mesh",
+      "uuid": "350fff91-03d4-4025-a389-7daa412f59c2@b27e0",
+      "displayName": "",
+      "id": "b27e0",
+      "name": "Skeleton_Minion_LegLeft.mesh",
+      "userData": {
+        "gltfIndex": 7,
+        "triangleCount": 602
+      },
+      "ver": "1.1.1",
+      "imported": true,
+      "files": [
+        ".bin",
+        ".json"
+      ],
+      "subMetas": {}
+    },
+    "a66a2": {
+      "importer": "gltf-mesh",
+      "uuid": "350fff91-03d4-4025-a389-7daa412f59c2@a66a2",
+      "displayName": "",
+      "id": "a66a2",
+      "name": "Skeleton_Minion_LegRight.mesh",
+      "userData": {
+        "gltfIndex": 8,
+        "triangleCount": 602
+      },
+      "ver": "1.1.1",
+      "imported": true,
+      "files": [
+        ".bin",
+        ".json"
+      ],
+      "subMetas": {}
+    },
+    "f1394": {
+      "importer": "gltf-skeleton",
+      "uuid": "350fff91-03d4-4025-a389-7daa412f59c2@f1394",
+      "displayName": "",
+      "id": "f1394",
+      "name": "UnnamedSkeleton-1.skeleton",
+      "userData": {
+        "gltfIndex": 1,
+        "jointsLength": 23
+      },
+      "ver": "1.0.1",
+      "imported": true,
+      "files": [
+        ".json"
+      ],
+      "subMetas": {}
+    },
+    "75ee4": {
+      "importer": "gltf-skeleton",
+      "uuid": "350fff91-03d4-4025-a389-7daa412f59c2@75ee4",
+      "displayName": "",
+      "id": "75ee4",
+      "name": "UnnamedSkeleton-2.skeleton",
+      "userData": {
+        "gltfIndex": 2,
+        "jointsLength": 23
+      },
+      "ver": "1.0.1",
+      "imported": true,
+      "files": [
+        ".json"
+      ],
+      "subMetas": {}
+    },
+    "a72ab": {
+      "importer": "gltf-skeleton",
+      "uuid": "350fff91-03d4-4025-a389-7daa412f59c2@a72ab",
+      "displayName": "",
+      "id": "a72ab",
+      "name": "UnnamedSkeleton-3.skeleton",
+      "userData": {
+        "gltfIndex": 3,
+        "jointsLength": 23
+      },
+      "ver": "1.0.1",
+      "imported": true,
+      "files": [
+        ".json"
+      ],
+      "subMetas": {}
+    },
+    "2224c": {
+      "importer": "gltf-skeleton",
+      "uuid": "350fff91-03d4-4025-a389-7daa412f59c2@2224c",
+      "displayName": "",
+      "id": "2224c",
+      "name": "UnnamedSkeleton-4.skeleton",
+      "userData": {
+        "gltfIndex": 4,
+        "jointsLength": 23
+      },
+      "ver": "1.0.1",
+      "imported": true,
+      "files": [
+        ".json"
+      ],
+      "subMetas": {}
+    },
+    "7d08b": {
+      "importer": "gltf-skeleton",
+      "uuid": "350fff91-03d4-4025-a389-7daa412f59c2@7d08b",
+      "displayName": "",
+      "id": "7d08b",
+      "name": "UnnamedSkeleton-6.skeleton",
+      "userData": {
+        "gltfIndex": 6,
+        "jointsLength": 23
+      },
+      "ver": "1.0.1",
+      "imported": true,
+      "files": [
+        ".json"
+      ],
+      "subMetas": {}
+    },
+    "b5902": {
+      "importer": "gltf-skeleton",
+      "uuid": "350fff91-03d4-4025-a389-7daa412f59c2@b5902",
+      "displayName": "",
+      "id": "b5902",
+      "name": "UnnamedSkeleton-7.skeleton",
+      "userData": {
+        "gltfIndex": 7,
+        "jointsLength": 23
+      },
+      "ver": "1.0.1",
+      "imported": true,
+      "files": [
+        ".json"
+      ],
+      "subMetas": {}
+    },
+    "2d5df": {
+      "importer": "gltf-skeleton",
+      "uuid": "350fff91-03d4-4025-a389-7daa412f59c2@2d5df",
+      "displayName": "",
+      "id": "2d5df",
+      "name": "UnnamedSkeleton-8.skeleton",
+      "userData": {
+        "gltfIndex": 8,
+        "jointsLength": 23
+      },
+      "ver": "1.0.1",
+      "imported": true,
+      "files": [
+        ".json"
+      ],
+      "subMetas": {}
+    },
+    "7d6ab": {
+      "importer": "texture",
+      "uuid": "350fff91-03d4-4025-a389-7daa412f59c2@7d6ab",
+      "displayName": "",
+      "id": "7d6ab",
+      "name": "base_color_texture.texture",
+      "userData": {
+        "wrapModeS": "repeat",
+        "wrapModeT": "repeat",
+        "minfilter": "linear",
+        "magfilter": "linear",
+        "mipfilter": "none",
+        "anisotropy": 0,
+        "isUuid": false,
+        "imageUuidOrDatabaseUri": "db://assets/game/fbx/KayKit_Skeletons_1.1_FREE/characters/fbx/skeleton_texture.png"
+      },
+      "ver": "1.0.22",
+      "imported": true,
+      "files": [
+        ".json"
+      ],
+      "subMetas": {}
+    },
+    "c96cf": {
+      "importer": "gltf-material",
+      "uuid": "350fff91-03d4-4025-a389-7daa412f59c2@c96cf",
+      "displayName": "",
+      "id": "c96cf",
+      "name": "skeleton.material",
+      "userData": {
+        "gltfIndex": 0
+      },
+      "ver": "1.0.14",
+      "imported": true,
+      "files": [
+        ".json"
+      ],
+      "subMetas": {}
+    },
+    "c7836": {
+      "importer": "gltf-material",
+      "uuid": "350fff91-03d4-4025-a389-7daa412f59c2@c7836",
+      "displayName": "",
+      "id": "c7836",
+      "name": "Glow.material",
+      "userData": {
+        "gltfIndex": 1
+      },
+      "ver": "1.0.14",
+      "imported": true,
+      "files": [
+        ".json"
+      ],
+      "subMetas": {}
+    },
+    "e8979": {
+      "importer": "gltf-scene",
+      "uuid": "350fff91-03d4-4025-a389-7daa412f59c2@e8979",
+      "displayName": "",
+      "id": "e8979",
+      "name": "Skeleton_Minion.prefab",
+      "userData": {
+        "gltfIndex": 0
+      },
+      "ver": "1.0.14",
+      "imported": true,
+      "files": [
+        ".json"
+      ],
+      "subMetas": {}
+    }
+  },
+  "userData": {
+    "imageMetas": [
+      {
+        "name": "base_color_texture",
+        "uri": "db://assets/game/fbx/KayKit_Skeletons_1.1_FREE/characters/fbx/skeleton_texture.png"
+      }
+    ],
+    "fbx": {
+      "smartMaterialEnabled": true
+    },
+    "lods": {
+      "enable": false,
+      "hasBuiltinLOD": false,
+      "options": [
+        {
+          "screenRatio": 0.25,
+          "faceCount": 1
+        },
+        {
+          "screenRatio": 0.125,
+          "faceCount": 0.25
+        },
+        {
+          "screenRatio": 0.01,
+          "faceCount": 0.1
+        }
+      ]
+    },
+    "assetFinder": {
+      "meshes": [
+        "350fff91-03d4-4025-a389-7daa412f59c2@70ee7",
+        "350fff91-03d4-4025-a389-7daa412f59c2@b45e0",
+        "350fff91-03d4-4025-a389-7daa412f59c2@0d9d4",
+        "350fff91-03d4-4025-a389-7daa412f59c2@04321",
+        "350fff91-03d4-4025-a389-7daa412f59c2@fd6a9",
+        "350fff91-03d4-4025-a389-7daa412f59c2@8fab3",
+        "350fff91-03d4-4025-a389-7daa412f59c2@a286e",
+        "350fff91-03d4-4025-a389-7daa412f59c2@b27e0",
+        "350fff91-03d4-4025-a389-7daa412f59c2@a66a2"
+      ],
+      "skeletons": [
+        "350fff91-03d4-4025-a389-7daa412f59c2@30732",
+        "350fff91-03d4-4025-a389-7daa412f59c2@f1394",
+        "350fff91-03d4-4025-a389-7daa412f59c2@75ee4",
+        "350fff91-03d4-4025-a389-7daa412f59c2@a72ab",
+        "350fff91-03d4-4025-a389-7daa412f59c2@2224c",
+        "350fff91-03d4-4025-a389-7daa412f59c2@62756",
+        "350fff91-03d4-4025-a389-7daa412f59c2@7d08b",
+        "350fff91-03d4-4025-a389-7daa412f59c2@b5902",
+        "350fff91-03d4-4025-a389-7daa412f59c2@2d5df"
+      ],
+      "textures": [
+        "350fff91-03d4-4025-a389-7daa412f59c2@7d6ab"
+      ],
+      "materials": [
+        "350fff91-03d4-4025-a389-7daa412f59c2@c96cf",
+        "350fff91-03d4-4025-a389-7daa412f59c2@c7836"
+      ],
+      "scenes": [
+        "350fff91-03d4-4025-a389-7daa412f59c2@e8979"
+      ]
+    }
+  }
+}

@@ -1,0 +1,126 @@
+{
+  "ver": "2.3.14",
+  "importer": "fbx",
+  "imported": true,
+  "uuid": "de3652a4-a249-4502-8053-615ff5ef0a08",
+  "files": [],
+  "subMetas": {
+    "bdd91": {
+      "importer": "gltf-mesh",
+      "uuid": "de3652a4-a249-4502-8053-615ff5ef0a08@bdd91",
+      "displayName": "",
+      "id": "bdd91",
+      "name": "Cylinder.002.mesh",
+      "userData": {
+        "gltfIndex": 0,
+        "triangleCount": 534
+      },
+      "ver": "1.1.1",
+      "imported": true,
+      "files": [
+        ".bin",
+        ".json"
+      ],
+      "subMetas": {}
+    },
+    "7d6ab": {
+      "importer": "texture",
+      "uuid": "de3652a4-a249-4502-8053-615ff5ef0a08@7d6ab",
+      "displayName": "",
+      "id": "7d6ab",
+      "name": "base_color_texture.texture",
+      "userData": {
+        "wrapModeS": "repeat",
+        "wrapModeT": "repeat",
+        "minfilter": "linear",
+        "magfilter": "linear",
+        "mipfilter": "none",
+        "anisotropy": 0,
+        "isUuid": false,
+        "imageUuidOrDatabaseUri": "db://assets/game/fbx/KayKit_Skeletons_1.1_FREE/assets/fbx/skeleton_texture.png"
+      },
+      "ver": "1.0.22",
+      "imported": true,
+      "files": [
+        ".json"
+      ],
+      "subMetas": {}
+    },
+    "c96cf": {
+      "importer": "gltf-material",
+      "uuid": "de3652a4-a249-4502-8053-615ff5ef0a08@c96cf",
+      "displayName": "",
+      "id": "c96cf",
+      "name": "skeleton.material",
+      "userData": {
+        "gltfIndex": 0
+      },
+      "ver": "1.0.14",
+      "imported": true,
+      "files": [
+        ".json"
+      ],
+      "subMetas": {}
+    },
+    "c9a24": {
+      "importer": "gltf-scene",
+      "uuid": "de3652a4-a249-4502-8053-615ff5ef0a08@c9a24",
+      "displayName": "",
+      "id": "c9a24",
+      "name": "Skeleton_Axe.prefab",
+      "userData": {
+        "gltfIndex": 0
+      },
+      "ver": "1.0.14",
+      "imported": true,
+      "files": [
+        ".json"
+      ],
+      "subMetas": {}
+    }
+  },
+  "userData": {
+    "imageMetas": [
+      {
+        "name": "base_color_texture",
+        "uri": "db://assets/game/fbx/KayKit_Skeletons_1.1_FREE/assets/fbx/skeleton_texture.png"
+      }
+    ],
+    "fbx": {
+      "smartMaterialEnabled": true
+    },
+    "lods": {
+      "enable": false,
+      "hasBuiltinLOD": false,
+      "options": [
+        {
+          "screenRatio": 0.25,
+          "faceCount": 1
+        },
+        {
+          "screenRatio": 0.125,
+          "faceCount": 0.25
+        },
+        {
+          "screenRatio": 0.01,
+          "faceCount": 0.1
+        }
+      ]
+    },
+    "assetFinder": {
+      "meshes": [
+        "de3652a4-a249-4502-8053-615ff5ef0a08@bdd91"
+      ],
+      "skeletons": [],
+      "textures": [
+        "de3652a4-a249-4502-8053-615ff5ef0a08@7d6ab"
+      ],
+      "materials": [
+        "de3652a4-a249-4502-8053-615ff5ef0a08@c96cf"
+      ],
+      "scenes": [
+        "de3652a4-a249-4502-8053-615ff5ef0a08@c9a24"
+      ]
+    }
+  }
+}
