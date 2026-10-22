@@ -18,6 +18,7 @@ export class Station {
     public slot: ItemStack | null = null;
     public cook: CookProcess | null = null;
     public barrel: BarrelTank | null = null;
+    public seatedGuestType: string | null = null;
     public lockRemain = 0;
 
     constructor(

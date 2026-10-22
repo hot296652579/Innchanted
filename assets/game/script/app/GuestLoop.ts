@@ -5,6 +5,7 @@ import { GameEvent } from "../../../framework/event/EventName";
 import { ResourceManager } from "../../../framework/resource/ResourceManager";
 import { Guest } from "../domain/Guest";
 import { COIN_ID, ItemStack } from "../domain/ItemStack";
+import { occupyRoundTable, vacateRoundTable } from "../domain/RoundTableSeat";
 import { StationType } from "../domain/Station";
 import { GuestFsm } from "../fsm/GuestFsm";
 import { DiningLayout, DiningScan, scanDining } from "../sim/DiningHall";
@@ -314,6 +315,9 @@ export class GuestLoop {
         runtime.agent.goto(leavePoint.worldPosition);
         if (table) {
             this._escort.hideMark(table.station.id);
+            if (table.station.type === StationType.RoundTable) {
+                vacateRoundTable(table.station);
+            }
         }
         if (seatPoint && table?.station.type === StationType.Table) {
             this._freeSeats.push({ seat: seatPoint, table });
@@ -383,7 +387,18 @@ export class GuestLoop {
         if (this._escortId === runtime.guest.id) {
             this._escortId = null;
         }
-        this.judgeRoundSeat(runtime, table);
+        const verdict = occupyRoundTable(
+            table.station,
+            runtime.layout.guestType,
+            this.registry.all.map((binding) => binding.station),
+        );
+        if (verdict === "match") {
+            this.tip("入座正确");
+        } else if (verdict === "mismatch") {
+            this.tip("入座错误");
+        } else {
+            this.tip("客人正在入座");
+        }
     }
 
     /** 队首仍是引座客则后面的人不动；引座客离开等待点后，普通人去空普通桌。 */
@@ -530,55 +545,6 @@ export class GuestLoop {
 
     private clearKids(hold: Node): void {
         hold.children.slice().forEach((kid) => kid.destroy());
-    }
-
-    /** RoundTable1 与 RoundTable2 相邻：同类型加分，不同类型扣分。邻桌空着先不判。 */
-    private judgeRoundSeat(runtime: GuestRuntime, table: StationBinding): void {
-        const index = this.roundTableIndex(table.station.id);
-        if (index < 0) {
-            this.tip("客人正在入座");
-            return;
-        }
-        const neighbors: GuestRuntime[] = [];
-        this.collectRoundNeighbor(index - 1, runtime.guest.id, neighbors);
-        this.collectRoundNeighbor(index + 1, runtime.guest.id, neighbors);
-        if (neighbors.length === 0) {
-            this.tip("客人正在入座");
-            return;
-        }
-        const type = runtime.layout.guestType;
-        for (let i = 0; i < neighbors.length; i++) {
-            if (neighbors[i].layout.guestType !== type) {
-                this.tip("入座错误");
-                return;
-            }
-        }
-        this.tip("入座正确");
-    }
-
-    private collectRoundNeighbor(index: number, skipGuestId: string, out: GuestRuntime[]): void {
-        if (index < 1) {
-            return;
-        }
-        for (let i = 0; i < this._runtimes.length; i++) {
-            const other = this._runtimes[i];
-            if (other.guest.id === skipGuestId || !USING_TABLE.has(other.guest.state)) {
-                continue;
-            }
-            const otherTable = other.layout.table;
-            if (
-                otherTable?.station.type === StationType.RoundTable
-                && this.roundTableIndex(otherTable.station.id) === index
-            ) {
-                out.push(other);
-                return;
-            }
-        }
-    }
-
-    private roundTableIndex(id: string): number {
-        const matched = id.toLowerCase().match(/roundtable(\d+)/);
-        return matched ? Number(matched[1]) : -1;
     }
 
     private tableBusy(tableId: string): boolean {
