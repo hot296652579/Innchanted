@@ -155,7 +155,7 @@ export class UIManager extends BaseSingleton {
         }
     }
     private pushPopupStack(key: string, layer: UILayerType): void {
-        if (layer >= UILayerType.POPUP_WIN) {
+        if (layer === UILayerType.POPUP_WIN || layer === UILayerType.TOP_POPUP) {
             this._popupStack.push(key);
         }
     }
