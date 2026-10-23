@@ -88,7 +88,7 @@ export class GuestLoop {
         private readonly registry: StationRegistry,
         camera: Camera | null,
     ) {
-        this._orders = new GuestOrderView(camera);
+        this._orders = new GuestOrderView();
         this._faces = new GuestExpressionView(camera);
         this._escort = new EscortView(camera);
     }
@@ -131,7 +131,6 @@ export class GuestLoop {
     /** 每帧：头顶 UI、引座长按、每个客人的走路/等待/吃饭。 */
     update(dt: number): void {
         this._orders.tick(dt);
-        this._orders.update();
         this._faces.tick(dt);
         this._faces.update();
         this._escort.update();
@@ -242,7 +241,7 @@ export class GuestLoop {
                 return null;
             }
             this.dropCoin(binding, guest.orderIds);
-            this._orders.hide(guest.id);
+            this.hideOrder(guest.id);
             this.eatThenLeave(runtime);
             this.emit(GameEvent.GUEST_SERVED, guest.id, guest.orderId);
             this.emit(GameEvent.SHELL_SPAWNED, binding.station.id);
@@ -331,11 +330,20 @@ export class GuestLoop {
         this.tryServe(layout.table);
     }
 
-    /** 头顶显示当前订单；一次性提示客会在 hintTime 后换成问号。 */
+    /** 头顶显示当前订单；一次性提示客会在 hintTime 后收起订单、持续显示问号。 */
     private showOrder(runtime: GuestRuntime): void {
         const def = this.defOf(runtime);
-        this._orders.show(runtime.guest.id, runtime.guest.orderId, def?.hintPrefab, def?.hintTime ?? 0);
-        this.emit(GameEvent.ORDER_SHOWN, runtime.guest.id, runtime.guest.orderId);
+        const guestId = runtime.guest.id;
+        this._faces.hideHint(guestId);
+        this._orders.show(guestId, runtime.guest.orderId, def?.hintTime ?? 0, () => {
+            this._faces.showHint(guestId, this.headOf(runtime));
+        });
+        this.emit(GameEvent.ORDER_SHOWN, guestId, runtime.guest.orderId);
+    }
+
+    private hideOrder(guestId: string): void {
+        this._orders.hide(guestId);
+        this._faces.hideHint(guestId);
     }
 
     /** 订单全部上完：播吃饭，开心表情，吃完再走。 */
@@ -486,7 +494,7 @@ export class GuestLoop {
             return;
         }
         if (signal === WaitSignal.Timeout && runtime.fsm.timeout()) {
-            this._orders.hide(runtime.guest.id);
+            this.hideOrder(runtime.guest.id);
             this.react(runtime, "angry");
             this.emit(GameEvent.GUEST_ANGRY, runtime.guest.id);
         }

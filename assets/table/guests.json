@@ -29,7 +29,7 @@
       { "orderId": "chickenlegbaked", "orderPrefab": "prefab/items/ChickenLegBaked" }
     ],
     "hintTime": 1,
-    "hintPrefab": "prefab/ui/QuestionMark"
+    "hintPrefab": "prefab/expression/QuestionMark"
   },
   {
     "id": "gourmetguest",

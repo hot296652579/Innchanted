@@ -4,7 +4,7 @@ import { ResourceManager } from "../../../framework/resource/ResourceManager";
 import { UILayerRoot, UILayerType } from "../../../framework/ui/UILayer";
 import { allGuestDefs } from "../app/GuestCatalog";
 
-export type ExpressionKind = "happy" | "urge" | "angry" | "wake";
+export type ExpressionKind = "happy" | "urge" | "angry" | "wake" | "hint";
 
 const EXPRESS_SEC = 1;
 const UI_Y_OFFSET = 8;
@@ -18,6 +18,7 @@ const PATHS: Record<ExpressionKind, string> = {
     urge: "prefab/expression/Urge",
     angry: "prefab/expression/Angry",
     wake: "prefab/expression/WeekUp",
+    hint: "prefab/expression/QuestionMark",
 };
 
 const _world = new Vec3();
@@ -32,23 +33,24 @@ interface FaceSession {
     onDone: (() => void) | null;
 }
 
-interface SleepSession {
+interface FollowSession {
     follow: Node;
     node: Node;
 }
 
-/** 客人头顶表情：挂 SCENE_UI，跟随 3D 坐标，到时销毁。睡觉表情一直挂着并轻微晃动。 */
+/** 客人头顶表情：挂 SCENE_UI，跟随 3D 坐标。开心/催促/生气/醒来到时销毁；睡觉晃动、问号提示一直挂着。 */
 export class GuestExpressionView {
     private readonly _prefabs = new Map<ExpressionKind, Prefab>();
     private readonly _sleepPrefabs = new Map<string, Prefab>();
     private readonly _sessions = new Map<string, FaceSession>();
-    private readonly _sleeps = new Map<string, SleepSession>();
+    private readonly _sleeps = new Map<string, FollowSession>();
+    private readonly _hints = new Map<string, FollowSession>();
 
     constructor(private readonly camera: Camera | null) { }
 
     async load(): Promise<void> {
         const res = ResourceManager.getInstance();
-        const kinds: ExpressionKind[] = ["happy", "urge", "angry", "wake"];
+        const kinds: ExpressionKind[] = ["happy", "urge", "angry", "wake", "hint"];
         for (let i = 0; i < kinds.length; i++) {
             const kind = kinds[i];
             const prefab = await res.loadPrefab(PATHS[kind], BundlesEnum.Game);
@@ -113,21 +115,33 @@ export class GuestExpressionView {
         this.startSway(node);
     }
 
+    /** 一次性提示客：订单闪过后持续显示问号。 */
+    showHint(guestId: string, follow: Node): void {
+        this.hideHint(guestId);
+        const prefab = this._prefabs.get("hint");
+        const uiRoot = UILayerRoot.getRootByLayer(UILayerType.SCENE_UI);
+        if (!prefab || !uiRoot) {
+            return;
+        }
+        const node = instantiate(prefab);
+        node.name = `Hint_${guestId}`;
+        uiRoot.addChild(node);
+        this._hints.set(guestId, { follow, node });
+        this.follow(node, follow, UI_Y_OFFSET);
+    }
+
     hide(guestId: string): void {
         this.hideFace(guestId);
         this.hideSleep(guestId);
+        this.hideHint(guestId);
     }
 
     hideSleep(guestId: string): void {
-        const session = this._sleeps.get(guestId);
-        if (!session) {
-            return;
-        }
-        this._sleeps.delete(guestId);
-        Tween.stopAllByTarget(session.node);
-        if (session.node.isValid) {
-            session.node.destroy();
-        }
+        this.clearFollow(this._sleeps, guestId);
+    }
+
+    hideHint(guestId: string): void {
+        this.clearFollow(this._hints, guestId);
     }
 
     tick(dt: number): void {
@@ -160,6 +174,23 @@ export class GuestExpressionView {
                 this.follow(session.node, session.follow, SLEEP_Y_OFFSET);
             }
         });
+        this._hints.forEach((session) => {
+            if (session.node.isValid && session.follow.isValid) {
+                this.follow(session.node, session.follow, UI_Y_OFFSET);
+            }
+        });
+    }
+
+    private clearFollow(map: Map<string, FollowSession>, guestId: string): void {
+        const session = map.get(guestId);
+        if (!session) {
+            return;
+        }
+        map.delete(guestId);
+        Tween.stopAllByTarget(session.node);
+        if (session.node.isValid) {
+            session.node.destroy();
+        }
     }
 
     private hideFace(guestId: string): void {
