@@ -49,7 +49,7 @@ export class FuelThiefView {
         });
         const agentPos = pathfinder.getPosition(agentId);
         this._yOffset = startPos.y - agentPos.y;
-        this._agent = new GridAgent(pathfinder, agentId, 1.1);
+        this._agent = new GridAgent(pathfinder, agentId, 0.32);
         node.setWorldPosition(agentPos.x, agentPos.y + this._yOffset, agentPos.z);
         this.playIdle();
     }
@@ -61,6 +61,7 @@ export class FuelThiefView {
     }
 
     goHome(): void {
+        this.setLookTarget(this._home);
         this.goto(this._home);
     }
 
@@ -119,18 +120,20 @@ export class FuelThiefView {
         const agentPos = pathfinder.getPosition(agent.agentId);
         node.setWorldPosition(agentPos.x, agentPos.y + this._yOffset, agentPos.z);
 
-        const next = pathfinder.getNextPoint(agent.agentId);
-        const toNextX = next.x - agentPos.x;
-        const toNextZ = next.z - agentPos.z;
         const velocity = pathfinder.getVelocity(agent.agentId);
-        if (toNextX * toNextX + toNextZ * toNextZ > 0.01) {
-            this.faceXZ(toNextX, toNextZ);
-        } else if (velocity.lengthSqr() > 0.04) {
-            this.faceXZ(velocity.x, velocity.z);
-        } else if (this._hasLook) {
+        if (this._hasLook) {
             this.faceXZ(this._look.x - agentPos.x, this._look.z - agentPos.z);
+        } else {
+            const next = pathfinder.getNextPoint(agent.agentId);
+            const toNextX = next.x - agentPos.x;
+            const toNextZ = next.z - agentPos.z;
+            if (toNextX * toNextX + toNextZ * toNextZ > 0.01) {
+                this.faceXZ(toNextX, toNextZ);
+            } else if (velocity.lengthSqr() > 0.04) {
+                this.faceXZ(velocity.x, velocity.z);
+            }
         }
-        this.applyYaw(dt);
+        this.applyYaw(dt, this._action ? 16 : 10);
 
         if (this._action) {
             return;
@@ -187,13 +190,13 @@ export class FuelThiefView {
         this._targetYaw = Math.atan2(dirX, dirZ) * 180 / Math.PI + this._yawOffset;
     }
 
-    private applyYaw(dt: number): void {
+    private applyYaw(dt: number, turnSpeed: number): void {
         const node = this._node;
         if (!node) {
             return;
         }
         const current = node.eulerAngles.y;
-        const yaw = this.lerpAngle(current, this._targetYaw, 1 - Math.exp(-10 * dt));
+        const yaw = this.lerpAngle(current, this._targetYaw, 1 - Math.exp(-turnSpeed * dt));
         node.setRotationFromEuler(0, yaw, 0);
     }
 

@@ -231,8 +231,7 @@ export class FuelThiefIncident implements IIncident {
     }
 
     private barrelStand(binding: StationBinding): Vec3 {
-        const marked = findNamedDescendant(binding.node, "StealPos")
-            ?? findNamedDescendant(binding.node, "InteractPos");
+        const marked = findNamedDescendant(binding.node, "StealPos");
         if (marked) {
             return marked.worldPosition;
         }
@@ -248,7 +247,8 @@ export class FuelThiefIncident implements IIncident {
             dx /= len;
             dz /= len;
         }
-        return new Vec3(center.x + dx * 1.05, this._view.home.y, center.z + dz * 1.05);
+        const gap = 0.48;
+        return new Vec3(center.x + dx * gap, this._view.home.y, center.z + dz * gap);
     }
 
     private pickBarrel(): StationBinding | null {
