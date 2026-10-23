@@ -41,12 +41,15 @@
       },
       {
         "__id__": 1463
+      },
+      {
+        "__id__": 1465
       }
     ],
     "_active": true,
     "_components": [],
     "_prefab": {
-      "__id__": 1465
+      "__id__": 1467
     },
     "_lpos": {
       "__type__": "cc.Vec3",
@@ -28758,7 +28761,7 @@
     "asset": {
       "__id__": 0
     },
-    "fileId": "58+giwdnxPm4QaJ6FVComq",
+    "fileId": "6dzZqUeaVGCqj6hr830X4N",
     "instance": null,
     "targetOverrides": null,
     "nestedPrefabInstanceRoots": null
@@ -28814,7 +28817,7 @@
     "asset": {
       "__id__": 0
     },
-    "fileId": "72DE/Sul1GM6j1gnUNzuAT",
+    "fileId": "66JNz7wF1L47M5ILPCjll0",
     "instance": null,
     "targetOverrides": null,
     "nestedPrefabInstanceRoots": null
@@ -28870,7 +28873,7 @@
     "asset": {
       "__id__": 0
     },
-    "fileId": "c4rPb+xTVBY7hYm1KIgjqL",
+    "fileId": "3bYCt4e5BKSJOyNptZumiH",
     "instance": null,
     "targetOverrides": null,
     "nestedPrefabInstanceRoots": null
@@ -28926,7 +28929,63 @@
     "asset": {
       "__id__": 0
     },
-    "fileId": "3fzKd46Y9OqZEI39WJSOHq",
+    "fileId": "c2GWwybeBKTYSxP5yS8a2R",
+    "instance": null,
+    "targetOverrides": null,
+    "nestedPrefabInstanceRoots": null
+  },
+  {
+    "__type__": "cc.Node",
+    "_name": "ThreatenPoint",
+    "_objFlags": 0,
+    "__editorExtras__": {},
+    "_parent": {
+      "__id__": 1
+    },
+    "_children": [],
+    "_active": true,
+    "_components": [],
+    "_prefab": {
+      "__id__": 1466
+    },
+    "_lpos": {
+      "__type__": "cc.Vec3",
+      "x": -13.527,
+      "y": 0.301,
+      "z": 4.466
+    },
+    "_lrot": {
+      "__type__": "cc.Quat",
+      "x": 0,
+      "y": 0,
+      "z": 0,
+      "w": 1
+    },
+    "_lscale": {
+      "__type__": "cc.Vec3",
+      "x": 1,
+      "y": 1,
+      "z": 1
+    },
+    "_mobility": 0,
+    "_layer": 1073741824,
+    "_euler": {
+      "__type__": "cc.Vec3",
+      "x": 0,
+      "y": 0,
+      "z": 0
+    },
+    "_id": ""
+  },
+  {
+    "__type__": "cc.PrefabInfo",
+    "root": {
+      "__id__": 1
+    },
+    "asset": {
+      "__id__": 0
+    },
+    "fileId": "dcNX26wIRHtq/wUo7WIvbW",
     "instance": null,
     "targetOverrides": null,
     "nestedPrefabInstanceRoots": null
