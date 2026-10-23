@@ -4,7 +4,7 @@ import { ResourceManager } from "../../../framework/resource/ResourceManager";
 import { UILayerRoot, UILayerType } from "../../../framework/ui/UILayer";
 import { allGuestDefs } from "../app/GuestCatalog";
 
-export type ExpressionKind = "happy" | "urge" | "angry" | "wake" | "hint";
+export type ExpressionKind = "happy" | "urge" | "angry" | "wake" | "hint" | "scared" | "threaten";
 
 const EXPRESS_SEC = 1;
 const UI_Y_OFFSET = 8;
@@ -19,6 +19,8 @@ const PATHS: Record<ExpressionKind, string> = {
     angry: "prefab/expression/Angry",
     wake: "prefab/expression/WeekUp",
     hint: "prefab/expression/QuestionMark",
+    scared: "prefab/expression/Scared",
+    threaten: "prefab/expression/Threaten",
 };
 
 const _world = new Vec3();
@@ -50,7 +52,7 @@ export class GuestExpressionView {
 
     async load(): Promise<void> {
         const res = ResourceManager.getInstance();
-        const kinds: ExpressionKind[] = ["happy", "urge", "angry", "wake", "hint"];
+        const kinds: ExpressionKind[] = ["happy", "urge", "angry", "wake", "hint", "scared", "threaten"];
         for (let i = 0; i < kinds.length; i++) {
             const kind = kinds[i];
             const prefab = await res.loadPrefab(PATHS[kind], BundlesEnum.Game);

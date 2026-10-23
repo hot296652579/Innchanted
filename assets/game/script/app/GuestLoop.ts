@@ -13,7 +13,7 @@ import { GridAgent } from "../sim/GridAgent";
 import { RecastPathfinder } from "../sim/RecastPathfinder";
 import { findNamedDescendant, StationBinding, StationRegistry } from "../sim/StationRegistry";
 import { EscortView } from "../view/EscortView";
-import { GuestExpressionView } from "../view/GuestExpressionView";
+import { ExpressionKind, GuestExpressionView } from "../view/GuestExpressionView";
 import { GuestOrderView } from "../view/GuestOrderView";
 import { PlayerView } from "../view/PlayerView";
 import { findGuestDef, GuestDef, isEscortGuest } from "./GuestCatalog";
@@ -208,6 +208,42 @@ export class GuestLoop {
     /** 这张桌是否被客人占着（去坐、坐着、反应中）。 */
     hasGuestAt(tableId: string): boolean {
         return this.tableBusy(tableId);
+    }
+
+    /** 已入座或正在反应的客人位置，给恐吓怪冲过去。 */
+    occupiedSeat(): { tableId: string; world: Vec3 } | null {
+        const runtime = this.scareTarget();
+        if (!runtime) {
+            return null;
+        }
+        const node = runtime.layout.seatPoint ?? runtime.layout.guestNode;
+        return { tableId: runtime.guest.tableId, world: node.worldPosition.clone() };
+    }
+
+    /** 恐吓吓跑：播害怕表情后走离席。 */
+    scareAway(tableId: string): boolean {
+        const runtime = this.scareTarget(tableId);
+        if (!runtime || !runtime.fsm.scare()) {
+            return false;
+        }
+        this.hideOrder(runtime.guest.id);
+        this._faces.hideSleep(runtime.guest.id);
+        runtime.eatLeft = 0;
+        this._faces.play(runtime.guest.id, this.headOf(runtime), "scared", () => {
+            this.walkOut(runtime);
+        });
+        return true;
+    }
+
+    playFace(id: string, follow: Node, kind: string): void {
+        if (!this.isFace(kind)) {
+            return;
+        }
+        this._faces.play(id, follow, kind);
+    }
+
+    hideFace(id: string): void {
+        this._faces.hide(id);
     }
 
     /** 台上物品给这桌客人：解药则叫醒，对上订单则推进或付钱离开。 */
@@ -648,6 +684,25 @@ export class GuestLoop {
             }
         }
         return null;
+    }
+
+    private scareTarget(tableId?: string): GuestRuntime | null {
+        for (let i = 0; i < this._runtimes.length; i++) {
+            const runtime = this._runtimes[i];
+            const guest = runtime.guest;
+            if (tableId && guest.tableId !== tableId) {
+                continue;
+            }
+            if (guest.state === GuestState.Seated || guest.state === GuestState.Reacting) {
+                return runtime;
+            }
+        }
+        return null;
+    }
+
+    private isFace(kind: string): kind is ExpressionKind {
+        return kind === "happy" || kind === "urge" || kind === "angry" || kind === "wake"
+            || kind === "hint" || kind === "scared" || kind === "threaten";
     }
 
     private tableBusy(tableId: string): boolean {

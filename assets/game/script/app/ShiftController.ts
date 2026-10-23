@@ -105,6 +105,10 @@ export class ShiftController {
             yawOffset: args.yawOffset,
             stealGold: (count) => this.onStolen(count),
             stealFuel: (count) => this._barrels?.stealCharges(count) ?? 0,
+            occupiedSeat: () => this._guests?.occupiedSeat() ?? null,
+            scareGuest: (tableId) => this._guests?.scareAway(tableId) ?? false,
+            showFace: (id, follow, kind) => this._guests?.playFace(id, follow, kind),
+            hideFace: (id) => this._guests?.hideFace(id),
             camera: args.camera,
         });
         this.tagEnemies(args.levelRoot);

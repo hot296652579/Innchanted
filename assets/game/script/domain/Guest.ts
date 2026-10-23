@@ -12,6 +12,7 @@ export enum GuestState {
 export enum GuestLeaveReason {
     Served = "served",
     Angry = "angry",
+    Scared = "scared",
 }
 
 export enum WaitSignal {

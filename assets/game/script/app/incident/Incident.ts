@@ -1,8 +1,13 @@
-import { Camera, Node } from "cc";
+import { Camera, Node, Vec3 } from "cc";
 import { ProcessorSystem } from "../ProcessorSystem";
 import { IPathfinder } from "../../sim/IPathfinder";
 import { StationRegistry } from "../../sim/StationRegistry";
 import { EventDef } from "../EventCatalog";
+
+export type OccupiedSeat = {
+    tableId: string;
+    world: Vec3;
+};
 
 export type IncidentContext = {
     registry: StationRegistry;
@@ -12,6 +17,10 @@ export type IncidentContext = {
     yawOffset?: number;
     stealGold?: (count: number) => number;
     stealFuel?: (count: number) => number;
+    occupiedSeat?: () => OccupiedSeat | null;
+    scareGuest?: (tableId: string) => boolean;
+    showFace?: (id: string, follow: Node, kind: string) => void;
+    hideFace?: (id: string) => void;
     camera?: Camera;
 };
 

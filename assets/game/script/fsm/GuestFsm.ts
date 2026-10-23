@@ -53,6 +53,15 @@ export class GuestFsm {
         return true;
     }
 
+    scare(): boolean {
+        if (this.guest.state !== GuestState.Seated && this.guest.state !== GuestState.Reacting) {
+            return false;
+        }
+        this.guest.state = GuestState.Reacting;
+        this.guest.leaveReason = GuestLeaveReason.Scared;
+        return true;
+    }
+
     leave(): void {
         if (this.guest.state === GuestState.Reacting || this.guest.seated) {
             this.guest.state = GuestState.Leaving;

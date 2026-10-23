@@ -19,7 +19,7 @@ export class BattleContext {
 
     /** 已解锁的最高关卡，默认第 1 关 */
     public static getUnlockedLevelId(): number {
-        const id = Number(storage.getItem(KEY_UNLOCKED_LEVEL, 2));
+        const id = Number(storage.getItem(KEY_UNLOCKED_LEVEL, 3));
         return Number.isFinite(id) && id >= 1 ? Math.floor(id) : 1;
     }
 
