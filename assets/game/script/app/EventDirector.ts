@@ -8,6 +8,7 @@ import { IceDragonIncident } from "./incident/IceDragonIncident";
 import { LockIncident } from "./incident/LockIncident";
 import { FuelThiefIncident } from "./incident/FuelThiefIncident";
 import { SkeletonThiefIncident } from "./incident/SkeletonThiefIncident";
+import { RaiderIncident } from "./incident/RaiderIncident";
 import { ThreatenIncident } from "./incident/ThreatenIncident";
 import { ThiefIncident } from "./incident/ThiefIncident";
 import { WhirlwindIncident } from "./incident/WhirlwindIncident";
@@ -20,6 +21,7 @@ const FACTORY: Record<string, IncidentFactory> = {
     skeleton: (def) => new SkeletonThiefIncident(def),
     fuelthief: (def) => new FuelThiefIncident(def),
     threaten: (def) => new ThreatenIncident(def),
+    raider: (def) => new RaiderIncident(def),
     curse: (def) => new CurseIncident(def),
     lock: (def) => new LockIncident(def),
     whirlwind: (def) => new WhirlwindIncident(def),

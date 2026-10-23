@@ -45,6 +45,9 @@ export function resolveDefaultAction(
     station: Station,
     wantedItemId?: string | null,
 ): ActionKind {
+    if (station.broken) {
+        return "RefuseSwap";
+    }
     if (station.winded) {
         const held = nonempty(hand);
         if (held && held.itemId === station.windUnlockItemId) {

@@ -18,10 +18,12 @@ export type IncidentContext = {
     stealGold?: (count: number) => number;
     stealFuel?: (count: number) => number;
     occupiedSeat?: () => OccupiedSeat | null;
+    occupiedSeats?: () => OccupiedSeat[];
     scareGuest?: (tableId: string) => boolean;
     showFace?: (id: string, follow: Node, kind: string) => void;
     hideFace?: (id: string) => void;
     windStations?: (types: string[], count: number, unlockItemId: string, prefab?: string) => Promise<number>;
+    burstFx?: (host: Node, key: string, duration: number, worldFrom?: Node | null, liftY?: number) => void;
     camera?: Camera;
 };
 

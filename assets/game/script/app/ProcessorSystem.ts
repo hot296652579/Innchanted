@@ -4,6 +4,7 @@ import { GameEvent } from "../../../framework/event/EventName";
 import { Actor } from "../domain/Actor";
 import { ItemStack } from "../domain/ItemStack";
 import { StationBinding, StationRegistry } from "../sim/StationRegistry";
+import { BrokenView } from "../view/BrokenView";
 import { FxView } from "../view/FxView";
 import { LockView } from "../view/LockView";
 import { ProcessorView } from "../view/ProcessorView";
@@ -13,6 +14,7 @@ import { findCookRecipe, isCookedOutput } from "./Recipe";
 export class ProcessorSystem {
     private readonly _view: ProcessorView;
     private readonly _locks: LockView;
+    private readonly _broken: BrokenView;
 
     constructor(
         camera: Camera | null,
@@ -21,16 +23,36 @@ export class ProcessorSystem {
     ) {
         this._view = new ProcessorView(camera);
         this._locks = new LockView(camera);
+        this._broken = new BrokenView(camera);
     }
 
     async load(): Promise<void> {
         await this._view.load();
         await this._locks.load();
+        await this._broken.load();
     }
 
     update(): void {
         this._view.update();
         this._locks.update();
+        this._broken.update();
+    }
+
+    /** 砸坏操作台并在上方持续显示警告。成功返回 true。 */
+    markBroken(binding: StationBinding): boolean {
+        if (!binding.station.tryBreak()) {
+            return false;
+        }
+        this._locks.hide(binding.station.id);
+        this._broken.show(binding);
+        return true;
+    }
+
+    clearBroken(): void {
+        this._broken.clear();
+        for (let i = 0; i < this.registry.all.length; i++) {
+            this.registry.all[i].station.broken = false;
+        }
     }
 
     /** 从未上锁的灶炉里锁 max 个（默认 1）。返回新锁上的数量。 */
@@ -38,7 +60,7 @@ export class ProcessorSystem {
         const candidates: StationBinding[] = [];
         for (let i = 0; i < this.registry.all.length; i++) {
             const binding = this.registry.all[i];
-            if (!binding.station.locked && binding.station.cook) {
+            if (!binding.station.locked && !binding.station.broken && !binding.station.winded && binding.station.cook) {
                 candidates.push(binding);
             }
         }
@@ -70,7 +92,7 @@ export class ProcessorSystem {
             if (binding.station.tickLock(dt)) {
                 this._locks.hide(binding.station.id);
             }
-            if (binding.station.locked || binding.station.winded) {
+            if (binding.station.locked || binding.station.winded || binding.station.broken) {
                 continue;
             }
             const cook = binding.station.cook;
@@ -147,7 +169,7 @@ export class ProcessorSystem {
     startFromHand(actor: Actor, binding: StationBinding): boolean {
         const hand = actor.hand;
         const cook = binding.station.cook;
-        if (!hand || !cook || cook.state !== "idle" || binding.station.locked || binding.station.winded) {
+        if (!hand || !cook || cook.state !== "idle" || binding.station.locked || binding.station.winded || binding.station.broken) {
             return false;
         }
         const recipe = findCookRecipe(hand.itemId);// 查找烘培配方

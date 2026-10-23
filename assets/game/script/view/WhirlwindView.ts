@@ -95,7 +95,7 @@ export class WhirlwindView {
         const list: StationBinding[] = [];
         for (let i = 0; i < registry.all.length; i++) {
             const binding = registry.all[i];
-            if (binding.station.winded || binding.station.locked) {
+            if (binding.station.winded || binding.station.locked || binding.station.broken) {
                 continue;
             }
             if (allow.indexOf(binding.station.type) < 0) {

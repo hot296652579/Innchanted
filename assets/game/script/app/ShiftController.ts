@@ -109,11 +109,14 @@ export class ShiftController {
             stealGold: (count) => this.onStolen(count),
             stealFuel: (count) => this._barrels?.stealCharges(count) ?? 0,
             occupiedSeat: () => this._guests?.occupiedSeat() ?? null,
+            occupiedSeats: () => this._guests?.occupiedSeats() ?? [],
             scareGuest: (tableId) => this._guests?.scareAway(tableId) ?? false,
             showFace: (id, follow, kind) => this._guests?.playFace(id, follow, kind),
             hideFace: (id) => this._guests?.hideFace(id),
             windStations: (types, count, unlockItemId, prefab) =>
                 this._winds?.seal(this._registry, types, count, unlockItemId, prefab) ?? Promise.resolve(0),
+            burstFx: (host, key, duration, worldFrom, liftY) =>
+                this._fx?.burst(host, key, duration, worldFrom, liftY),
             camera: args.camera,
         });
         this.tagEnemies(args.levelRoot);
@@ -153,6 +156,7 @@ export class ShiftController {
         this._winds = null;
         this._barrels?.cancel();
         this._processors?.clearLocks();
+        this._processors?.clearBroken();
         this._registry.clear();
         this._score = null;
     }

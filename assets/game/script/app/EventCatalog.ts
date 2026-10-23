@@ -21,6 +21,9 @@ export type EventDef = {
     count?: number;
     stationTypes?: string[];
     unlockItemId?: string;
+    goals?: string[];
+    hitCount?: number;
+    prefabs?: string[];
 };
 
 const FALLBACK: EventDef[] = [
@@ -81,6 +84,22 @@ const FALLBACK: EventDef[] = [
         flySpeed: 4.5,
         warnText: "恐吓怪来了！",
         failText: "客人被吓跑了！",
+    },
+    {
+        id: "raider",
+        kind: "raider",
+        category: "raid",
+        delay: 8,
+        duration: 8,
+        count: 3,
+        goals: ["station", "guest"],
+        stationTypes: ["cook", "place", "itemstand"],
+        hitCount: 4,
+        spawnName: "AttackPoints",
+        prefabs: ["prefab/enemys/AttackEnemy1", "prefab/enemys/AttackEnemy2"],
+        flySpeed: 2.2,
+        warnText: "有怪物来砸店了！",
+        failText: "操作台被砸坏了！",
     },
     {
         id: "whirlwind",

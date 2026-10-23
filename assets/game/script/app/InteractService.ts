@@ -345,6 +345,9 @@ export class InteractService {
 }
 
 function refuseTip(station: Station, hand?: ItemStack | null): string {
+    if (station.broken) {
+        return "操作台被砸坏了";
+    }
     if (station.winded) {
         return "需要红色药剂才能解开旋风";
     }

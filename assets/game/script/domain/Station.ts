@@ -21,6 +21,7 @@ export class Station {
     public seatedGuestType: string | null = null;
     public lockRemain = 0;
     public windUnlockItemId = "";
+    public broken = false;
 
     constructor(
         public readonly id: string,
@@ -44,7 +45,7 @@ export class Station {
 
     /** 未上锁才加锁。成功返回 true。 */
     tryLock(seconds: number): boolean {
-        if (this.locked || this.winded || this.type !== StationType.Cook || seconds <= 0) {
+        if (this.locked || this.winded || this.broken || this.type !== StationType.Cook || seconds <= 0) {
             return false;
         }
         this.lockRemain = seconds;
@@ -53,7 +54,7 @@ export class Station {
 
     /** 旋风封台，用药水才能解。成功返回 true。 */
     tryWind(unlockItemId: string): boolean {
-        if (this.winded || this.locked || !unlockItemId) {
+        if (this.winded || this.locked || this.broken || !unlockItemId) {
             return false;
         }
         this.windUnlockItemId = unlockItemId;
@@ -62,6 +63,14 @@ export class Station {
 
     clearWind(): void {
         this.windUnlockItemId = "";
+    }
+
+    tryBreak(): boolean {
+        if (this.broken) {
+            return false;
+        }
+        this.broken = true;
+        return true;
     }
 
     /** 刚解锁时返回 true。 */

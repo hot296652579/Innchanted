@@ -53,9 +53,9 @@ export class FxView {
         }
     }
 
-    /** 一次性：放置烟、喝药、存金币。 */
-    burst(host: Node, key: string, duration: number, worldFrom?: Node | null): void {
-        const node = this.spawn(host, key, worldFrom);
+    /** 一次性：放置烟、喝药、存金币。liftY 再抬世界高度。 */
+    burst(host: Node, key: string, duration: number, worldFrom?: Node | null, liftY = 0): void {
+        const node = this.spawn(host, key, worldFrom, liftY);
         if (!node) {
             return;
         }
@@ -97,7 +97,7 @@ export class FxView {
         this._sticky.clear();
     }
 
-    private spawn(host: Node, key: string, worldFrom?: Node | null): Node | null {
+    private spawn(host: Node, key: string, worldFrom?: Node | null, liftY = 0): Node | null {
         const prefab = this._prefabs.get(key);
         if (!prefab || !host.isValid) {
             return null;
@@ -105,7 +105,7 @@ export class FxView {
         const node = instantiate(prefab);
         node.name = `Fx_${key}`;
         host.addChild(node);
-        const lift = Y_OFFSET[key] ?? 0;
+        const lift = (Y_OFFSET[key] ?? 0) + liftY;
         if (worldFrom?.isValid) {
             _world.set(worldFrom.worldPosition);
             _world.y += lift;

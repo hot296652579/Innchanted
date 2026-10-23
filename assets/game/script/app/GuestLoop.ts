@@ -220,6 +220,21 @@ export class GuestLoop {
         return { tableId: runtime.guest.tableId, world: node.worldPosition.clone() };
     }
 
+    /** 所有已入座或正在反应的客人位置，给多个攻击怪分目标。 */
+    occupiedSeats(): { tableId: string; world: Vec3 }[] {
+        const list: { tableId: string; world: Vec3 }[] = [];
+        for (let i = 0; i < this._runtimes.length; i++) {
+            const runtime = this._runtimes[i];
+            const guest = runtime.guest;
+            if (guest.state !== GuestState.Seated && guest.state !== GuestState.Reacting) {
+                continue;
+            }
+            const node = runtime.layout.seatPoint ?? runtime.layout.guestNode;
+            list.push({ tableId: guest.tableId, world: node.worldPosition.clone() });
+        }
+        return list;
+    }
+
     /** 恐吓吓跑：播害怕表情后走离席。 */
     scareAway(tableId: string): boolean {
         const runtime = this.scareTarget(tableId);
