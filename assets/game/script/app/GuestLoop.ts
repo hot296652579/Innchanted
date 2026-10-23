@@ -3,9 +3,9 @@ import { BundlesEnum } from "../../../define/BundlesEnum";
 import { EventManager } from "../../../framework/event/EventManager";
 import { GameEvent } from "../../../framework/event/EventName";
 import { ResourceManager } from "../../../framework/resource/ResourceManager";
-import { Guest } from "../domain/Guest";
+import { Guest, GuestState, WaitSignal } from "../domain/Guest";
 import { COIN_ID, ItemStack } from "../domain/ItemStack";
-import { occupyRoundTable, vacateRoundTable } from "../domain/RoundTableSeat";
+import { occupyRoundTable, RoundSeatVerdict, vacateRoundTable } from "../domain/RoundTableSeat";
 import { StationType } from "../domain/Station";
 import { GuestFsm } from "../fsm/GuestFsm";
 import { DiningLayout, DiningScan, scanDining } from "../sim/DiningHall";
@@ -16,7 +16,7 @@ import { EscortView } from "../view/EscortView";
 import { GuestExpressionView } from "../view/GuestExpressionView";
 import { GuestOrderView } from "../view/GuestOrderView";
 import { PlayerView } from "../view/PlayerView";
-import { findGuestDef, isEscortGuest } from "./GuestCatalog";
+import { findGuestDef, GuestDef, isEscortGuest } from "./GuestCatalog";
 import { goldOf } from "./ItemCatalog";
 
 const SEAT_ARRIVE = 1.0;
@@ -26,11 +26,24 @@ const HOLD_RANGE_SQ = 2.2 * 2.2;
 const CLIP_STAND = 0;
 const CLIP_EAT = 2;
 const EAT_FACE_SEC = 1;
-const USING_TABLE = new Set(["entering", "seated", "reacting"]);
-const AT_WAIT = new Set(["queuing", "waitingEscort", "escorted"]);
+const AGENT = {
+    radius: 0.4,
+    height: 1.6,
+    maxAcceleration: 10,
+    maxSpeed: 3.2,
+    collisionQueryRange: 1.2,
+    pathOptimizationRange: 4,
+    separationWeight: 1,
+};
+const ROUND_TIPS: Record<RoundSeatVerdict, string> = {
+    match: "入座正确",
+    mismatch: "入座错误",
+    pending: "客人正在入座",
+};
 const _waitPos = new Vec3();
 const _waitBack = new Vec3();
 
+/** 一个在场客人：场景节点、领域数据、状态机、寻路、吃饭倒计时。 */
 interface GuestRuntime {
     layout: DiningLayout;
     guest: Guest;
@@ -40,8 +53,19 @@ interface GuestRuntime {
     eatLeft: number;
 }
 
+export enum ServeResult {
+    Next = "next",
+    Done = "done",
+    Wake = "wake",
+}
+
+enum HoldKind {
+    Confirm = "confirm",
+    Seat = "seat",
+}
+
 type SeatSlot = { seat: Node; table: StationBinding };
-type Hold = { kind: "confirm" | "seat"; guestId: string; tableId?: string; elapsed: number; duration: number };
+type Hold = { kind: HoldKind; guestId: string; tableId?: string; elapsed: number; duration: number };
 
 /** 客人：普通桌自动入座；引座客挡住队尾，入座离开等待点后普通客再去空桌。 */
 export class GuestLoop {
@@ -69,6 +93,7 @@ export class GuestLoop {
         this._escort = new EscortView(camera);
     }
 
+    /** 预加载订单食物、表情、引座标识、金币预设。 */
     async load(): Promise<void> {
         await this._orders.load();
         await this._faces.load();
@@ -79,15 +104,11 @@ export class GuestLoop {
         }
     }
 
+    /** 扫关卡客人/座位，有座的直接走去坐，没座的进 WaitPoint 队列。 */
     start(levelRoot: Node, stationRoot: Node, yawOffset: number, player?: Node | null): void {
         this._yawOffset = yawOffset;
         this._player = player ?? null;
-        this._runtimes.length = 0;
-        this._queue.length = 0;
-        this._freeSeats.length = 0;
-        this._hold = null;
-        this._escortId = null;
-        this._escort.clear();
+        this.resetShift();
         const scan = scanDining(levelRoot, stationRoot, this.registry);
         if (!scan) {
             console.warn("[Guest] 缺少 Guest / Table / SeatPoint / LeavePoint");
@@ -107,6 +128,7 @@ export class GuestLoop {
         );
     }
 
+    /** 每帧：头顶 UI、引座长按、每个客人的走路/等待/吃饭。 */
     update(dt: number): void {
         this._orders.tick(dt);
         this._orders.update();
@@ -124,69 +146,97 @@ export class GuestLoop {
         }
     }
 
+    /** 点到的是否是还在排队、可被引座的客人。 */
     canEscortPick(node: Node): boolean {
         const runtime = this.findByNode(node);
-        return !!runtime && isEscortGuest(runtime.layout.guestType) && AT_WAIT.has(runtime.guest.state);
+        return !!runtime && isEscortGuest(runtime.layout.guestType) && runtime.guest.atWait;
     }
 
+    /** 开始长按确认引座客，进度条跟在客人头上。 */
     beginConfirmHold(guestId: string): boolean {
         const runtime = this.findById(guestId);
         if (!runtime || !this.canEscortPick(runtime.layout.guestNode)) {
             return false;
         }
-        return this.startHold("confirm", runtime, runtime.layout.guestNode, findGuestDef(runtime.layout.guestType)?.confirmTime ?? 0.5);
+        return this.startHold(HoldKind.Confirm, runtime, runtime.layout.guestNode, this.defOf(runtime)?.confirmTime ?? 0.5);
     }
 
+    /** 已确认的引座客，长按空圆桌把他带过去入座。 */
     beginSeatHold(binding: StationBinding): boolean {
         if (binding.station.type !== StationType.RoundTable) {
             return false;
         }
         const runtime = this._escortId ? this.findById(this._escortId) : null;
-        if (!runtime || runtime.guest.state !== "escorted") {
+        if (!runtime || runtime.guest.state !== GuestState.Escorted) {
             return false;
         }
         if (this.tableBusy(binding.station.id)) {
             this.tip("这张圆桌已经有客人了");
             return true;
         }
-        return this.startHold("seat", runtime, binding.node, findGuestDef(runtime.layout.guestType)?.seatTime ?? 1, binding.station.id);
+        return this.startHold(HoldKind.Seat, runtime, binding.node, this.defOf(runtime)?.seatTime ?? 1, binding.station.id);
     }
 
+    /** 松开或走远时取消当前长按，进度条消失。 */
     cancelHold(): void {
         this._hold = null;
         this._escort.hideBar();
     }
 
+    /** 这张桌现在要什么：睡着要解药，醒着要当前订单。对不上返回 null。 */
     wantedAt(tableId: string, itemId?: string | null): string | null {
-        for (let i = 0; i < this._runtimes.length; i++) {
-            const guest = this._runtimes[i].guest;
-            if (guest.state === "seated" && guest.tableId === tableId && (!itemId || guest.orderId === itemId)) {
-                return guest.orderId;
-            }
+        const guest = this.seatedAt(tableId);
+        if (!guest) {
+            return null;
         }
-        return null;
+        const want = guest.wantedId;
+        if (itemId && itemId !== want) {
+            return null;
+        }
+        return want;
     }
 
+    /** 这张桌的客人是否正在睡觉（这时不能上菜，只能上解药）。 */
+    asleepAt(tableId: string): boolean {
+        return !!this.seatedAt(tableId)?.sleeping;
+    }
+
+    /** 这张桌有没有已经坐下的客人。 */
     hasSeated(tableId: string): boolean {
-        return this.wantedAt(tableId) !== null;
+        return this.seatedAt(tableId) !== null;
     }
 
-    tryServe(binding: StationBinding): "next" | "done" | null {
-        const slot = binding.station.slot;
-        if (!slot) {
+    /** 这张桌是否被客人占着（去坐、坐着、反应中）。 */
+    hasGuestAt(tableId: string): boolean {
+        return this.tableBusy(tableId);
+    }
+
+    /** 台上物品给这桌客人：解药则叫醒，对上订单则推进或付钱离开。 */
+    tryServe(binding: StationBinding): ServeResult | null {
+        const itemId = binding.station.slot?.itemId;
+        if (!itemId) {
             return null;
         }
         for (let i = 0; i < this._runtimes.length; i++) {
             const runtime = this._runtimes[i];
             const guest = runtime.guest;
-            if (guest.tableId !== binding.station.id || !guest.canAccept(slot.itemId)) {
+            if (guest.tableId !== binding.station.id) {
                 continue;
             }
-            this.clearKids(binding.holdPoint);
-            binding.station.slot = null;
+            if (guest.canWake(itemId)) {
+                this.takeSlot(binding);
+                guest.wake();
+                this._faces.hideSleep(guest.id);
+                this._faces.play(guest.id, this.headOf(runtime), "wake");
+                return ServeResult.Wake;
+            }
+            if (!guest.canAccept(itemId)) {
+                continue;
+            }
+            this.takeSlot(binding);
             if (guest.advanceOrder()) {
                 this.showOrder(runtime);
-                return "next";
+                return ServeResult.Next;
             }
             if (!runtime.fsm.serve()) {
                 return null;
@@ -194,36 +244,28 @@ export class GuestLoop {
             this.dropCoin(binding, guest.orderIds);
             this._orders.hide(guest.id);
             this.eatThenLeave(runtime);
-            EventManager.getInstance().emit(GameEvent.GUEST_SERVED, guest.id, guest.orderId);
-            EventManager.getInstance().emit(GameEvent.SHELL_SPAWNED, binding.station.id);
-            return "done";
+            this.emit(GameEvent.GUEST_SERVED, guest.id, guest.orderId);
+            this.emit(GameEvent.SHELL_SPAWNED, binding.station.id);
+            return ServeResult.Done;
         }
         return null;
     }
 
+    /** 按配置生成一个客人：挂寻路，排队或直接去座位。 */
     private spawn(layout: DiningLayout, waitInLine: boolean): void {
         const def = findGuestDef(layout.guestType);
         if (!def) {
             console.warn("[Guest] 没有配置", layout.guestNode.name, layout.guestType);
             return;
         }
-        const guest = new Guest(layout.guestNode.name, def);
+        const node = layout.guestNode;
+        const guest = new Guest(node.name, def);
         guest.tableId = layout.table?.station.id ?? "";
         const fsm = new GuestFsm(guest);
-        this._orders.bind(guest.id, layout.guestNode);
-
-        const node = layout.guestNode;
+        this._orders.bind(guest.id, node);
         node.mobility = 2;
         const startPos = node.worldPosition.clone();
-        const agentId = this.pathfinder.addAgent(startPos, {
-            radius: 0.4,
-            height: 1.6,
-            maxAcceleration: 10,
-            maxSpeed: 3.2,
-            collisionQueryRange: 1.2,
-            pathOptimizationRange: 4,
-            separationWeight: 1,
-        });
+        const agentId = this.pathfinder.addAgent(startPos, AGENT);
         const agent = new GridAgent(this.pathfinder, agentId, SEAT_ARRIVE);
         const view = node.getComponent(PlayerView) ?? node.addComponent(PlayerView);
         view.bind(this.pathfinder, agentId, startPos.y - this.pathfinder.getPosition(agentId).y, this._yawOffset, 8);
@@ -244,6 +286,7 @@ export class GuestLoop {
         }
     }
 
+    /** 单个客人：吃饭结束离席、走到点坐下/离开、催单/睡觉/超时。 */
     private tickRuntime(runtime: GuestRuntime, dt: number): void {
         if (runtime.eatLeft > 0) {
             runtime.eatLeft -= dt;
@@ -252,38 +295,33 @@ export class GuestLoop {
             }
             return;
         }
-        if (AT_WAIT.has(runtime.guest.state) && !runtime.layout.table && runtime.agent.arrived()) {
-            runtime.agent.stop();
-            this.faceWaitLine(runtime.layout.guestNode);
-            return;
+        if (runtime.agent.arrived()) {
+            const guest = runtime.guest;
+            if (guest.atWait && !runtime.layout.table) {
+                runtime.agent.stop();
+                this.faceWaitLine(runtime.layout.guestNode);
+                return;
+            }
+            if (guest.state === GuestState.Entering) {
+                this.sit(runtime);
+                return;
+            }
+            if (guest.state === GuestState.Leaving) {
+                this.finishLeave(runtime);
+                return;
+            }
         }
-        if (runtime.guest.state === "entering" && runtime.agent.arrived()) {
-            this.sit(runtime);
-            return;
-        }
-        if (runtime.guest.state === "leaving" && runtime.agent.arrived()) {
-            this.finishLeave(runtime);
-            return;
-        }
-        const signal = runtime.guest.tickWait(dt);
-        if (signal === "urge") {
-            this.react(runtime, "urge");
-        } else if (signal === "timeout" && runtime.fsm.timeout()) {
-            this._orders.hide(runtime.guest.id);
-            this.react(runtime, "angry");
-            EventManager.getInstance().emit(GameEvent.GUEST_ANGRY, runtime.guest.id);
-        }
+        this.applyWait(runtime, runtime.guest.tickWait(dt));
     }
 
+    /** 走到座位：贴座位、面向桌子、亮订单，桌上已有对的菜就直接吃。 */
     private sit(runtime: GuestRuntime): void {
-        const { layout, fsm, view, agent } = runtime;
+        const { layout, fsm, agent } = runtime;
         if (!layout.seatPoint || !layout.table) {
             return;
         }
         agent.stop();
-        if (view) {
-            view.enabled = false;
-        }
+        this.setWalking(runtime, false);
         const pos = layout.seatPoint.worldPosition;
         layout.guestNode.setWorldPosition(pos.x, pos.y, pos.z);
         this.face(layout.guestNode, layout.table.node.worldPosition);
@@ -293,39 +331,36 @@ export class GuestLoop {
         this.tryServe(layout.table);
     }
 
+    /** 头顶显示当前订单；一次性提示客会在 hintTime 后换成问号。 */
     private showOrder(runtime: GuestRuntime): void {
-        const def = findGuestDef(runtime.layout.guestType);
+        const def = this.defOf(runtime);
         this._orders.show(runtime.guest.id, runtime.guest.orderId, def?.hintPrefab, def?.hintTime ?? 0);
-        EventManager.getInstance().emit(GameEvent.ORDER_SHOWN, runtime.guest.id, runtime.guest.orderId);
+        this.emit(GameEvent.ORDER_SHOWN, runtime.guest.id, runtime.guest.orderId);
     }
 
+    /** 订单全部上完：播吃饭，开心表情，吃完再走。 */
     private eatThenLeave(runtime: GuestRuntime): void {
-        const eatSec = this.playClip(runtime.layout.guestNode, CLIP_EAT, false);
-        runtime.eatLeft = Math.max(eatSec, EAT_FACE_SEC);
+        runtime.eatLeft = Math.max(this.playClip(runtime.layout.guestNode, CLIP_EAT, false), EAT_FACE_SEC);
         this.react(runtime, "happy");
     }
 
+    /** 头顶播表情。生气播完后离席。 */
     private react(runtime: GuestRuntime, kind: "happy" | "urge" | "angry"): void {
-        const follow = this._orders.followPoint(runtime.guest.id) ?? runtime.layout.guestNode;
-        this._faces.play(runtime.guest.id, follow, kind, () => {
+        this._faces.play(runtime.guest.id, this.headOf(runtime), kind, () => {
             if (kind === "angry") {
                 this.walkOut(runtime);
             }
         });
     }
 
+    /** 去 LeavePoint：清表情/圆桌占用，普通桌空出来后让排队的普通人入座。 */
     private walkOut(runtime: GuestRuntime): void {
         const { leavePoint, seatPoint, table } = runtime.layout;
         runtime.fsm.leave();
-        if (this._escortId === runtime.guest.id) {
-            this._escortId = null;
-        }
+        this.clearEscort(runtime.guest.id);
         this._faces.hide(runtime.guest.id);
         runtime.eatLeft = 0;
-        if (runtime.view) {
-            runtime.view.enabled = true;
-            runtime.view.resumeLoco();
-        }
+        this.setWalking(runtime, true);
         runtime.agent.goto(leavePoint.worldPosition);
         if (table) {
             this._escort.hideMark(table.station.id);
@@ -334,31 +369,26 @@ export class GuestLoop {
             }
         }
         if (seatPoint && table?.station.type === StationType.Table) {
-            this._freeSeats.push({ seat: seatPoint, table });
             this.trySeatRegulars();
         }
     }
 
+    /** 走到出口：停寻路、藏节点，通知客人已离开。 */
     private finishLeave(runtime: GuestRuntime): void {
         runtime.agent.stop();
         runtime.fsm.finish();
         runtime.layout.guestNode.active = false;
-        EventManager.getInstance().emit(GameEvent.GUEST_LEFT, runtime.guest.id);
+        this.emit(GameEvent.GUEST_LEFT, runtime.guest.id);
     }
 
-    private startHold(kind: Hold["kind"], runtime: GuestRuntime, follow: Node, duration: number, tableId?: string): boolean {
-        this._hold = { kind, guestId: runtime.guest.id, tableId, elapsed: 0, duration };
-        this._escort.showBar(follow, 0);
-        return true;
-    }
-
+    /** 长按计时：走远取消；满了则确认引座或把客人送上圆桌。 */
     private tickHold(dt: number): void {
         const hold = this._hold;
         if (!hold) {
             return;
         }
         const runtime = this.findById(hold.guestId);
-        const follow = hold.kind === "seat"
+        const follow = hold.kind === HoldKind.Seat
             ? this.registry.get(hold.tableId ?? "")?.node
             : runtime?.layout.guestNode;
         if (!runtime || !follow || this.playerTooFar(follow)) {
@@ -371,7 +401,7 @@ export class GuestLoop {
             return;
         }
         this.cancelHold();
-        if (hold.kind === "confirm") {
+        if (hold.kind === HoldKind.Confirm) {
             runtime.fsm.confirmEscort();
             runtime.agent.stop();
             this._escortId = runtime.guest.id;
@@ -383,6 +413,7 @@ export class GuestLoop {
         }
     }
 
+    /** 引座客入圆桌：离队、走座位、亮桌标，由圆桌判断邻座对错。 */
     private seatEscort(runtime: GuestRuntime, tableId: string): void {
         const table = this.registry.get(tableId);
         const seat = table ? findNamedDescendant(table.node, "SeatPoint") : null;
@@ -394,25 +425,17 @@ export class GuestLoop {
         this.sendToSeat(runtime, seat, table);
         this.repackQueue();
         this.trySeatRegulars();
-        const mark = findGuestDef(runtime.layout.guestType)?.markPrefab;
+        const mark = this.defOf(runtime)?.markPrefab;
         if (mark) {
             this._escort.showMark(tableId, mark, table.node);
         }
-        if (this._escortId === runtime.guest.id) {
-            this._escortId = null;
-        }
+        this.clearEscort(runtime.guest.id);
         const verdict = occupyRoundTable(
             table.station,
             runtime.layout.guestType,
             this.registry.all.map((binding) => binding.station),
         );
-        if (verdict === "match") {
-            this.tip("入座正确");
-        } else if (verdict === "mismatch") {
-            this.tip("入座错误");
-        } else {
-            this.tip("客人正在入座");
-        }
+        this.tip(ROUND_TIPS[verdict]);
     }
 
     /** 队首仍是引座客则后面的人不动；引座客离开等待点后，普通人去空普通桌。 */
@@ -430,15 +453,58 @@ export class GuestLoop {
         }
     }
 
-    private collectEmptyTables(): void {
-        const taken = new Set<string>();
-        for (let i = 0; i < this._freeSeats.length; i++) {
-            taken.add(this._freeSeats[i].table.station.id);
+    /** 指定座位并寻路过去，状态改成 entering。 */
+    private sendToSeat(runtime: GuestRuntime, seat: Node, table: StationBinding): void {
+        runtime.layout.seatPoint = seat;
+        runtime.layout.table = table;
+        runtime.guest.tableId = table.station.id;
+        runtime.fsm.goSeat();
+        runtime.agent.arriveRadius = SEAT_ARRIVE;
+        this.setWalking(runtime, true);
+        runtime.agent.goto(seat.worldPosition);
+    }
+
+    private resetShift(): void {
+        this._runtimes.length = 0;
+        this._queue.length = 0;
+        this._freeSeats.length = 0;
+        this._hold = null;
+        this._escortId = null;
+        this._escort.clear();
+    }
+
+    private applyWait(runtime: GuestRuntime, signal: WaitSignal | null): void {
+        if (signal === WaitSignal.Urge) {
+            this.react(runtime, "urge");
+            return;
         }
+        if (signal === WaitSignal.Sleep) {
+            const path = this.defOf(runtime)?.sleepPrefab;
+            if (path) {
+                this._faces.showSleep(runtime.guest.id, this.headOf(runtime), path);
+            }
+            return;
+        }
+        if (signal === WaitSignal.Timeout && runtime.fsm.timeout()) {
+            this._orders.hide(runtime.guest.id);
+            this.react(runtime, "angry");
+            this.emit(GameEvent.GUEST_ANGRY, runtime.guest.id);
+        }
+    }
+
+    private startHold(kind: HoldKind, runtime: GuestRuntime, follow: Node, duration: number, tableId?: string): boolean {
+        this._hold = { kind, guestId: runtime.guest.id, tableId, elapsed: 0, duration };
+        this._escort.showBar(follow, 0);
+        return true;
+    }
+
+    private collectEmptyTables(): void {
+        this._freeSeats.length = 0;
+        const taken = new Set<string>();
         for (let i = 0; i < this._runtimes.length; i++) {
             const runtime = this._runtimes[i];
             const table = runtime.layout.table;
-            if (table?.station.type === StationType.Table && USING_TABLE.has(runtime.guest.state)) {
+            if (table?.station.type === StationType.Table && runtime.guest.usingTable) {
                 taken.add(table.station.id);
             }
         }
@@ -452,19 +518,6 @@ export class GuestLoop {
                 this._freeSeats.push({ seat, table: binding });
             }
         }
-    }
-
-    private sendToSeat(runtime: GuestRuntime, seat: Node, table: StationBinding): void {
-        runtime.layout.seatPoint = seat;
-        runtime.layout.table = table;
-        runtime.guest.tableId = table.station.id;
-        runtime.fsm.goSeat();
-        runtime.agent.arriveRadius = SEAT_ARRIVE;
-        if (runtime.view) {
-            runtime.view.enabled = true;
-            runtime.view.resumeLoco();
-        }
-        runtime.agent.goto(seat.worldPosition);
     }
 
     private leaveQueue(runtime: GuestRuntime): void {
@@ -506,7 +559,11 @@ export class GuestLoop {
 
     private waitSlot(waitPoint: Node, index: number): Vec3 {
         const origin = waitPoint.worldPosition;
-        _waitPos.set(origin.x + this._queueDir.x * WAIT_GAP * index, origin.y, origin.z + this._queueDir.z * WAIT_GAP * index);
+        _waitPos.set(
+            origin.x + this._queueDir.x * WAIT_GAP * index,
+            origin.y,
+            origin.z + this._queueDir.z * WAIT_GAP * index,
+        );
         return _waitPos;
     }
 
@@ -549,8 +606,7 @@ export class GuestLoop {
         for (let i = 0; i < orderIds.length; i++) {
             gold += goldOf(orderIds[i]);
         }
-        gold = Math.max(1, gold);
-        binding.station.slot = new ItemStack(COIN_ID, gold);
+        binding.station.slot = new ItemStack(COIN_ID, Math.max(1, gold));
         if (!this._coinPrefab) {
             return;
         }
@@ -561,12 +617,33 @@ export class GuestLoop {
         coin.mobility = 2;
     }
 
-    private clearKids(hold: Node): void {
-        hold.children.slice().forEach((kid) => kid.destroy());
+    private takeSlot(binding: StationBinding): void {
+        binding.holdPoint.children.slice().forEach((kid) => kid.destroy());
+        binding.station.slot = null;
+    }
+
+    private setWalking(runtime: GuestRuntime, walking: boolean): void {
+        if (!runtime.view) {
+            return;
+        }
+        runtime.view.enabled = walking;
+        if (walking) {
+            runtime.view.resumeLoco();
+        }
+    }
+
+    private seatedAt(tableId: string): Guest | null {
+        for (let i = 0; i < this._runtimes.length; i++) {
+            const guest = this._runtimes[i].guest;
+            if (guest.seated && guest.tableId === tableId) {
+                return guest;
+            }
+        }
+        return null;
     }
 
     private tableBusy(tableId: string): boolean {
-        return this._runtimes.some((runtime) => runtime.guest.tableId === tableId && USING_TABLE.has(runtime.guest.state));
+        return this._runtimes.some((runtime) => runtime.guest.tableId === tableId && runtime.guest.usingTable);
     }
 
     private playerTooFar(target: Node): boolean {
@@ -578,6 +655,20 @@ export class GuestLoop {
         const dx = a.x - b.x;
         const dz = a.z - b.z;
         return dx * dx + dz * dz > HOLD_RANGE_SQ;
+    }
+
+    private defOf(runtime: GuestRuntime): GuestDef | null {
+        return findGuestDef(runtime.layout.guestType);
+    }
+
+    private headOf(runtime: GuestRuntime): Node {
+        return this._orders.followPoint(runtime.guest.id) ?? runtime.layout.guestNode;
+    }
+
+    private clearEscort(guestId: string): void {
+        if (this._escortId === guestId) {
+            this._escortId = null;
+        }
     }
 
     private findById(guestId: string): GuestRuntime | null {
@@ -596,7 +687,11 @@ export class GuestLoop {
         return null;
     }
 
+    private emit(name: string, ...args: unknown[]): void {
+        EventManager.getInstance().emit(name, ...args);
+    }
+
     private tip(text: string): void {
-        EventManager.getInstance().emit(GameEvent.SHOW_TIPS, text);
+        this.emit(GameEvent.SHOW_TIPS, text);
     }
 }

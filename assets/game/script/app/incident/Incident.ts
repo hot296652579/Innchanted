@@ -11,6 +11,7 @@ export type IncidentContext = {
     pathfinder?: IPathfinder;
     yawOffset?: number;
     stealGold?: (count: number) => number;
+    stealFuel?: (count: number) => number;
     camera?: Camera;
 };
 

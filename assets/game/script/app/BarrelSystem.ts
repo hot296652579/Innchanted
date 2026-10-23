@@ -55,6 +55,23 @@ export class BarrelSystem {
         return true;
     }
 
+    /** 从有饮料的魔法桶抽走 count 份，返回实际偷到的数量。 */
+    stealCharges(count: number): number {
+        let took = 0;
+        let left = Math.max(0, Math.floor(count));
+        while (left > 0) {
+            const binding = this.fullestMagic();
+            const tank = binding?.station.barrel;
+            if (!binding || !tank || !tank.draw()) {
+                break;
+            }
+            this._view.syncVolumes(binding);
+            took += 1;
+            left -= 1;
+        }
+        return took;
+    }
+
     cancel(): void {
         const active = this._active;
         if (!active) {
@@ -79,6 +96,23 @@ export class BarrelSystem {
         this._view.hide(active);
         this._active = null;
         this.finish(active, done.kind, done.color);
+    }
+
+    private fullestMagic(): StationBinding | null {
+        let best: StationBinding | null = null;
+        let bestCharges = 0;
+        for (let i = 0; i < this.registry.all.length; i++) {
+            const binding = this.registry.all[i];
+            const tank = binding.station.barrel;
+            if (binding.station.type !== StationType.MagicBarrel || !tank || tank.charges <= 0) {
+                continue;
+            }
+            if (tank.charges > bestCharges) {
+                best = binding;
+                bestCharges = tank.charges;
+            }
+        }
+        return best;
     }
 
     private startAccept(action: ActionKind, binding: StationBinding): boolean {

@@ -17,7 +17,7 @@ import {
     stationNeedOf,
 } from "./Combine";
 import { ActionKind, resolveDefaultAction } from "./DefaultAction";
-import { GuestLoop } from "./GuestLoop";
+import { GuestLoop, ServeResult } from "./GuestLoop";
 import { findItemDef, isDrinkable, itemEffects } from "./ItemCatalog";
 import { ProcessorSystem } from "./ProcessorSystem";
 
@@ -73,7 +73,33 @@ export class InteractService {
             this.guests.wantedAt(binding.station.id, this.actor.hand?.itemId),
         );
         console.log("[Player] 到达", binding.station.id, action);
+        if (this.blockEmptyTable(action, binding)) {
+            return;
+        }
         this.apply(action, binding);
+    }
+
+    /** 餐桌只能上客人当前要的东西；没客人不能放菜。 */
+    private blockEmptyTable(action: ActionKind, binding: StationBinding): boolean {
+        const type = binding.station.type;
+        if (type !== StationType.Table && type !== StationType.RoundTable) {
+            return false;
+        }
+        const held = this.actor.hand && !this.actor.hand.empty;
+        const slot = binding.station.slot && !binding.station.slot.empty;
+        if (!held || slot || action === "Serve") {
+            return false;
+        }
+        const events = EventManager.getInstance();
+        if (this.guests.asleepAt(binding.station.id)) {
+            events.emit(GameEvent.SHOW_TIPS, "客人睡着了");
+            return true;
+        }
+        events.emit(
+            GameEvent.SHOW_TIPS,
+            this.guests.hasGuestAt(binding.station.id) ? "这不是客人要的" : "没有客人，不能上菜",
+        );
+        return true;
     }
 
     apply(action: ActionKind, binding: StationBinding): void {
@@ -276,11 +302,11 @@ export class InteractService {
 
     private tryServe(binding: StationBinding): boolean {
         const result = this.guests.tryServe(binding);
-        if (result === "done") {
+        if (result === ServeResult.Done) {
             EventManager.getInstance().emit(GameEvent.SHOW_TIPS, "客人吃完离开了");
             return true;
         }
-        if (result === "next") {
+        if (result === ServeResult.Next || result === ServeResult.Wake) {
             return true;
         }
         const slot = binding.station.slot;
@@ -326,6 +352,9 @@ function refuseTip(station: Station, hand?: ItemStack | null): string {
     }
     if (station.type === StationType.MagicJar) {
         return "融合罐只放魔法饮料，两种饮料才能融合";
+    }
+    if (station.type === StationType.Table || station.type === StationType.RoundTable) {
+        return "没有客人，不能上菜";
     }
     if (isCoin(station.slot?.itemId)) {
         return "先拿走金币才能上菜";

@@ -85,6 +85,9 @@ function resolveTable(
     if (held && !slot && wantedItemId && held.itemId === wantedItemId) {
         return "Serve";
     }
+    if (held && !slot) {
+        return "RefuseSwap";
+    }
     return resolvePlace(hand, station);
 }
 

@@ -15,6 +15,8 @@ export type GuestDef = {
     markPrefab?: string;
     hintTime?: number;
     hintPrefab?: string;
+    sleepItemId?: string;
+    sleepPrefab?: string;
 };
 
 export function guestOrders(def: GuestDef): GuestOrderDef[] {

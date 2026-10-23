@@ -1,4 +1,4 @@
-import { Guest, GuestState } from "../domain/Guest";
+import { Guest, GuestLeaveReason, GuestState } from "../domain/Guest";
 
 /** 只改 Guest Domain，不碰节点。 */
 export class GuestFsm {
@@ -9,55 +9,57 @@ export class GuestFsm {
     }
 
     queue(): void {
-        this.guest.state = "queuing";
+        this.guest.state = GuestState.Queuing;
     }
 
     waitEscort(): void {
-        this.guest.state = "waitingEscort";
+        this.guest.state = GuestState.WaitingEscort;
     }
 
     confirmEscort(): void {
-        if (this.guest.state === "queuing" || this.guest.state === "waitingEscort") {
-            this.guest.state = "escorted";
+        if (this.guest.state === GuestState.Queuing || this.guest.state === GuestState.WaitingEscort) {
+            this.guest.state = GuestState.Escorted;
         }
     }
 
     goSeat(): void {
-        this.guest.state = "entering";
+        this.guest.state = GuestState.Entering;
     }
 
     sit(): void {
-        this.guest.state = "seated";
+        this.guest.state = GuestState.Seated;
         this.guest.waited = 0;
         this.guest.urged = false;
+        this.guest.sleeping = false;
+        this.guest.slept = false;
         this.guest.leaveReason = null;
     }
 
     serve(): boolean {
-        if (this.guest.state !== "seated") {
+        if (!this.guest.seated) {
             return false;
         }
-        this.guest.state = "reacting";
-        this.guest.leaveReason = "served";
+        this.guest.state = GuestState.Reacting;
+        this.guest.leaveReason = GuestLeaveReason.Served;
         return true;
     }
 
     timeout(): boolean {
-        if (this.guest.state !== "seated") {
+        if (!this.guest.seated) {
             return false;
         }
-        this.guest.state = "reacting";
-        this.guest.leaveReason = "angry";
+        this.guest.state = GuestState.Reacting;
+        this.guest.leaveReason = GuestLeaveReason.Angry;
         return true;
     }
 
     leave(): void {
-        if (this.guest.state === "reacting" || this.guest.state === "seated") {
-            this.guest.state = "leaving";
+        if (this.guest.state === GuestState.Reacting || this.guest.seated) {
+            this.guest.state = GuestState.Leaving;
         }
     }
 
     finish(): void {
-        this.guest.state = "gone";
+        this.guest.state = GuestState.Gone;
     }
 }

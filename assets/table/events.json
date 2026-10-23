@@ -30,6 +30,21 @@
     "failText": "蝙蝠偷走了成品！"
   },
   {
+    "id": "fuelthief",
+    "kind": "fuelthief",
+    "category": "raid",
+    "delay": 10,
+    "duration": 12,
+    "stealCount": 1,
+    "actorName": "FuelThief",
+    "spawnName": "FuelSwapnPoint",
+    "prefab": "prefab/enemys/FuelThief",
+    "flySpeed": 1.4,
+    "hoverTime": 2,
+    "warnText": "有人来偷魔法饮料了！",
+    "failText": "小偷偷走了魔法饮料！"
+  },
+  {
     "id": "lock",
     "kind": "lock",
     "category": "status",

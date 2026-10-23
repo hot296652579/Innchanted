@@ -104,6 +104,7 @@ export class ShiftController {
             pathfinder: this._pathfinder!,
             yawOffset: args.yawOffset,
             stealGold: (count) => this.onStolen(count),
+            stealFuel: (count) => this._barrels?.stealCharges(count) ?? 0,
             camera: args.camera,
         });
         this.tagEnemies(args.levelRoot);

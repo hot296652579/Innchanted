@@ -6,6 +6,7 @@ import { IIncident, IncidentContext } from "./incident/Incident";
 import { CurseIncident } from "./incident/CurseIncident";
 import { IceDragonIncident } from "./incident/IceDragonIncident";
 import { LockIncident } from "./incident/LockIncident";
+import { FuelThiefIncident } from "./incident/FuelThiefIncident";
 import { SkeletonThiefIncident } from "./incident/SkeletonThiefIncident";
 import { ThiefIncident } from "./incident/ThiefIncident";
 
@@ -15,6 +16,7 @@ type IncidentFactory = (def: EventDef) => IIncident;
 const FACTORY: Record<string, IncidentFactory> = {
     thief: (def) => new ThiefIncident(def),
     skeleton: (def) => new SkeletonThiefIncident(def),
+    fuelthief: (def) => new FuelThiefIncident(def),
     curse: (def) => new CurseIncident(def),
     lock: (def) => new LockIncident(def),
     ice: (def) => new IceDragonIncident(def),
