@@ -126,6 +126,7 @@ export class ThiefIncident implements IIncident {
             if (this._attackLeft <= 0) {
                 this._view.discardHeld();
                 this._carrying = false;
+                this._view.playIdle();
                 this._index += 1;
                 this.nextTarget();
             }
@@ -243,6 +244,7 @@ export class ThiefIncident implements IIncident {
             this._phase = "attack";
             return;
         }
+        this._view.playIdle();
         this.restartWarn();
     }
 }

@@ -7,8 +7,9 @@ import { allGuestDefs } from "../app/GuestCatalog";
 export type ExpressionKind = "happy" | "urge" | "angry" | "wake";
 
 const EXPRESS_SEC = 1;
-const UI_Y_OFFSET = 40;
-const SLEEP_Y_OFFSET = 78;
+const UI_Y_OFFSET = 8;
+const SLEEP_Y_OFFSET = 48;
+const WAKE_Y_OFFSET = 48;
 const WAKE_RISE = 48;
 const SWAY_ANGLE = 8;
 const SWAY_SEC = 0.65;
@@ -43,7 +44,7 @@ export class GuestExpressionView {
     private readonly _sessions = new Map<string, FaceSession>();
     private readonly _sleeps = new Map<string, SleepSession>();
 
-    constructor(private readonly camera: Camera | null) {}
+    constructor(private readonly camera: Camera | null) { }
 
     async load(): Promise<void> {
         const res = ResourceManager.getInstance();
@@ -85,7 +86,7 @@ export class GuestExpressionView {
         const node = instantiate(prefab);
         node.name = `Face_${kind}_${guestId}`;
         uiRoot.addChild(node);
-        const yOffset = kind === "wake" ? SLEEP_Y_OFFSET : UI_Y_OFFSET;
+        const yOffset = kind === "wake" ? WAKE_Y_OFFSET : UI_Y_OFFSET;
         this._sessions.set(guestId, {
             follow,
             node,

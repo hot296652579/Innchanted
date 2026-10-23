@@ -57,6 +57,10 @@ export class ThiefView {
         return state?.duration > 0 ? state.duration : 1;
     }
 
+    playIdle(): void {
+        this.playClip(["bat_idle", "idle"], true);
+    }
+
     flyTo(world: Vec3, speed: number): void {
         this._landHome = false;
         this.lookQuat(world, this._toRot);

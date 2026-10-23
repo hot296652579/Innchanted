@@ -31,14 +31,9 @@ function createIncident(def: EventDef): IIncident | null {
     return make(def);
 }
 
-function isAttack(def: EventDef): boolean {
-    return def.category === "attack" || def.kind === "thief" || def.kind === "skeleton";
-}
-
-/** 班次突发事件时间轴。攻击型同时只跑 1 个；状态型（锁灶）可并行。 */
+/** 班次突发事件时间轴。每条按自己的 delay 开跑，互不挡；duration 由各 Incident 自己用。 */
 export class EventDirector {
-    private _queue: EventDef[] = [];
-    private _index = 0;
+    private _pending: EventDef[] = [];
     private _elapsed = 0;
     private readonly _running: IIncident[] = [];
     private _ctx: IncidentContext | null = null;
@@ -72,12 +67,11 @@ export class EventDirector {
     }
 
     start(ctx: IncidentContext): void {
-        this._queue = allEventDefs().slice().sort((a, b) => a.delay - b.delay);
-        this._index = 0;
+        this._pending = allEventDefs().slice();
         this._elapsed = 0;
         this._running.length = 0;
         this._ctx = ctx;
-        console.log("[Event] 时间轴", this._queue.length, "条");
+        console.log("[Event] 时间轴", this._pending.length, "条");
     }
 
     update(dt: number): void {
@@ -94,15 +88,15 @@ export class EventDirector {
         if (!this._ctx) {
             return;
         }
-        while (this._index < this._queue.length) {
-            const def = this._queue[this._index];
+        for (let i = this._pending.length - 1; i >= 0; i--) {
+            const def = this._pending[i];
             if (def.delay > this._elapsed) {
-                break;
+                continue;
             }
-            if (isAttack(def) && this.hasAttack()) {
-                break;
+            if (this.hasKind(def.kind)) {
+                continue;
             }
-            this._index += 1;
+            this._pending.splice(i, 1);
             const incident = createIncident(def);
             if (!incident) {
                 continue;
@@ -121,13 +115,13 @@ export class EventDirector {
             this._running[i].cancel();
         }
         this._running.length = 0;
-        this._queue.length = 0;
+        this._pending.length = 0;
         this._ctx = null;
     }
 
-    private hasAttack(): boolean {
+    private hasKind(kind: string): boolean {
         for (let i = 0; i < this._running.length; i++) {
-            if (isAttack(this._running[i].def)) {
+            if (this._running[i].def.kind === kind) {
                 return true;
             }
         }
