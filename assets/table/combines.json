@@ -38,5 +38,15 @@
     "output": { "itemId": "medicinebottle_olivegreen", "count": 1, "to": "station" },
     "stationTypes": ["magicjar"],
     "prefab": "prefab/items/MedicineBottle_OliveGreen"
+  },
+  {
+    "id": "fuse_red",
+    "inputs": [
+      { "itemId": "magicdrink_red", "count": 1 },
+      { "itemId": "magicdrink_brown", "count": 1 }
+    ],
+    "output": { "itemId": "medicinebottle_red", "count": 1, "to": "station" },
+    "stationTypes": ["magicjar"],
+    "prefab": "prefab/items/MedicineBottle_Red"
   }
 ]

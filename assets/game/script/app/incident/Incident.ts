@@ -21,6 +21,7 @@ export type IncidentContext = {
     scareGuest?: (tableId: string) => boolean;
     showFace?: (id: string, follow: Node, kind: string) => void;
     hideFace?: (id: string) => void;
+    windStations?: (types: string[], count: number, unlockItemId: string, prefab?: string) => Promise<number>;
     camera?: Camera;
 };
 

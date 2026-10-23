@@ -17,7 +17,8 @@ export type ActionKind =
     | "AcceptPulp"
     | "AcceptFill"
     | "AcceptDrink"
-    | "Combine";
+    | "Combine"
+    | "UnlockWind";
 
 type StationResolver = (
     hand: ItemStack | null,
@@ -44,6 +45,13 @@ export function resolveDefaultAction(
     station: Station,
     wantedItemId?: string | null,
 ): ActionKind {
+    if (station.winded) {
+        const held = nonempty(hand);
+        if (held && held.itemId === station.windUnlockItemId) {
+            return "UnlockWind";
+        }
+        return "RefuseSwap";
+    }
     return STATION_RESOLVERS[station.type](hand, station, wantedItemId);
 }
 

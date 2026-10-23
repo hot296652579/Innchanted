@@ -16,5 +16,6 @@
   { "id": "combburgerbrown", "stack": 3, "displayName": "棕色魔法汉堡", "gold": 12 },
   { "id": "combburgergreen", "stack": 3, "displayName": "绿色魔法汉堡", "gold": 12 },
   { "id": "medicinebottle_yellow", "stack": 1, "displayName": "黄色药剂", "use": "drink", "effects": ["thaw"] },
-  { "id": "medicinebottle_olivegreen", "stack": 1, "displayName": "橄榄绿药剂", "use": "drink" }
+  { "id": "medicinebottle_olivegreen", "stack": 1, "displayName": "橄榄绿药剂", "use": "drink" },
+  { "id": "medicinebottle_red", "stack": 1, "displayName": "红色药剂" }
 ]

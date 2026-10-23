@@ -7,6 +7,7 @@ import { stackFromHoldPoint, StationBinding } from "../sim/StationRegistry";
 import { FxView } from "../view/FxView";
 import { ItemHoldView } from "../view/ItemHoldView";
 import { PlayerView } from "../view/PlayerView";
+import { WhirlwindView } from "../view/WhirlwindView";
 import { BarrelSystem } from "./BarrelSystem";
 import {
     CombineCatalog,
@@ -32,6 +33,7 @@ export class InteractService {
         private readonly guests: GuestLoop,
         private readonly playerView: PlayerView,
         private readonly fx: FxView,
+        private readonly winds: WhirlwindView,
     ) { }
 
     /** 点自身：喝掉手里的药剂。新药只改 items.json 的 use / effects。 */
@@ -145,6 +147,11 @@ export class InteractService {
                     return;
                 }
                 break;
+            case "UnlockWind":
+                if (!this.unlockWind(binding)) {
+                    return;
+                }
+                break;
             case "AcceptPulp":
             case "AcceptFill":
             case "AcceptDrink":
@@ -174,12 +181,32 @@ export class InteractService {
             default:
                 return;
         }
-        if (action === "Take" || action === "Place" || action === "Combine") {
+        if (action === "Take" || action === "Place" || action === "Combine" || action === "UnlockWind") {
             this.playerView.playThrow();
         }
         events.emit(GameEvent.ITEM_HELD_CHANGED, actor.id, actor.hand);
         events.emit(GameEvent.STATION_SLOT_CHANGED, station.id);
         console.log("[Player]", action, "手", actor.hand, "台", station.slot);
+    }
+
+    private unlockWind(binding: StationBinding): boolean {
+        const hand = this.actor.hand;
+        if (!hand || hand.empty) {
+            return false;
+        }
+        const itemId = hand.itemId;
+        if (!this.winds.unlock(binding, itemId)) {
+            EventManager.getInstance().emit(GameEvent.SHOW_TIPS, "需要红色药剂才能解开旋风");
+            return false;
+        }
+        hand.count -= 1;
+        this.holds.removeFromPlayer(1);
+        if (hand.empty) {
+            this.actor.hand = null;
+        }
+        EventManager.getInstance().emit(GameEvent.SHOW_TIPS, "旋风解开了");
+        console.log("[Wind] 解开", binding.station.id, itemId);
+        return true;
     }
 
     private combine(binding: StationBinding): boolean {
@@ -318,6 +345,9 @@ export class InteractService {
 }
 
 function refuseTip(station: Station, hand?: ItemStack | null): string {
+    if (station.winded) {
+        return "需要红色药剂才能解开旋风";
+    }
     if (station.locked) {
         return "灶炉被锁住了";
     }

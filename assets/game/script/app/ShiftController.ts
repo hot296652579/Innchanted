@@ -16,6 +16,7 @@ import { FxView } from "../view/FxView";
 import { GroundIceView } from "../view/GroundIceView";
 import { ItemHoldView } from "../view/ItemHoldView";
 import { PlayerView } from "../view/PlayerView";
+import { WhirlwindView } from "../view/WhirlwindView";
 import { BarrelSystem } from "./BarrelSystem";
 import { ClickHit, ClickPicker } from "./ClickPicker";
 import { CombineCatalog } from "./Combine";
@@ -52,6 +53,7 @@ export class ShiftController {
     private _guests: GuestLoop | null = null;
     private _interact: InteractService | null = null;
     private _events: EventDirector | null = null;
+    private _winds: WhirlwindView | null = null;
     private _score: ShiftScore | null = null;
     private _huntId: string | null = null;
     private _huntRetarget = 0;
@@ -91,7 +93,8 @@ export class ShiftController {
         const combines = new CombineCatalog();
         await combines.load();
 
-        this._interact = new InteractService(this._actor!, holds, this._processors, this._barrels, combines, this._guests, this._playerView!, this._fx);
+        this._winds = new WhirlwindView();
+        this._interact = new InteractService(this._actor!, holds, this._processors, this._barrels, combines, this._guests, this._playerView!, this._fx, this._winds);
         this.bindScore();
         const level = findLevel(BattleContext.selectedLevelId);
         this._score = new ShiftScore(level.duration);
@@ -109,6 +112,8 @@ export class ShiftController {
             scareGuest: (tableId) => this._guests?.scareAway(tableId) ?? false,
             showFace: (id, follow, kind) => this._guests?.playFace(id, follow, kind),
             hideFace: (id) => this._guests?.hideFace(id),
+            windStations: (types, count, unlockItemId, prefab) =>
+                this._winds?.seal(this._registry, types, count, unlockItemId, prefab) ?? Promise.resolve(0),
             camera: args.camera,
         });
         this.tagEnemies(args.levelRoot);
@@ -124,6 +129,7 @@ export class ShiftController {
         this._processors?.update();
         this._barrels?.tick(dt);
         this._guests?.update(dt);
+        this._winds?.update();
         this._events?.update(dt);
         this.tickHunt(dt);
         this._ice?.update(dt);
@@ -143,6 +149,8 @@ export class ShiftController {
         this._fx?.clear();
         this._fx = null;
         this._events?.clear();
+        this._winds?.clear();
+        this._winds = null;
         this._barrels?.cancel();
         this._processors?.clearLocks();
         this._registry.clear();

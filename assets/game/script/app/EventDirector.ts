@@ -10,6 +10,7 @@ import { FuelThiefIncident } from "./incident/FuelThiefIncident";
 import { SkeletonThiefIncident } from "./incident/SkeletonThiefIncident";
 import { ThreatenIncident } from "./incident/ThreatenIncident";
 import { ThiefIncident } from "./incident/ThiefIncident";
+import { WhirlwindIncident } from "./incident/WhirlwindIncident";
 
 type IncidentFactory = (def: EventDef) => IIncident;
 
@@ -21,6 +22,7 @@ const FACTORY: Record<string, IncidentFactory> = {
     threaten: (def) => new ThreatenIncident(def),
     curse: (def) => new CurseIncident(def),
     lock: (def) => new LockIncident(def),
+    whirlwind: (def) => new WhirlwindIncident(def),
     ice: (def) => new IceDragonIncident(def),
 };
 

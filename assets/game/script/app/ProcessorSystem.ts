@@ -70,7 +70,7 @@ export class ProcessorSystem {
             if (binding.station.tickLock(dt)) {
                 this._locks.hide(binding.station.id);
             }
-            if (binding.station.locked) {
+            if (binding.station.locked || binding.station.winded) {
                 continue;
             }
             const cook = binding.station.cook;
@@ -147,7 +147,7 @@ export class ProcessorSystem {
     startFromHand(actor: Actor, binding: StationBinding): boolean {
         const hand = actor.hand;
         const cook = binding.station.cook;
-        if (!hand || !cook || cook.state !== "idle" || binding.station.locked) {
+        if (!hand || !cook || cook.state !== "idle" || binding.station.locked || binding.station.winded) {
             return false;
         }
         const recipe = findCookRecipe(hand.itemId);// 查找烘培配方

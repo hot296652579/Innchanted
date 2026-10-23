@@ -5,7 +5,7 @@ import { UILayerRoot, UILayerType } from "../../../framework/ui/UILayer";
 import { StationBinding } from "../sim/StationRegistry";
 
 const LOCK_PATH = "prefab/expression/Lock";
-const UI_Y_OFFSET = 100;
+const UI_Y_OFFSET = 50;
 const _world = new Vec3();
 const _local = new Vec3();
 
@@ -19,7 +19,7 @@ export class LockView {
     private _prefab: Prefab | null = null;
     private readonly _sessions = new Map<string, LockSession>();
 
-    constructor(private readonly camera: Camera | null) {}
+    constructor(private readonly camera: Camera | null) { }
 
     async load(): Promise<void> {
         this._prefab = await ResourceManager.getInstance().loadPrefab(LOCK_PATH, BundlesEnum.Game);

@@ -18,6 +18,9 @@ export type EventDef = {
     hoverTime?: number;
     warnText?: string;
     failText?: string;
+    count?: number;
+    stationTypes?: string[];
+    unlockItemId?: string;
 };
 
 const FALLBACK: EventDef[] = [
@@ -78,6 +81,19 @@ const FALLBACK: EventDef[] = [
         flySpeed: 4.5,
         warnText: "恐吓怪来了！",
         failText: "客人被吓跑了！",
+    },
+    {
+        id: "whirlwind",
+        kind: "whirlwind",
+        category: "status",
+        delay: 8,
+        duration: 0,
+        count: 1,
+        stationTypes: ["cook", "place", "itemstand"],
+        unlockItemId: "medicinebottle_red",
+        prefab: "effect/whirlwind/whirlwindLight01",
+        warnText: "旋风来了！",
+        failText: "操作台被旋风卷起了，用药水才能解开！",
     },
     {
         id: "lock",

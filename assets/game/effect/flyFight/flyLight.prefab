@@ -3,18 +3,19 @@
     "__type__": "cc.Prefab",
     "_name": "flyLight",
     "_objFlags": 0,
+    "__editorExtras__": {},
     "_native": "",
     "data": {
       "__id__": 1
     },
     "optimizationPolicy": 0,
-    "asyncLoadAssets": false,
     "persistent": false
   },
   {
     "__type__": "cc.Node",
     "_name": "flyLight",
     "_objFlags": 0,
+    "__editorExtras__": {},
     "_parent": null,
     "_children": [],
     "_active": true,
@@ -24,7 +25,7 @@
       }
     ],
     "_prefab": {
-      "__id__": 54
+      "__id__": 55
     },
     "_lpos": {
       "__type__": "cc.Vec3",
@@ -45,6 +46,7 @@
       "y": 1,
       "z": 1
     },
+    "_mobility": 0,
     "_layer": 1073741824,
     "_euler": {
       "__type__": "cc.Vec3",
@@ -58,6 +60,7 @@
     "__type__": "cc.ParticleSystem",
     "_name": "",
     "_objFlags": 0,
+    "__editorExtras__": {},
     "node": {
       "__id__": 1
     },
@@ -67,7 +70,8 @@
     },
     "_materials": [
       {
-        "__uuid__": "84e3ded6-f7f6-4b76-a106-0f260502c4e6"
+        "__uuid__": "84e3ded6-f7f6-4b76-a106-0f260502c4e6",
+        "__expectedType__": "cc.Material"
       },
       null
     ],
@@ -125,6 +129,13 @@
       "__id__": 16
     },
     "bursts": [],
+    "_renderCulling": false,
+    "_cullingMode": 0,
+    "_aabbHalfX": 0,
+    "_aabbHalfY": 0,
+    "_aabbHalfZ": 0,
+    "_dataCulling": false,
+    "enableCulling": false,
     "_colorOverLifetimeModule": {
       "__id__": 17
     },
@@ -149,13 +160,15 @@
     "_textureAnimationModule": {
       "__id__": 45
     },
-    "_trailModule": {
+    "_noiseModule": {
       "__id__": 48
     },
-    "renderer": {
-      "__id__": 53
+    "_trailModule": {
+      "__id__": 49
     },
-    "enableCulling": false,
+    "renderer": {
+      "__id__": 54
+    },
     "_prewarm": false,
     "_capacity": 80,
     "_simulationSpace": 2,
@@ -338,10 +351,10 @@
   {
     "__type__": "cc.CurveRange",
     "mode": 1,
-    "multiplier": 1,
     "spline": {
       "__id__": 23
-    }
+    },
+    "multiplier": 1
   },
   {
     "__type__": "cc.RealCurve",
@@ -355,9 +368,9 @@
         "interpolationMode": 2,
         "tangentWeightMode": 0,
         "value": 0.78,
-        "leftTangent": 0,
         "rightTangent": 2.44,
         "rightTangentWeight": 0,
+        "leftTangent": 0,
         "leftTangentWeight": 0,
         "easingMethod": 0
       },
@@ -366,9 +379,9 @@
         "interpolationMode": 2,
         "tangentWeightMode": 0,
         "value": 0.01,
-        "leftTangent": -2.9,
         "rightTangent": 0,
         "rightTangentWeight": 0,
+        "leftTangent": -2.9,
         "leftTangentWeight": 0,
         "easingMethod": 0
       }
@@ -577,25 +590,42 @@
     "multiplier": 1
   },
   {
+    "__type__": "cc.NoiseModule",
+    "_enable": false,
+    "_strengthX": 10,
+    "_strengthY": 10,
+    "_strengthZ": 10,
+    "_noiseSpeedX": 0,
+    "_noiseSpeedY": 0,
+    "_noiseSpeedZ": 0,
+    "_noiseFrequency": 1,
+    "_remapX": 0,
+    "_remapY": 0,
+    "_remapZ": 0,
+    "_octaves": 1,
+    "_octaveMultiplier": 0.5,
+    "_octaveScale": 2
+  },
+  {
     "__type__": "cc.TrailModule",
     "_enable": false,
     "mode": 0,
     "lifeTime": {
-      "__id__": 49
+      "__id__": 50
     },
     "_minParticleDistance": 0.1,
     "existWithParticles": true,
     "textureMode": 0,
     "widthFromParticle": true,
     "widthRatio": {
-      "__id__": 50
+      "__id__": 51
     },
     "colorFromParticle": false,
     "colorOverTrail": {
-      "__id__": 51
+      "__id__": 52
     },
     "colorOvertime": {
-      "__id__": 52
+      "__id__": 53
     },
     "_space": 0,
     "_particleSystem": {
@@ -642,10 +672,17 @@
     "_velocityScale": 0.15,
     "_lengthScale": 0,
     "_mesh": null,
-    "_mainTexture": {
-      "__uuid__": "f2558223-6d62-4ada-a9aa-c8bec42782fa@6c48a"
+    "_cpuMaterial": {
+      "__uuid__": "84e3ded6-f7f6-4b76-a106-0f260502c4e6",
+      "__expectedType__": "cc.Material"
     },
-    "_useGPU": false
+    "_gpuMaterial": null,
+    "_mainTexture": {
+      "__uuid__": "f2558223-6d62-4ada-a9aa-c8bec42782fa@6c48a",
+      "__expectedType__": "cc.Texture2D"
+    },
+    "_useGPU": false,
+    "_alignSpace": 2
   },
   {
     "__type__": "cc.PrefabInfo",
@@ -655,6 +692,8 @@
     "asset": {
       "__id__": 0
     },
-    "fileId": "e9s9XAjjhDYIybaSeMww3e"
+    "fileId": "e9s9XAjjhDYIybaSeMww3e",
+    "instance": null,
+    "targetOverrides": null
   }
 ]
