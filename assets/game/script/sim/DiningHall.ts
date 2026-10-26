@@ -18,32 +18,92 @@ export interface DiningScan {
     waiting: DiningLayout[];
 }
 
-type SeatSlot = {
+export type SeatSlot = {
     seat: Node;
     table: StationBinding;
 };
+
+export type DiningHallScan = {
+    leavePoint: Node;
+    waitPoint: Node | null;
+    slots: SeatSlot[];
+};
+
+export type GuestPlan = {
+    guestType: string;
+    waitInLine: boolean;
+    seatPoint: Node | null;
+    table: StationBinding | null;
+};
+
+/** 扫离店点、排队点、普通桌座位。客人不从场景里取。 */
+export function scanHall(
+    levelRoot: Node,
+    stationRoot: Node,
+    registry: StationRegistry,
+): DiningHallScan | null {
+    const leavePoint = findNamedDescendant(levelRoot, "LeavePoint");
+    const waitPoint = findNamedDescendant(levelRoot, "WaitPoint");
+    const tables = registry.all.filter((b) => b.station.type === StationType.Table);
+    const rounds = registry.all.filter((b) => b.station.type === StationType.RoundTable);
+    const slots = collectSeatSlots(tables, stationRoot);
+    if (!leavePoint || (tables.length === 0 && rounds.length === 0)) {
+        return null;
+    }
+    console.log(
+        "[Guest] 座位归属",
+        slots.map((slot) => `${slot.seat.parent?.name ?? slot.seat.name}→${slot.table.station.id}`).join(", "),
+    );
+    return { leavePoint, waitPoint, slots };
+}
+
+/** 按客人类型顺序分座：引座客和被挡住的人进队。 */
+export function planGuests(types: string[], slots: SeatSlot[]): GuestPlan[] {
+    const plans: GuestPlan[] = [];
+    let slotIndex = 0;
+    let blocked = false;
+    for (let i = 0; i < types.length; i++) {
+        const type = types[i];
+        if (isEscortGuest(type) || blocked || slotIndex >= slots.length) {
+            if (isEscortGuest(type)) {
+                blocked = true;
+            }
+            plans.push({ guestType: type, waitInLine: true, seatPoint: null, table: null });
+            continue;
+        }
+        plans.push({
+            guestType: type,
+            waitInLine: false,
+            seatPoint: slots[slotIndex].seat,
+            table: slots[slotIndex].table,
+        });
+        slotIndex += 1;
+    }
+    return plans;
+}
 
 /** 从关卡收集客人、座位、排队点。座位不够的进 waiting。 */
 export function scanDining(
     levelRoot: Node,
     stationRoot: Node,
     registry: StationRegistry,
+    guests?: Node[],
 ): DiningScan | null {
     const leavePoint = findNamedDescendant(levelRoot, "LeavePoint");
     const waitPoint = findNamedDescendant(levelRoot, "WaitPoint");
-    const guests = collectGuests(levelRoot);
+    const guestNodes = guests ?? collectGuests(levelRoot);
     const tables = registry.all.filter((b) => b.station.type === StationType.Table);
     const rounds = registry.all.filter((b) => b.station.type === StationType.RoundTable);
     const slots = collectSeatSlots(tables, stationRoot);
-    if (!leavePoint || guests.length === 0 || (tables.length === 0 && rounds.length === 0)) {
+    if (!leavePoint || guestNodes.length === 0 || (tables.length === 0 && rounds.length === 0)) {
         return null;
     }
-    console.log("[Guest] 层级顺序", guests.map((node) => node.name).join(", "));
+    console.log("[Guest] 层级顺序", guestNodes.map((node) => node.name).join(", "));
     console.log(
         "[Guest] 座位归属",
         slots.map((slot) => `${slot.seat.parent?.name ?? slot.seat.name}→${slot.table.station.id}`).join(", "),
     );
-    return assignSeats(guests, slots, leavePoint, waitPoint);
+    return assignSeats(guestNodes, slots, leavePoint, waitPoint);
 }
 
 function assignSeats(

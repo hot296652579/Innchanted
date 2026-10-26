@@ -9,6 +9,7 @@ export type GuestDef = {
     id: string;
     waitTime: number;
     orders: GuestOrderDef[];
+    prefab?: string;
     escort?: boolean;
     confirmTime?: number;
     seatTime?: number;
@@ -19,8 +20,22 @@ export type GuestDef = {
     sleepPrefab?: string;
 };
 
+const PREFAB_PATHS: Record<string, string> = {
+    guest: "prefab/guest/RegularGuest",
+    regularguest: "prefab/guest/RegularGuest",
+    sleepguest: "prefab/guest/SleepGuest",
+    onetimeguest: "prefab/guest/OneTimeGuest",
+    gourmetguest: "prefab/guest/GourmetGuest",
+    soldierguest: "prefab/guest/soldier/SoldierGuest",
+    mageguest: "prefab/guest/mage/MageGuest",
+};
+
 export function guestOrders(def: GuestDef): GuestOrderDef[] {
     return def.orders ?? [];
+}
+
+export function guestPrefabPath(def: GuestDef): string {
+    return def.prefab || PREFAB_PATHS[def.id] || `prefab/guest/${def.id}`;
 }
 
 

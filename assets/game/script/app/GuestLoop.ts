@@ -8,7 +8,7 @@ import { COIN_ID, ItemStack } from "../domain/ItemStack";
 import { occupyRoundTable, RoundSeatVerdict, vacateRoundTable } from "../domain/RoundTableSeat";
 import { StationType } from "../domain/Station";
 import { GuestFsm } from "../fsm/GuestFsm";
-import { DiningLayout, DiningScan, scanDining } from "../sim/DiningHall";
+import { DiningLayout, GuestPlan, planGuests, scanHall } from "../sim/DiningHall";
 import { GridAgent } from "../sim/GridAgent";
 import { RecastPathfinder } from "../sim/RecastPathfinder";
 import { findNamedDescendant, StationBinding, StationRegistry } from "../sim/StationRegistry";
@@ -16,9 +16,10 @@ import { EscortView } from "../view/EscortView";
 import { ExpressionKind, GuestExpressionView } from "../view/GuestExpressionView";
 import { GuestOrderView } from "../view/GuestOrderView";
 import { PlayerView } from "../view/PlayerView";
-import { findGuestDef, GuestDef, isEscortGuest } from "./GuestCatalog";
+import { findGuestDef, GuestDef, guestPrefabPath, isEscortGuest } from "./GuestCatalog";
 import { goldOf } from "./ItemCatalog";
 
+const SPAWN_GAP = 2;
 const SEAT_ARRIVE = 1.0;
 const QUEUE_ARRIVE = 0.35;
 const WAIT_GAP = 1.6;
@@ -66,6 +67,7 @@ enum HoldKind {
 
 type SeatSlot = { seat: Node; table: StationBinding };
 type Hold = { kind: HoldKind; guestId: string; tableId?: string; elapsed: number; duration: number };
+type PendingGuest = GuestPlan & { prefab: Prefab };
 
 /** 客人：普通桌自动入座；引座客挡住队尾，入座离开等待点后普通客再去空桌。 */
 export class GuestLoop {
@@ -77,6 +79,13 @@ export class GuestLoop {
     private readonly _freeSeats: SeatSlot[] = [];
     private readonly _queueDir = new Vec3(0, 0, -1);
     private _waitPoint: Node | null = null;
+    private _leavePoint: Node | null = null;
+    private _spawnAt: Node | null = null;
+    private _guestFolder: Node | null = null;
+    private readonly _pending: PendingGuest[] = [];
+    private _spawnWait = 0;
+    private _spawnGap = SPAWN_GAP;
+    private _spawned = 0;
     private _coinPrefab: Prefab | null = null;
     private _yawOffset = 0;
     private _player: Node | null = null;
@@ -104,32 +113,48 @@ export class GuestLoop {
         }
     }
 
-    /** 扫关卡客人/座位，有座的直接走去坐，没座的进 WaitPoint 队列。 */
-    start(levelRoot: Node, stationRoot: Node, yawOffset: number, player?: Node | null): void {
+    /** 按关卡 guests 间隔从 GuestSwapnPoint 出场，先出的先去座位或排队。 */
+    async start(
+        levelRoot: Node,
+        stationRoot: Node,
+        yawOffset: number,
+        player?: Node | null,
+        guestIds?: string[],
+        guestInterval?: number,
+    ): Promise<void> {
         this._yawOffset = yawOffset;
         this._player = player ?? null;
+        this._spawnGap = Math.max(0.3, guestInterval ?? SPAWN_GAP);
         this.resetShift();
-        const scan = scanDining(levelRoot, stationRoot, this.registry);
-        if (!scan) {
-            console.warn("[Guest] 缺少 Guest / Table / SeatPoint / LeavePoint");
+        const hall = scanHall(levelRoot, stationRoot, this.registry);
+        if (!hall) {
+            console.warn("[Guest] 缺少 Table / SeatPoint / LeavePoint");
             return;
         }
-        this._waitPoint = scan.waitPoint;
-        this.captureQueueDir(scan);
-        scan.seated.forEach((layout) => this.spawn(layout, false));
-        if (scan.waiting.length > 0 && !scan.waitPoint) {
+        this._leavePoint = hall.leavePoint;
+        this._waitPoint = hall.waitPoint;
+        this._spawnAt = findNamedDescendant(levelRoot, "GuestSwapnPoint")
+            ?? findNamedDescendant(levelRoot, "GuestSpawnPoint");
+        if (!this._spawnAt) {
+            console.warn("[Guest] 场景里没有 GuestSwapnPoint");
+            return;
+        }
+        this._guestFolder = this.ensureGuestFolder(levelRoot);
+        this.hidePlaced(this._guestFolder);
+        this.captureQueueDir();
+        const pending = await this.prepareGuests(guestIds ?? [], hall.slots);
+        if (pending.some((item) => item.waitInLine) && !hall.waitPoint) {
             console.warn("[Guest] 有人没座位，但缺少 WaitPoint");
         }
-        scan.waiting.forEach((layout) => this.spawn(layout, true));
-        this.repackQueue();
-        console.log(
-            `[Guest] 就绪 入座 ${scan.seated.map((g) => g.guestNode.name).join(", ") || "无"}`,
-            `排队 ${scan.waiting.map((g) => g.guestNode.name).join(", ") || "无"}`,
-        );
+        this._pending.push(...pending);
+        this._spawnWait = 0;
+        this.spawnNext();
+        console.log(`[Guest] 间隔 ${this._spawnGap}s 出场 ${pending.length} 人`);
     }
 
     /** 每帧：头顶 UI、引座长按、每个客人的走路/等待/吃饭。 */
     update(dt: number): void {
+        this.tickSpawn(dt);
         this._orders.tick(dt);
         this._faces.tick(dt);
         this._faces.update();
@@ -301,6 +326,92 @@ export class GuestLoop {
         return null;
     }
 
+    private async prepareGuests(guestIds: string[], slots: SeatSlot[]): Promise<PendingGuest[]> {
+        const types: string[] = [];
+        const prefabs = new Map<string, Prefab>();
+        const res = ResourceManager.getInstance();
+        for (let i = 0; i < guestIds.length; i++) {
+            const def = findGuestDef(guestIds[i]);
+            if (!def) {
+                console.warn("[Guest] 关卡客人未配置", guestIds[i]);
+                continue;
+            }
+            if (!prefabs.has(def.id)) {
+                const path = guestPrefabPath(def);
+                const prefab = await res.loadPrefab(path, BundlesEnum.Game);
+                if (!prefab) {
+                    console.warn("[Guest] 未找到", path);
+                    continue;
+                }
+                prefabs.set(def.id, prefab);
+            }
+            types.push(def.id);
+        }
+        const plans = planGuests(types, slots);
+        const pending: PendingGuest[] = [];
+        for (let i = 0; i < plans.length; i++) {
+            const prefab = prefabs.get(plans[i].guestType);
+            if (!prefab) {
+                continue;
+            }
+            pending.push({ ...plans[i], prefab });
+        }
+        return pending;
+    }
+
+    private tickSpawn(dt: number): void {
+        if (this._pending.length === 0) {
+            return;
+        }
+        this._spawnWait -= dt;
+        if (this._spawnWait <= 0) {
+            this.spawnNext();
+        }
+    }
+
+    private spawnNext(): void {
+        const item = this._pending.shift();
+        const spawn = this._spawnAt;
+        const folder = this._guestFolder;
+        const leave = this._leavePoint;
+        if (!item || !spawn || !folder || !leave) {
+            return;
+        }
+        const node = instantiate(item.prefab);
+        node.name = `${item.guestType}_${this._spawned}`;
+        this._spawned += 1;
+        folder.addChild(node);
+        node.setWorldPosition(spawn.worldPosition);
+        node.setWorldRotation(spawn.worldRotation);
+        node.active = true;
+        const layout: DiningLayout = {
+            guestNode: node,
+            guestType: item.guestType,
+            leavePoint: leave,
+            seatPoint: item.seatPoint,
+            table: item.table,
+        };
+        this.spawn(layout, item.waitInLine);
+        this._spawnWait = this._pending.length > 0 ? this._spawnGap : 0;
+    }
+
+    private ensureGuestFolder(levelRoot: Node): Node {
+        const existing = findNamedDescendant(levelRoot, "Guests");
+        if (existing) {
+            return existing;
+        }
+        const folder = new Node("Guests");
+        levelRoot.addChild(folder);
+        return folder;
+    }
+
+    private hidePlaced(folder: Node): void {
+        const placed = folder.children.slice();
+        for (let i = 0; i < placed.length; i++) {
+            placed[i].active = false;
+        }
+    }
+
     /** 按配置生成一个客人：挂寻路，排队或直接去座位。 */
     private spawn(layout: DiningLayout, waitInLine: boolean): void {
         const def = findGuestDef(layout.guestType);
@@ -328,6 +439,10 @@ export class GuestLoop {
             fsm.queue();
             agent.arriveRadius = QUEUE_ARRIVE;
             this._queue.push(runtime);
+            if (this._waitPoint) {
+                runtime.agent.goto(this.waitSlot(this._waitPoint, this._queue.length - 1));
+                this.setWalking(runtime, true);
+            }
             console.log("[Guest] 排队", guest.id, guest.orderId);
             return;
         }
@@ -527,6 +642,9 @@ export class GuestLoop {
         this._runtimes.length = 0;
         this._queue.length = 0;
         this._freeSeats.length = 0;
+        this._pending.length = 0;
+        this._spawnWait = 0;
+        this._spawned = 0;
         this._hold = null;
         this._escortId = null;
         this._escort.clear();
@@ -595,15 +713,15 @@ export class GuestLoop {
         }
     }
 
-    private captureQueueDir(scan: DiningScan): void {
-        const wait = scan.waitPoint;
+    private captureQueueDir(): void {
+        const wait = this._waitPoint;
+        const spawn = this._spawnAt;
         if (!wait) {
             return;
         }
-        const tail = scan.waiting[scan.waiting.length - 1] ?? scan.seated[scan.seated.length - 1];
         const origin = wait.worldPosition;
-        if (tail) {
-            const p = tail.guestNode.worldPosition;
+        if (spawn) {
+            const p = spawn.worldPosition;
             _waitBack.set(p.x - origin.x, 0, p.z - origin.z);
         } else {
             _waitBack.set(wait.forward.x, 0, wait.forward.z);

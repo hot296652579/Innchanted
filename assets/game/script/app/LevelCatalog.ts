@@ -4,10 +4,19 @@ export type LevelDef = {
     id: number;
     duration: number;
     stars: number[];
+    eventIds?: string[];
+    guests?: string[];
+    guestInterval?: number;
 };
 
 const FALLBACK: LevelDef[] = [
-    { id: 1, duration: 180, stars: [20, 40, 70] },
+    {
+        id: 1,
+        duration: 180,
+        stars: [20, 40, 70],
+        eventIds: ["lock", "thief", "whirlwind"],
+        guests: ["soldierguest", "mageguest", "regularguest", "regularguest", "gourmetguest"],
+    },
 ];
 
 export function allLevels(): LevelDef[] {

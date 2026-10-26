@@ -86,9 +86,17 @@ export class ShiftController {
         this._barrels = new BarrelSystem(args.camera, this._registry, this._actor!, this.requireHold(args.player), this._playerView!);
         await this._barrels.load();
 
+        const level = findLevel(BattleContext.selectedLevelId);
         this._guests = new GuestLoop(this._pathfinder, this._registry, args.camera);
         await this._guests.load();
-        this._guests.start(args.levelRoot, args.stationRoot, args.yawOffset, args.player);
+        await this._guests.start(
+            args.levelRoot,
+            args.stationRoot,
+            args.yawOffset,
+            args.player,
+            level.guests,
+            level.guestInterval,
+        );
 
         const combines = new CombineCatalog();
         await combines.load();
@@ -96,7 +104,6 @@ export class ShiftController {
         this._winds = new WhirlwindView();
         this._interact = new InteractService(this._actor!, holds, this._processors, this._barrels, combines, this._guests, this._playerView!, this._fx, this._winds);
         this.bindScore();
-        const level = findLevel(BattleContext.selectedLevelId);
         this._score = new ShiftScore(level.duration);
         this.emitHud();
         this._events = new EventDirector();
@@ -118,7 +125,7 @@ export class ShiftController {
             burstFx: (host, key, duration, worldFrom, liftY) =>
                 this._fx?.burst(host, key, duration, worldFrom, liftY),
             camera: args.camera,
-        });
+        }, level.eventIds);
         this.tagEnemies(args.levelRoot);
         this.bindClick(args);
         await this.bindIce(args.planeRoot);

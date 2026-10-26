@@ -54,7 +54,7 @@ export class RaiderView {
         });
         const agentPos = pathfinder.getPosition(agentId);
         this._yOffset = startPos.y - agentPos.y;
-        this._agent = new GridAgent(pathfinder, agentId, 0.32);
+        this._agent = new GridAgent(pathfinder, agentId, 1.1);
         node.setWorldPosition(agentPos.x, agentPos.y + this._yOffset, agentPos.z);
         this.playIdle();
     }

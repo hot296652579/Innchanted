@@ -1,6 +1,7 @@
 [
   {
     "id": "guest",
+    "prefab": "prefab/guest/RegularGuest",
     "waitTime": 25,
     "orders": [
       { "orderId": "chickenlegbaked", "orderPrefab": "prefab/items/ChickenLegBaked" }
@@ -8,6 +9,7 @@
   },
   {
     "id": "regularguest",
+    "prefab": "prefab/guest/RegularGuest",
     "waitTime": 25,
     "orders": [
       { "orderId": "chickenlegbaked", "orderPrefab": "prefab/items/ChickenLegBaked" }
@@ -15,6 +17,7 @@
   },
   {
     "id": "sleepguest",
+    "prefab": "prefab/guest/SleepGuest",
     "waitTime": 20,
     "orders": [
       { "orderId": "chickenlegbaked", "orderPrefab": "prefab/items/ChickenLegBaked" }
@@ -24,6 +27,7 @@
   },
   {
     "id": "onetimeguest",
+    "prefab": "prefab/guest/OneTimeGuest",
     "waitTime": 25,
     "orders": [
       { "orderId": "chickenlegbaked", "orderPrefab": "prefab/items/ChickenLegBaked" }
@@ -33,6 +37,7 @@
   },
   {
     "id": "gourmetguest",
+    "prefab": "prefab/guest/GourmetGuest",
     "waitTime": 25,
     "orders": [
       { "orderId": "magicdrink_green", "orderPrefab": "prefab/items/MagicDrink_Green" },
@@ -42,6 +47,7 @@
   },
   {
     "id": "soldierguest",
+    "prefab": "prefab/guest/soldier/SoldierGuest",
     "waitTime": 15,
     "orders": [
       { "orderId": "chickenlegbaked", "orderPrefab": "prefab/items/ChickenLegBaked" }
@@ -53,6 +59,7 @@
   },
   {
     "id": "mageguest",
+    "prefab": "prefab/guest/mage/MageGuest",
     "waitTime": 15,
     "orders": [
       { "orderId": "burgerbaked", "orderPrefab": "prefab/items/BurgerBaked" }

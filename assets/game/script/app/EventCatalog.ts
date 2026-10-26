@@ -142,3 +142,30 @@ const FALLBACK: EventDef[] = [
 export function allEventDefs(): EventDef[] {
     return ConfigManager.getInstance().getTable<EventDef>("events") ?? FALLBACK;
 }
+
+export function findEventDef(id: string): EventDef | null {
+    const table = allEventDefs();
+    for (let i = 0; i < table.length; i++) {
+        if (table[i].id === id) {
+            return table[i];
+        }
+    }
+    return null;
+}
+
+/** 按关卡 eventIds 取事件。空数组表示本关没有突发事件。 */
+export function eventsOf(ids?: string[]): EventDef[] {
+    if (!ids || ids.length === 0) {
+        return [];
+    }
+    const list: EventDef[] = [];
+    for (let i = 0; i < ids.length; i++) {
+        const def = findEventDef(ids[i]);
+        if (!def) {
+            console.warn("[Event] 关卡事件未配置", ids[i]);
+            continue;
+        }
+        list.push(def);
+    }
+    return list;
+}

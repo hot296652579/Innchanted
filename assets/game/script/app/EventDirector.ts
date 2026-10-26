@@ -1,7 +1,7 @@
 import { Node } from "cc";
 import { EventManager } from "../../../framework/event/EventManager";
 import { GameEvent } from "../../../framework/event/EventName";
-import { allEventDefs, EventDef } from "./EventCatalog";
+import { EventDef, eventsOf } from "./EventCatalog";
 import { IIncident, IncidentContext } from "./incident/Incident";
 import { CurseIncident } from "./incident/CurseIncident";
 import { IceDragonIncident } from "./incident/IceDragonIncident";
@@ -72,12 +72,12 @@ export class EventDirector {
         return false;
     }
 
-    start(ctx: IncidentContext): void {
-        this._pending = allEventDefs().slice();
+    start(ctx: IncidentContext, eventIds?: string[]): void {
+        this._pending = eventsOf(eventIds);
         this._elapsed = 0;
         this._running.length = 0;
         this._ctx = ctx;
-        console.log("[Event] 时间轴", this._pending.length, "条");
+        console.log("[Event] 时间轴", this._pending.map((def) => def.id).join(", ") || "无");
     }
 
     update(dt: number): void {

@@ -2,6 +2,25 @@
   {
     "id": 1,
     "duration": 180,
-    "stars": [20, 40, 70]
+    "stars": [20, 40, 70],
+    "eventIds": ["thief"],
+    "guestInterval": 12,
+    "guests": ["soldierguest", "mageguest", "regularguest", "regularguest", "gourmetguest"]
+  },
+  {
+    "id": 2,
+    "duration": 180,
+    "stars": [30, 55, 90],
+    "eventIds": ["lock", "fuelthief", "threaten", "raider"],
+    "guestInterval": 1,
+    "guests": ["sleepguest", "onetimeguest", "gourmetguest", "mageguest", "regularguest", "regularguest", "soldierguest"]
+  },
+  {
+    "id": 3,
+    "duration": 180,
+    "stars": [40, 70, 110],
+    "eventIds": ["lock", "whirlwind", "threaten", "raider","thief","fuelthief","ice"],
+    "guestInterval": 1,
+    "guests": ["sleepguest", "onetimeguest", "gourmetguest", "mageguest", "regularguest", "regularguest", "soldierguest"]
   }
 ]

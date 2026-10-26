@@ -14,7 +14,8 @@ type UnitPhase = "smoke" | "appearing" | "toStation" | "hitStation" | "toGuest" 
 
 const SMOKE_SEC = 1;
 const SMOKE_LIFT = 1.4;
-const STATION_GAP = 0.55;
+const STATION_GAP = 1.2;
+const ARRIVE_STATION = 1.8;
 const GUEST_GAP = 1.05;
 const FILL_GAP = 0.2;
 const DEFAULT_GOALS = ["station", "guest"];
@@ -210,7 +211,7 @@ export class RaiderIncident implements IIncident {
         if (unit.phase === "toStation") {
             if (!this.stationValid(unit.station)) {
                 this.assignGoal(unit);
-            } else if (unit.view.arrived()) {
+            } else if (unit.view.arrived() || this.closeEnough(unit, unit.station.node.worldPosition, ARRIVE_STATION)) {
                 this.startHit(unit);
             }
             return;
@@ -532,7 +533,19 @@ export class RaiderIncident implements IIncident {
     }
 
     private stationStand(unit: Unit, binding: StationBinding): Vec3 {
-        return this.standAt(unit, binding.node.worldPosition, STATION_GAP);
+        const from = unit.view.node?.worldPosition ?? unit.spawn.worldPosition;
+        return this._ctx?.registry.standPoint(binding, unit.view.home.y, from)
+            ?? this.standAt(unit, binding.node.worldPosition, STATION_GAP);
+    }
+
+    private closeEnough(unit: Unit, world: Vec3, range: number): boolean {
+        const pos = unit.view.node?.worldPosition;
+        if (!pos) {
+            return false;
+        }
+        const dx = pos.x - world.x;
+        const dz = pos.z - world.z;
+        return dx * dx + dz * dz <= range * range;
     }
 
     private standAt(unit: Unit, world: Vec3, gap: number): Vec3 {
