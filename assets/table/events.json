@@ -99,7 +99,7 @@
     "id": "ice",
     "kind": "ice",
     "category": "status",
-    "delay": 10,
+    "delay": 100,
     "duration": 0,
     "freezeTime": 1,
     "slowScale": 0.4,

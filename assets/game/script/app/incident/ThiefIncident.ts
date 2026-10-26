@@ -8,7 +8,7 @@ import { EventDef } from "../EventCatalog";
 import { isCookedOutput } from "../Recipe";
 import { IIncident, IncidentContext } from "./Incident";
 
-type Phase = "warning" | "toFood" | "hover" | "toHome" | "attack" | "done";
+type Phase = "warning" | "attention" | "toFood" | "hover" | "toHome" | "attack" | "done";
 
 /** 小偷来袭：飞到台后停留，未被驱赶才偷走；回巢 Hit 后销毁。 */
 export class ThiefIncident implements IIncident {
@@ -66,6 +66,7 @@ export class ThiefIncident implements IIncident {
         if (this._phase === "done" || this._phase === "toHome" || this._phase === "attack") {
             return false;
         }
+        this.hideFace();
         this._scared = true;
         this._carrying = false;
         this._hoverStationId = null;
@@ -95,6 +96,14 @@ export class ThiefIncident implements IIncident {
         }
         if (this._phase === "warning") {
             this.tickWarn(dt);
+            return;
+        }
+        if (this._phase === "attention") {
+            this._remain -= dt;
+            if (this._remain <= 0) {
+                this.hideFace();
+                this.nextTarget();
+            }
             return;
         }
         this._view.tick(dt);
@@ -134,6 +143,7 @@ export class ThiefIncident implements IIncident {
     }
 
     cancel(): void {
+        this.hideFace();
         this._view.discardHeld();
         this._view.snapHome();
         this._hoverStationId = null;
@@ -169,7 +179,25 @@ export class ThiefIncident implements IIncident {
         }
         console.log("[Event] 开始偷", this.def.id, this._targets.length, "份");
         this._index = 0;
-        this.nextTarget();
+        this.startAttention();
+    }
+
+    private startAttention(): void {
+        const follow = this._view.node ?? this._actor;
+        if (follow) {
+            this._ctx?.showFace?.(this.faceId(), follow, "attention");
+        }
+        this._remain = 1;
+        this._phase = "attention";
+        console.log("[Event] 蝙蝠注意", this.def.id);
+    }
+
+    private hideFace(): void {
+        this._ctx?.hideFace?.(this.faceId());
+    }
+
+    private faceId(): string {
+        return this._actor?.name ?? this.def.id;
     }
 
     private restartWarn(): void {

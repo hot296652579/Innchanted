@@ -7,7 +7,7 @@ import { findNamedDescendant } from "../../sim/StationRegistry";
 import { Enemy } from "../../view/Enemy";
 import { ThreatenView } from "../../view/ThreatenView";
 import { EventDef } from "../EventCatalog";
-import { IIncident, IncidentContext, OccupiedSeat } from "./Incident";
+import { IIncident, IncidentContext, OccupiedSeat, showDeathMark } from "./Incident";
 
 type Phase = "spawning" | "toGuest" | "throw" | "toHome" | "rest" | "dying" | "waitSpawn" | "done";
 
@@ -74,6 +74,7 @@ export class ThreatenIncident implements IIncident {
             return false;
         }
         this.hideFace();
+        showDeathMark(this._ctx, this._actor, this.def.id);
         this._remain = Math.max(0.6, this._view.playDeath() + 0.15);
         this._phase = "dying";
         console.log("[Event] 击杀", this.def.id);

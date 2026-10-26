@@ -21,6 +21,10 @@ export class ThiefView {
     private _duration = 0.2;
     private _landHome = false;
 
+    get node(): Node | null {
+        return this._node;
+    }
+
     get hold(): Node | null {
         return this._hold;
     }

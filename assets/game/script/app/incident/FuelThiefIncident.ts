@@ -8,7 +8,7 @@ import { findNamedDescendant, StationBinding } from "../../sim/StationRegistry";
 import { Enemy } from "../../view/Enemy";
 import { FuelThiefView } from "../../view/FuelThiefView";
 import { EventDef } from "../EventCatalog";
-import { IIncident, IncidentContext } from "./Incident";
+import { IIncident, IncidentContext, showDeathMark } from "./Incident";
 
 type Phase = "spawning" | "toBarrel" | "steal" | "toHome" | "rest" | "dying" | "waitSpawn" | "done";
 
@@ -72,6 +72,7 @@ export class FuelThiefIncident implements IIncident {
         if (!this.isAlive()) {
             return false;
         }
+        showDeathMark(this._ctx, this._actor, this.def.id);
         this._remain = Math.max(0.6, this._view.playDeath() + 0.15);
         this._phase = "dying";
         console.log("[Event] 击杀", this.def.id);

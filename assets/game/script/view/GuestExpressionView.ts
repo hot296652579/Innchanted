@@ -1,16 +1,18 @@
-import { Camera, instantiate, Node, Prefab, tween, Tween, Vec3 } from "cc";
+import { Camera, instantiate, Node, Prefab, tween, Tween, UIOpacity, Vec3 } from "cc";
 import { BundlesEnum } from "../../../define/BundlesEnum";
 import { ResourceManager } from "../../../framework/resource/ResourceManager";
 import { UILayerRoot, UILayerType } from "../../../framework/ui/UILayer";
 import { allGuestDefs } from "../app/GuestCatalog";
 
-export type ExpressionKind = "happy" | "urge" | "angry" | "wake" | "hint" | "scared" | "threaten";
+export type ExpressionKind = "happy" | "urge" | "angry" | "wake" | "hint" | "scared" | "threaten" | "attention" | "death";
 
 const EXPRESS_SEC = 1;
 const UI_Y_OFFSET = 8;
 const SLEEP_Y_OFFSET = 48;
 const WAKE_Y_OFFSET = 48;
 const WAKE_RISE = 48;
+const DEATH_RISE = 90;
+const ATTENTION_Y_OFFSET = 40;
 const SWAY_ANGLE = 8;
 const SWAY_SEC = 0.65;
 const PATHS: Record<ExpressionKind, string> = {
@@ -21,14 +23,18 @@ const PATHS: Record<ExpressionKind, string> = {
     hint: "prefab/expression/QuestionMark",
     scared: "prefab/expression/Scared",
     threaten: "prefab/expression/Threaten",
+    attention: "prefab/expression/Attention",
+    death: "prefab/expression/Death",
 };
 
 const _world = new Vec3();
 const _local = new Vec3();
 
 interface FaceSession {
-    follow: Node;
+    follow: Node | null;
+    world: Vec3 | null;
     node: Node;
+    kind: ExpressionKind;
     remain: number;
     yOffset: number;
     riseTo: number;
@@ -52,7 +58,7 @@ export class GuestExpressionView {
 
     async load(): Promise<void> {
         const res = ResourceManager.getInstance();
-        const kinds: ExpressionKind[] = ["happy", "urge", "angry", "wake", "hint", "scared", "threaten"];
+        const kinds: ExpressionKind[] = ["happy", "urge", "angry", "wake", "hint", "scared", "threaten", "attention", "death"];
         for (let i = 0; i < kinds.length; i++) {
             const kind = kinds[i];
             const prefab = await res.loadPrefab(PATHS[kind], BundlesEnum.Game);
@@ -90,16 +96,24 @@ export class GuestExpressionView {
         const node = instantiate(prefab);
         node.name = `Face_${kind}_${guestId}`;
         uiRoot.addChild(node);
-        const yOffset = kind === "wake" ? WAKE_Y_OFFSET : UI_Y_OFFSET;
-        this._sessions.set(guestId, {
-            follow,
-            node,
-            remain: EXPRESS_SEC,
-            yOffset,
-            riseTo: kind === "wake" ? WAKE_RISE : 0,
-            onDone: onDone ?? null,
-        });
-        this.follow(node, follow, yOffset);
+        this._sessions.set(guestId, this.makeSession(node, kind, follow, null, onDone));
+        this.place(this._sessions.get(guestId)!);
+    }
+
+    /** 钉在世界坐标：死亡图标漂浮淡出，不跟尸体。 */
+    playAtWorld(id: string, world: Vec3, kind: ExpressionKind, onDone?: () => void): void {
+        this.hideFace(id);
+        const prefab = this._prefabs.get(kind);
+        const uiRoot = UILayerRoot.getRootByLayer(UILayerType.SCENE_UI);
+        if (!prefab || !uiRoot) {
+            onDone?.();
+            return;
+        }
+        const node = instantiate(prefab);
+        node.name = `Face_${kind}_${id}`;
+        uiRoot.addChild(node);
+        this._sessions.set(id, this.makeSession(node, kind, null, world.clone(), onDone));
+        this.place(this._sessions.get(id)!);
     }
 
     showSleep(guestId: string, follow: Node, path: string): void {
@@ -166,9 +180,8 @@ export class GuestExpressionView {
 
     update(): void {
         this._sessions.forEach((session) => {
-            if (session.node.isValid && session.follow.isValid) {
-                const t = 1 - Math.max(0, session.remain) / EXPRESS_SEC;
-                this.follow(session.node, session.follow, session.yOffset + session.riseTo * t);
+            if (session.node.isValid) {
+                this.place(session);
             }
         });
         this._sleeps.forEach((session) => {
@@ -217,14 +230,60 @@ export class GuestExpressionView {
             .start();
     }
 
+    private makeSession(
+        node: Node,
+        kind: ExpressionKind,
+        follow: Node | null,
+        world: Vec3 | null,
+        onDone?: () => void,
+    ): FaceSession {
+        return {
+            follow,
+            world,
+            node,
+            kind,
+            remain: EXPRESS_SEC,
+            yOffset: this.yOffsetOf(kind),
+            riseTo: kind === "wake" ? WAKE_RISE : kind === "death" ? DEATH_RISE : 0,
+            onDone: onDone ?? null,
+        };
+    }
+
+    private yOffsetOf(kind: ExpressionKind): number {
+        if (kind === "wake") {
+            return WAKE_Y_OFFSET;
+        }
+        if (kind === "attention" || kind === "death") {
+            return ATTENTION_Y_OFFSET;
+        }
+        return UI_Y_OFFSET;
+    }
+
+    private place(session: FaceSession): void {
+        const t = 1 - Math.max(0, session.remain) / EXPRESS_SEC;
+        const y = session.yOffset + session.riseTo * t;
+        if (session.follow?.isValid) {
+            this.follow(session.node, session.follow, y);
+        } else if (session.world) {
+            this.placeWorld(session.node, session.world, y);
+        }
+        if (session.kind === "death") {
+            const fade = session.node.getComponent(UIOpacity) ?? session.node.addComponent(UIOpacity);
+            fade.opacity = Math.round(255 * (1 - t));
+        }
+    }
+
     private follow(face: Node, target: Node, yOffset: number): void {
+        this.placeWorld(face, target.worldPosition, yOffset);
+    }
+
+    private placeWorld(face: Node, world: Vec3, yOffset: number): void {
         const cam3d = this.camera;
         const sceneUI = UILayerRoot.getRootByLayer(UILayerType.SCENE_UI);
         if (!cam3d || !sceneUI) {
             return;
         }
-        const pos = target.worldPosition;
-        _world.set(pos.x, pos.y, pos.z);
+        _world.set(world.x, world.y, world.z);
         cam3d.convertToUINode(_world, sceneUI, _local);
         face.setPosition(_local.x, _local.y + yOffset, 0);
     }

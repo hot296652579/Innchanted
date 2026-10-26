@@ -160,7 +160,7 @@ export class GuestLoop {
         this._faces.update();
         this._escort.update();
         this.tickHold(dt);
-        for (let i = 0; i < this._runtimes.length; i++) {
+        for (let i = this._runtimes.length - 1; i >= 0; i--) {
             const runtime = this._runtimes[i];
             this.tickRuntime(runtime, dt);
             const table = runtime.layout.table;
@@ -280,6 +280,13 @@ export class GuestLoop {
             return;
         }
         this._faces.play(id, follow, kind);
+    }
+
+    playFaceAt(id: string, world: Vec3, kind: string): void {
+        if (!this.isFace(kind)) {
+            return;
+        }
+        this._faces.playAtWorld(id, world, kind);
     }
 
     hideFace(id: string): void {
@@ -547,11 +554,25 @@ export class GuestLoop {
         }
     }
 
-    /** 走到出口：停寻路、藏节点，通知客人已离开。 */
+    /** 走到出口：停寻路、销毁节点，通知客人已离开。 */
     private finishLeave(runtime: GuestRuntime): void {
         runtime.agent.stop();
         runtime.fsm.finish();
-        runtime.layout.guestNode.active = false;
+        this._faces.hide(runtime.guest.id);
+        this._orders.hide(runtime.guest.id);
+        this.clearEscort(runtime.guest.id);
+        const queue = this._queue.indexOf(runtime);
+        if (queue >= 0) {
+            this._queue.splice(queue, 1);
+        }
+        const index = this._runtimes.indexOf(runtime);
+        if (index >= 0) {
+            this._runtimes.splice(index, 1);
+        }
+        const node = runtime.layout.guestNode;
+        if (node.isValid) {
+            node.destroy();
+        }
         this.emit(GameEvent.GUEST_LEFT, runtime.guest.id);
     }
 
@@ -835,7 +856,8 @@ export class GuestLoop {
 
     private isFace(kind: string): kind is ExpressionKind {
         return kind === "happy" || kind === "urge" || kind === "angry" || kind === "wake"
-            || kind === "hint" || kind === "scared" || kind === "threaten";
+            || kind === "hint" || kind === "scared" || kind === "threaten"
+            || kind === "attention" || kind === "death";
     }
 
     private tableBusy(tableId: string): boolean {

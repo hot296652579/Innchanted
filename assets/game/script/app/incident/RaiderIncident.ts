@@ -7,7 +7,7 @@ import { findNamedDescendant, StationBinding } from "../../sim/StationRegistry";
 import { Enemy } from "../../view/Enemy";
 import { RaiderView } from "../../view/RaiderView";
 import { EventDef } from "../EventCatalog";
-import { IIncident, IncidentContext, OccupiedSeat } from "./Incident";
+import { IIncident, IncidentContext, OccupiedSeat, showDeathMark } from "./Incident";
 
 type Phase = "boot" | "run" | "done";
 type UnitPhase = "smoke" | "appearing" | "toStation" | "hitStation" | "toGuest" | "scare" | "toLeave" | "dying";
@@ -108,6 +108,7 @@ export class RaiderIncident implements IIncident {
             return false;
         }
         this.hideFace(unit);
+        showDeathMark(this._ctx, unit.actor, `${this.def.id}_${unit.actor?.uuid ?? "x"}`);
         unit.remain = Math.max(0.6, unit.view.playDeath() + 0.15);
         unit.phase = "dying";
         unit.station = null;
@@ -243,7 +244,7 @@ export class RaiderIncident implements IIncident {
             }
             return;
         }
-        if (unit.phase === "toLeave" && unit.view.arrived()) {
+        if (unit.phase === "toLeave" && (unit.view.arrived() || this.nearLeave(unit))) {
             this.removeUnit(unit, true);
         }
     }
@@ -536,6 +537,10 @@ export class RaiderIncident implements IIncident {
         const from = unit.view.node?.worldPosition ?? unit.spawn.worldPosition;
         return this._ctx?.registry.standPoint(binding, unit.view.home.y, from)
             ?? this.standAt(unit, binding.node.worldPosition, STATION_GAP);
+    }
+
+    private nearLeave(unit: Unit): boolean {
+        return !!this._leave && this.closeEnough(unit, this._leave.worldPosition, ARRIVE_STATION);
     }
 
     private closeEnough(unit: Unit, world: Vec3, range: number): boolean {

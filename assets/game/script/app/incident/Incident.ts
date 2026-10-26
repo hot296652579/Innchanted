@@ -21,6 +21,7 @@ export type IncidentContext = {
     occupiedSeats?: () => OccupiedSeat[];
     scareGuest?: (tableId: string) => boolean;
     showFace?: (id: string, follow: Node, kind: string) => void;
+    showFaceAt?: (id: string, world: Vec3, kind: string) => void;
     hideFace?: (id: string) => void;
     windStations?: (types: string[], count: number, unlockItemId: string, prefab?: string) => Promise<number>;
     burstFx?: (host: Node, key: string, duration: number, worldFrom?: Node | null, liftY?: number) => void;
@@ -40,4 +41,11 @@ export interface IIncident {
     ownsNode?(hit: Node): Node | null;
     /** 玩家走到跟前攻击。成功返回 true。 */
     strike?(): boolean;
+}
+
+export function showDeathMark(ctx: IncidentContext | null, actor: Node | null, id: string): void {
+    if (!actor?.isValid || !ctx?.showFaceAt) {
+        return;
+    }
+    ctx.showFaceAt(`${id}_death`, actor.worldPosition.clone(), "death");
 }

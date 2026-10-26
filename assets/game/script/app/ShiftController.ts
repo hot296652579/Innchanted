@@ -120,6 +120,7 @@ export class ShiftController {
             occupiedSeats: () => this._guests?.occupiedSeats() ?? [],
             scareGuest: (tableId) => this._guests?.scareAway(tableId) ?? false,
             showFace: (id, follow, kind) => this._guests?.playFace(id, follow, kind),
+            showFaceAt: (id, world, kind) => this._guests?.playFaceAt(id, world, kind),
             hideFace: (id) => this._guests?.hideFace(id),
             windStations: (types, count, unlockItemId, prefab) =>
                 this._winds?.seal(this._registry, types, count, unlockItemId, prefab) ?? Promise.resolve(0),

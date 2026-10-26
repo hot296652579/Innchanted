@@ -71,7 +71,7 @@
   },
   {
     "id": 8,
-    "map": 3,
+    "map": 2,
     "duration": 190,
     "stars": [52, 95, 145],
     "eventIds": ["ice", "lock", "fuelthief", "thief"],
@@ -81,7 +81,7 @@
   },
   {
     "id": 9,
-    "map": 3,
+    "map": 2,
     "duration": 200,
     "stars": [60, 110, 165],
     "eventIds": ["raider", "threaten", "whirlwind", "lock", "thief"],
@@ -91,12 +91,12 @@
   },
   {
     "id": 10,
-    "map": 3,
+    "map": 2,
     "duration": 210,
     "stars": [75, 130, 200],
     "eventIds": ["raider", "threaten", "whirlwind", "ice", "lock", "fuelthief", "thief", "skeleton"],
     "delay": 1,
     "guestInterval": 1,
-    "guests": ["soldierguest", "mageguest", "sleepguest", "onetimeguest", "gourmetguest", "gourmetguest", "regularguest", "regularguest", "soldierguest"]
+    "guests": ["regularguest", "regularguest","soldierguest", "mageguest", "sleepguest", "onetimeguest", "gourmetguest", "gourmetguest",  "soldierguest"]
   }
 ]
