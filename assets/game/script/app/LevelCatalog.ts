@@ -6,7 +6,9 @@ export type LevelDef = {
     stars: number[];
     eventIds?: string[];
     guests?: string[];
+    delay?: number;
     guestInterval?: number;
+    map?: number;
 };
 
 const FALLBACK: LevelDef[] = [
@@ -31,6 +33,15 @@ export function findLevel(levelId: number): LevelDef {
         }
     }
     return table[0] ?? FALLBACK[0];
+}
+
+/** 场景预设：1/2/3 对应 Level1/2/3。没写 map 时按关卡号，超过 3 用 Level3。 */
+export function mapOf(level: LevelDef): number {
+    const n = level.map ?? level.id;
+    if (n === 2 || n === 3) {
+        return n;
+    }
+    return 1;
 }
 
 /** 入箱金币对照星级线。0～3。结算时再用。 */

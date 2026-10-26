@@ -95,6 +95,7 @@ export class ShiftController {
             args.yawOffset,
             args.player,
             level.guests,
+            level.delay,
             level.guestInterval,
         );
 

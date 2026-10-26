@@ -1,7 +1,9 @@
 import { _decorator, Component, instantiate, Node } from "cc";
 import { BattleContext } from "../../define/BattleContext";
 import { BundlesEnum } from "../../define/BundlesEnum";
+import { ConfigManager } from "../../framework/config/ConfigManager";
 import { ResourceManager } from "../../framework/resource/ResourceManager";
+import { findLevel, mapOf } from "../../game/script/app/LevelCatalog";
 
 const { ccclass } = _decorator;
 
@@ -16,7 +18,9 @@ export class BattleMapRoot extends Component {
     public async loadLevel(levelId: number): Promise<Node | null> {
         this.clearLevel();
 
-        const path = `prefab/Level${levelId}`;
+        await ConfigManager.getInstance().loadTable("levels", BundlesEnum.Table);
+        const mapId = mapOf(findLevel(levelId));
+        const path = `prefab/Level${mapId}`;
         const prefab = await ResourceManager.getInstance().loadPrefab(path, BundlesEnum.Game);
         if (!prefab) {
             console.error(`[BattleMapRoot] 关卡预设加载失败: ${BundlesEnum.Game}/${path}`);

@@ -19,7 +19,7 @@ import { PlayerView } from "../view/PlayerView";
 import { findGuestDef, GuestDef, guestPrefabPath, isEscortGuest } from "./GuestCatalog";
 import { goldOf } from "./ItemCatalog";
 
-const SPAWN_GAP = 2;
+const SPAWN_GAP = 1;
 const SEAT_ARRIVE = 1.0;
 const QUEUE_ARRIVE = 0.35;
 const WAIT_GAP = 1.6;
@@ -113,18 +113,19 @@ export class GuestLoop {
         }
     }
 
-    /** 按关卡 guests 间隔从 GuestSwapnPoint 出场，先出的先去座位或排队。 */
+    /** 按关卡 delay 等待后，按 guestInterval 从 GuestSwapnPoint 出一个客人。 */
     async start(
         levelRoot: Node,
         stationRoot: Node,
         yawOffset: number,
         player?: Node | null,
         guestIds?: string[],
+        guestDelay?: number,
         guestInterval?: number,
     ): Promise<void> {
         this._yawOffset = yawOffset;
         this._player = player ?? null;
-        this._spawnGap = Math.max(0.3, guestInterval ?? SPAWN_GAP);
+        this._spawnGap = Math.max(0.1, guestInterval ?? SPAWN_GAP);
         this.resetShift();
         const hall = scanHall(levelRoot, stationRoot, this.registry);
         if (!hall) {
@@ -147,9 +148,8 @@ export class GuestLoop {
             console.warn("[Guest] 有人没座位，但缺少 WaitPoint");
         }
         this._pending.push(...pending);
-        this._spawnWait = 0;
-        this.spawnNext();
-        console.log(`[Guest] 间隔 ${this._spawnGap}s 出场 ${pending.length} 人`);
+        this._spawnWait = Math.max(0, guestDelay ?? 0);
+        console.log(`[Guest] ${this._spawnWait}s 后出场，间隔 ${this._spawnGap}s，共 ${pending.length} 人`);
     }
 
     /** 每帧：头顶 UI、引座长按、每个客人的走路/等待/吃饭。 */
