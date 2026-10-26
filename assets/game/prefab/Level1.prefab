@@ -41,12 +41,15 @@
       },
       {
         "__id__": 1343
+      },
+      {
+        "__id__": 1345
       }
     ],
     "_active": true,
     "_components": [],
     "_prefab": {
-      "__id__": 1345
+      "__id__": 1347
     },
     "_lpos": {
       "__type__": "cc.Vec3",
@@ -28037,6 +28040,62 @@
       "__id__": 0
     },
     "fileId": "2b4trIdl9N8aJ3sZiPtOSt",
+    "instance": null,
+    "targetOverrides": null,
+    "nestedPrefabInstanceRoots": null
+  },
+  {
+    "__type__": "cc.Node",
+    "_name": "WizardSwapnPoint",
+    "_objFlags": 0,
+    "__editorExtras__": {},
+    "_parent": {
+      "__id__": 1
+    },
+    "_children": [],
+    "_active": true,
+    "_components": [],
+    "_prefab": {
+      "__id__": 1346
+    },
+    "_lpos": {
+      "__type__": "cc.Vec3",
+      "x": -1.865,
+      "y": 0,
+      "z": 1.556
+    },
+    "_lrot": {
+      "__type__": "cc.Quat",
+      "x": 0,
+      "y": 0,
+      "z": 0,
+      "w": 1
+    },
+    "_lscale": {
+      "__type__": "cc.Vec3",
+      "x": 1,
+      "y": 1,
+      "z": 1
+    },
+    "_mobility": 0,
+    "_layer": 1073741824,
+    "_euler": {
+      "__type__": "cc.Vec3",
+      "x": 0,
+      "y": 0,
+      "z": 0
+    },
+    "_id": ""
+  },
+  {
+    "__type__": "cc.PrefabInfo",
+    "root": {
+      "__id__": 1
+    },
+    "asset": {
+      "__id__": 0
+    },
+    "fileId": "e0l0MVgnhHvbvK9Qd80U9t",
     "instance": null,
     "targetOverrides": null,
     "nestedPrefabInstanceRoots": null
