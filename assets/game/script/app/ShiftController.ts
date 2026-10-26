@@ -417,7 +417,7 @@ export class ShiftController {
         const tags = this._levelRoot.getComponentsInChildren(Enemy);
         for (let i = 0; i < tags.length; i++) {
             const node = tags[i].node;
-            if (node.name === enemyId && node.activeInHierarchy) {
+            if (node.activeInHierarchy && (node.uuid === enemyId || node.name === enemyId)) {
                 return node;
             }
         }

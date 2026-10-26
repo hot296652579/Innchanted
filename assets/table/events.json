@@ -65,7 +65,7 @@
     "duration": 8,
     "count": 3,
     "goals": ["station", "guest"],
-    "stationTypes": ["cook", "place", "itemstand"],
+    "stationTypes": ["cook", "place"],
     "hitCount": 4,
     "spawnName": "AttackPoints",
     "prefabs": ["prefab/enemys/AttackEnemy1", "prefab/enemys/AttackEnemy2"],

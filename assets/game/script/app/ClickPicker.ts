@@ -217,7 +217,7 @@ export class ClickPicker extends Component {
         const from = this.player?.worldPosition ?? null;
         const playerY = from ? from.y : bestRoot.worldPosition.y;
         return {
-            target: { kind: "enemy", enemyId: bestRoot.name },
+            target: { kind: "enemy", enemyId: bestRoot.uuid },
             dest: standBeside(from, bestRoot.worldPosition, playerY, 1.2),
             lookAt: bestRoot.worldPosition.clone(),
         };

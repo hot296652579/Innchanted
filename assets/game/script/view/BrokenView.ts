@@ -5,7 +5,7 @@ import { UILayerRoot, UILayerType } from "../../../framework/ui/UILayer";
 import { StationBinding } from "../sim/StationRegistry";
 
 const WARNING_PATH = "prefab/expression/Warning";
-const UI_Y_OFFSET = 56;
+const UI_Y_OFFSET = 0;
 const _world = new Vec3();
 const _local = new Vec3();
 

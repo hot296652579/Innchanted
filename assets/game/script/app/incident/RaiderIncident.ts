@@ -256,7 +256,7 @@ export class RaiderIncident implements IIncident {
         }
         const prefab = this._enemyPrefabs[Math.floor(Math.random() * this._enemyPrefabs.length)];
         const actor = instantiate(prefab);
-        actor.name = this.def.actorName ?? "AttackEnemy";
+        actor.name = `${this.def.actorName ?? "AttackEnemy"}_${unit.id}`;
         ctx.levelRoot.addChild(actor);
         actor.setWorldPosition(unit.spawn.worldPosition);
         actor.setWorldRotation(unit.spawn.worldRotation);
