@@ -1,13 +1,13 @@
 [
   {
     "id": 1,
-    "map": 1,
+    "map": 2,
     "duration": 180,
     "stars": [12, 24, 40],
-    "eventIds": ["thief"],
+    "eventIds": ["raider", "threaten", "whirlwind", "ice", "lock", "fuelthief", "thief"],
     "delay": 3,
     "guestInterval": 1,
-    "guests": ["regularguest", "regularguest"]
+    "guests": ["regularguest", "regularguest","soldierguest", "mageguest", "sleepguest", "onetimeguest", "gourmetguest", "gourmetguest",  "soldierguest"]
   },
   {
     "id": 2,

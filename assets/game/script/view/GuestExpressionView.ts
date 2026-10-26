@@ -1,4 +1,4 @@
-import { Camera, instantiate, Node, Prefab, tween, Tween, UIOpacity, Vec3 } from "cc";
+import { Camera, instantiate, Label, Node, Prefab, tween, Tween, UIOpacity, Vec3 } from "cc";
 import { BundlesEnum } from "../../../define/BundlesEnum";
 import { ResourceManager } from "../../../framework/resource/ResourceManager";
 import { UILayerRoot, UILayerType } from "../../../framework/ui/UILayer";
@@ -13,6 +13,8 @@ const WAKE_Y_OFFSET = 48;
 const WAKE_RISE = 48;
 const DEATH_RISE = 90;
 const ATTENTION_Y_OFFSET = 40;
+const TALK_Y_OFFSET = 72;
+const TALK_PATH = "prefab/expression/Talk";
 const SWAY_ANGLE = 8;
 const SWAY_SEC = 0.65;
 const PATHS: Record<ExpressionKind, string> = {
@@ -44,6 +46,7 @@ interface FaceSession {
 interface FollowSession {
     follow: Node;
     node: Node;
+    yOffset?: number;
 }
 
 /** 客人头顶表情：挂 SCENE_UI，跟随 3D 坐标。开心/催促/生气/醒来到时销毁；睡觉晃动、问号提示一直挂着。 */
@@ -53,6 +56,8 @@ export class GuestExpressionView {
     private readonly _sessions = new Map<string, FaceSession>();
     private readonly _sleeps = new Map<string, FollowSession>();
     private readonly _hints = new Map<string, FollowSession>();
+    private readonly _talks = new Map<string, FollowSession>();
+    private _talkPrefab: Prefab | null = null;
 
     constructor(private readonly camera: Camera | null) { }
 
@@ -82,6 +87,10 @@ export class GuestExpressionView {
                 continue;
             }
             this._sleepPrefabs.set(path, prefab);
+        }
+        this._talkPrefab = await res.loadPrefab(TALK_PATH, BundlesEnum.Game);
+        if (!this._talkPrefab) {
+            console.warn("[Guest] 未找到聊天气泡", TALK_PATH);
         }
     }
 
@@ -146,10 +155,38 @@ export class GuestExpressionView {
         this.follow(node, follow, UI_Y_OFFSET);
     }
 
+    /** 常驻聊天气泡，跟在 3D 目标头顶。 */
+    showTalk(id: string, follow: Node, text: string, yOffset = TALK_Y_OFFSET): void {
+        const keep = this._talks.get(id);
+        if (keep?.node.isValid) {
+            keep.follow = follow;
+            keep.yOffset = yOffset;
+            this.setTalkText(keep.node, text);
+            this.follow(keep.node, follow, yOffset);
+            return;
+        }
+        this.hideTalk(id);
+        const uiRoot = UILayerRoot.getRootByLayer(UILayerType.SCENE_UI);
+        if (!this._talkPrefab || !uiRoot) {
+            return;
+        }
+        const node = instantiate(this._talkPrefab);
+        node.name = `Talk_${id}`;
+        uiRoot.addChild(node);
+        this.setTalkText(node, text);
+        this._talks.set(id, { follow, node, yOffset });
+        this.follow(node, follow, yOffset);
+    }
+
+    hideTalk(id: string): void {
+        this.clearFollow(this._talks, id);
+    }
+
     hide(guestId: string): void {
         this.hideFace(guestId);
         this.hideSleep(guestId);
         this.hideHint(guestId);
+        this.hideTalk(guestId);
     }
 
     hideSleep(guestId: string): void {
@@ -194,6 +231,18 @@ export class GuestExpressionView {
                 this.follow(session.node, session.follow, UI_Y_OFFSET);
             }
         });
+        this._talks.forEach((session) => {
+            if (session.node.isValid && session.follow.isValid) {
+                this.follow(session.node, session.follow, session.yOffset ?? TALK_Y_OFFSET);
+            }
+        });
+    }
+
+    private setTalkText(node: Node, text: string): void {
+        const label = node.getComponentInChildren(Label);
+        if (label) {
+            label.string = text;
+        }
     }
 
     private clearFollow(map: Map<string, FollowSession>, guestId: string): void {

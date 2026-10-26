@@ -36,6 +36,9 @@ const AGENT = {
     pathOptimizationRange: 4,
     separationWeight: 1,
 };
+const PLAYER_TALK = "player";
+const TALK_ASK = "我该坐哪里?";
+const TALK_LEAD = "跟我来~";
 const ROUND_TIPS: Record<RoundSeatVerdict, string> = {
     match: "入座正确",
     mismatch: "入座错误",
@@ -472,6 +475,7 @@ export class GuestLoop {
             if (guest.atWait && !runtime.layout.table) {
                 runtime.agent.stop();
                 this.faceWaitLine(runtime.layout.guestNode);
+                this.showEscortAsk(runtime);
                 return;
             }
             if (guest.state === GuestState.Entering) {
@@ -600,6 +604,8 @@ export class GuestLoop {
             runtime.fsm.confirmEscort();
             runtime.agent.stop();
             this._escortId = runtime.guest.id;
+            this._faces.hideTalk(runtime.guest.id);
+            this.showPlayerLead();
             this.tip("已确认引座，带到空圆桌");
             return;
         }
@@ -668,6 +674,7 @@ export class GuestLoop {
         this._spawned = 0;
         this._hold = null;
         this._escortId = null;
+        this._faces.hideTalk(PLAYER_TALK);
         this._escort.clear();
     }
 
@@ -883,9 +890,33 @@ export class GuestLoop {
         return this._orders.followPoint(runtime.guest.id) ?? runtime.layout.guestNode;
     }
 
+    private showEscortAsk(runtime: GuestRuntime): void {
+        if (!isEscortGuest(runtime.layout.guestType) || runtime.guest.state === GuestState.Escorted) {
+            return;
+        }
+        if (this._queue[0] !== runtime) {
+            this._faces.hideTalk(runtime.guest.id);
+            return;
+        }
+        this._faces.showTalk(runtime.guest.id, this.headOf(runtime), TALK_ASK);
+    }
+
+    private showPlayerLead(): void {
+        const follow = this.playerHead();
+        if (!follow) {
+            return;
+        }
+        this._faces.showTalk(PLAYER_TALK, follow, TALK_LEAD, 100);
+    }
+
+    private playerHead(): Node | null {
+        return this._player?.getChildByName("HoldPoint") ?? this._player;
+    }
+
     private clearEscort(guestId: string): void {
         if (this._escortId === guestId) {
             this._escortId = null;
+            this._faces.hideTalk(PLAYER_TALK);
         }
     }
 
