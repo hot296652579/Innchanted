@@ -1,5 +1,5 @@
 import { colorFromItemId, isMagicDrink, isPulp } from "../domain/Barrel";
-import { ITEM_STACK_CAP, isCoin, ItemStack } from "../domain/ItemStack";
+import { isCoin, ItemStack } from "../domain/ItemStack";
 import { Station, StationType } from "../domain/Station";
 import { findCombineRecipe } from "./Combine";
 import { findCookRecipe } from "./Recipe";
@@ -181,7 +181,7 @@ function resolvePlace(hand: ItemStack | null, station: Station): ActionKind {
     return "MoveOnly";
 }
 
-/** 空手才能拿。只有手里已是金币时，才能再叠台上的金币。 */
+/** 空手才能拿。手里已有东西时，只有台上是金币才能再叠。 */
 function resolveCollect(hand: ItemStack | null, slot: ItemStack | null): ActionKind | null {
     const goods = nonempty(slot);
     if (!goods) {
@@ -191,8 +191,8 @@ function resolveCollect(hand: ItemStack | null, slot: ItemStack | null): ActionK
     if (!held) {
         return "Take";
     }
-    if (isCoin(held.itemId) && isCoin(goods.itemId)) {
-        return held.count < ITEM_STACK_CAP ? "Take" : "RefuseSwap";
+    if (isCoin(goods.itemId) && isCoin(held.itemId)) {
+        return "Take";
     }
     return "RefuseSwap";
 }

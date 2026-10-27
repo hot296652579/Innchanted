@@ -1,7 +1,7 @@
 import { instantiate, Node, Prefab, tween, Vec3 } from "cc";
 import { StationRegistry } from "../sim/StationRegistry";
 
-const STACK_Y = 0.12;
+export const HOLD_STACK_Y = 0.38;
 
 export class ItemHoldView {
     private readonly _stationHold = new Map<string, Node>();
@@ -16,8 +16,8 @@ export class ItemHoldView {
         }
     }
 
-    take(stationId: string): void {
-        this.transfer(this.hold(stationId), this.playerHold, -1);
+    take(stationId: string, count = -1): void {
+        this.transfer(this.hold(stationId), this.playerHold, count);
     }
 
     /** 无限材料架：复制一份到手上，不销毁台上的。 */
@@ -130,14 +130,18 @@ export class ItemHoldView {
             to.addChild(clone);
             kids[i].destroy();
         }
+        this.layout(from);
         this.layout(to);
     }
 
-    private layout(hold: Node): void {
+    private layout(hold: Node | null): void {
+        if (!hold) {
+            return;
+        }
         const kids = hold.children;
         for (let i = 0; i < kids.length; i++) {
             if (kids[i].isValid) {
-                kids[i].setPosition(0, i * STACK_Y, 0);
+                kids[i].setPosition(0, i * HOLD_STACK_Y, 0);
             }
         }
     }

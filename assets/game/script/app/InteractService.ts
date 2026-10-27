@@ -157,17 +157,9 @@ export class InteractService {
             case "AcceptDrink":
                 this.barrels.begin(action, binding);
                 return;
-            case "Bank":// 金币存宝箱
-                if (!actor.hand || !isCoin(actor.hand.itemId)) {
+            case "Bank":
+                if (!this.bankAll(binding)) {
                     return;
-                }
-                {
-                    const count = actor.hand.count;
-                    actor.hand = null;
-                    this.holds.bankInto(station.id);
-                    this.fx.burst(binding.node, "bank", 1, binding.holdPoint);
-                    events.emit(GameEvent.SHELL_BANKED, count);
-                    events.emit(GameEvent.SHOW_TIPS, "金币已存入宝箱");
                 }
                 break;
             case "Stack":
@@ -266,22 +258,7 @@ export class InteractService {
         }
         const hand = this.actor.hand;
         if (hand && !hand.empty) {
-            if (!isCoin(hand.itemId) || !isCoin(slot.itemId)) {
-                EventManager.getInstance().emit(GameEvent.SHOW_TIPS, "先把手里的东西放下再拿");
-                return false;
-            }
-            const before = hand.count;
-            hand.absorb(slot);
-            const moved = hand.count - before;
-            if (moved <= 0) {
-                EventManager.getInstance().emit(GameEvent.SHOW_TIPS, "金币拿满了");
-                return false;
-            }
-            if (slot.empty) {
-                binding.station.slot = null;
-                this.holds.take(binding.station.id);
-            }
-            return true;
+            return this.takeGoldOnly(binding, hand, slot);
         }
         this.actor.hand = slot;
         binding.station.slot = null;
@@ -292,15 +269,52 @@ export class InteractService {
         return true;
     }
 
+    /** 手上已是金币时，再拿台上的金币叠到手上。桌上几枚模型就叠几枚。 */
+    private takeGoldOnly(binding: StationBinding, hand: ItemStack, slot: ItemStack): boolean {
+        if (!isCoin(slot.itemId) || !isCoin(hand.itemId)) {
+            EventManager.getInstance().emit(GameEvent.SHOW_TIPS, "先把手里的东西放下再拿");
+            return false;
+        }
+        const before = hand.count;
+        hand.absorb(slot, Number.MAX_SAFE_INTEGER);
+        if (hand.count <= before) {
+            return false;
+        }
+        this.holds.take(binding.station.id);
+        if (slot.empty) {
+            binding.station.slot = null;
+        }
+        return true;
+    }
+
     private takeFromStand(binding: StationBinding): boolean {
         const src = binding.station.slot;
         const hand = this.actor.hand;
-        if (!src || src.empty || (hand && !hand.empty)) {
+        if (!src || src.empty) {
+            return false;
+        }
+        if (hand && !hand.empty) {
             EventManager.getInstance().emit(GameEvent.SHOW_TIPS, "先把手里的东西放下再拿");
             return false;
         }
         this.actor.hand = new ItemStack(src.itemId, 1);
         this.holds.copyToPlayer(binding.station.id, 1);
+        return true;
+    }
+
+    /** 把手上全部金币存进宝箱。 */
+    private bankAll(binding: StationBinding): boolean {
+        const hand = this.actor.hand;
+        if (!hand || hand.empty || !isCoin(hand.itemId)) {
+            return false;
+        }
+        const count = hand.count;
+        this.actor.hand = null;
+        this.holds.bankInto(binding.station.id);
+        this.fx.burst(binding.node, "bank", 1, binding.holdPoint);
+        const events = EventManager.getInstance();
+        events.emit(GameEvent.SHELL_BANKED, count);
+        events.emit(GameEvent.SHOW_TIPS, `金币已存入宝箱 x${count}`);
         return true;
     }
 
