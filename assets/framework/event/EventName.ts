@@ -61,6 +61,11 @@ export enum GameEvent {
     /** 加工台完成 */
     PROCESSOR_READY = "PROCESSOR_READY",
 
+    /** 班次开始，弹出准备 */
+    SHIFT_READY = "SHIFT_READY",
+    /** 关卡 delay 到，开始招待客人 */
+    GUEST_INVITE = "GUEST_INVITE",
+
     /** 突发事件进入预兆倒计时 */
     EVENT_WARN = "EVENT_WARN",
     /** 突发事件超时，后果开始结算 */

@@ -5,7 +5,7 @@
     "duration": 180,
     "stars": [12, 24, 40],
     "eventIds": ["raider", "threaten", "whirlwind", "ice", "lock", "fuelthief", "thief"],
-    "delay": 3,
+    "delay": 10,
     "guestInterval": 1,
     "guests": ["regularguest", "regularguest","soldierguest", "mageguest", "sleepguest", "onetimeguest", "gourmetguest", "gourmetguest",  "soldierguest"]
   },
@@ -15,7 +15,7 @@
     "duration": 180,
     "stars": [18, 36, 55],
     "eventIds": ["lock", "thief"],
-    "delay": 4,
+    "delay": 10,
     "guestInterval": 1,
     "guests": ["regularguest", "regularguest", "gourmetguest"]
   },
@@ -25,7 +25,7 @@
     "duration": 180,
     "stars": [22, 44, 70],
     "eventIds": ["lock", "whirlwind"],
-    "delay": 5,
+    "delay": 10,
     "guestInterval": 1,
     "guests": ["soldierguest", "regularguest", "regularguest", "gourmetguest"]
   },
@@ -35,7 +35,7 @@
     "duration": 180,
     "stars": [28, 52, 85],
     "eventIds": ["lock", "fuelthief"],
-    "delay": 5,
+    "delay": 10,
     "guestInterval": 1,
     "guests": ["soldierguest", "mageguest", "regularguest", "regularguest", "gourmetguest"]
   },
@@ -45,7 +45,7 @@
     "duration": 180,
     "stars": [32, 60, 95],
     "eventIds": ["lock", "threaten"],
-    "delay": 6,
+    "delay": 10,
     "guestInterval": 1,
     "guests": ["soldierguest", "sleepguest", "regularguest", "gourmetguest", "onetimeguest"]
   },
@@ -55,7 +55,7 @@
     "duration": 180,
     "stars": [38, 70, 110],
     "eventIds": ["raider", "lock", "thief"],
-    "delay": 4,
+    "delay": 10,
     "guestInterval": 1,
     "guests": ["soldierguest", "mageguest", "sleepguest", "regularguest", "gourmetguest", "onetimeguest"]
   },
@@ -65,7 +65,7 @@
     "duration": 190,
     "stars": [45, 80, 125],
     "eventIds": ["raider", "threaten", "whirlwind"],
-    "delay": 3,
+    "delay": 10,
     "guestInterval": 1,
     "guests": ["soldierguest", "mageguest", "sleepguest", "onetimeguest", "gourmetguest", "regularguest", "regularguest"]
   },
@@ -75,7 +75,7 @@
     "duration": 190,
     "stars": [52, 95, 145],
     "eventIds": ["ice", "lock", "fuelthief", "thief"],
-    "delay": 3,
+    "delay": 5,
     "guestInterval": 1,
     "guests": ["soldierguest", "mageguest", "sleepguest", "onetimeguest", "gourmetguest", "regularguest", "regularguest"]
   },
@@ -85,7 +85,7 @@
     "duration": 200,
     "stars": [60, 110, 165],
     "eventIds": ["raider", "threaten", "whirlwind", "lock", "thief"],
-    "delay": 2,
+    "delay": 5,
     "guestInterval": 1,
     "guests": ["soldierguest", "mageguest", "sleepguest", "onetimeguest", "gourmetguest", "gourmetguest", "regularguest", "regularguest"]
   },
@@ -95,7 +95,7 @@
     "duration": 210,
     "stars": [75, 130, 200],
     "eventIds": ["raider", "threaten", "whirlwind", "ice", "lock", "fuelthief", "thief", "skeleton"],
-    "delay": 1,
+    "delay": 5,
     "guestInterval": 1,
     "guests": ["regularguest", "regularguest","soldierguest", "mageguest", "sleepguest", "onetimeguest", "gourmetguest", "gourmetguest",  "soldierguest"]
   }

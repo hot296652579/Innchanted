@@ -14,8 +14,11 @@ type UnitPhase = "smoke" | "appearing" | "toStation" | "hitStation" | "toGuest" 
 
 const SMOKE_SEC = 1;
 const SMOKE_LIFT = 1.4;
-const STATION_GAP = 1.2;
-const ARRIVE_STATION = 1.8;
+const STATION_GAP = 1.4;
+const STATION_GAPS = [1.4, 2.0, 2.6, 3.4];
+const ARRIVE_STATION = 2.4;
+const ARRIVE_STUCK = 4.2;
+const STUCK_SEC = 0.35;
 const GUEST_GAP = 1.05;
 const FILL_GAP = 0.2;
 const DEFAULT_GOALS = ["station", "guest"];
@@ -37,6 +40,8 @@ interface Unit {
     phase: UnitPhase;
     remain: number;
     hitsLeft: number;
+    stuck: number;
+    retried: boolean;
     station: StationBinding | null;
     seat: OccupiedSeat | null;
 }
@@ -181,6 +186,8 @@ export class RaiderIncident implements IIncident {
             phase: "smoke",
             remain: SMOKE_SEC,
             hitsLeft: this.hitsNeed(),
+            stuck: 0,
+            retried: false,
             station: null,
             seat: null,
         };
@@ -199,6 +206,9 @@ export class RaiderIncident implements IIncident {
             return;
         }
         if (unit.phase === "appearing") {
+            if (unit.actor) {
+                this.assignGoal(unit);
+            }
             return;
         }
         unit.view.tick(dt);
@@ -212,8 +222,10 @@ export class RaiderIncident implements IIncident {
         if (unit.phase === "toStation") {
             if (!this.stationValid(unit.station)) {
                 this.assignGoal(unit);
-            } else if (unit.view.arrived() || this.closeEnough(unit, unit.station.node.worldPosition, ARRIVE_STATION)) {
-                this.startHit(unit);
+            } else {
+                this.tickTravel(unit, dt, this.atStation(unit), () => {
+                    this.startHit(unit);
+                });
             }
             return;
         }
@@ -229,10 +241,13 @@ export class RaiderIncident implements IIncident {
             return;
         }
         if (unit.phase === "toGuest") {
-            if (!this.guestValid(unit.seat)) {
+            const seat = unit.seat;
+            if (!this.guestValid(seat) || !seat) {
                 this.assignGoal(unit);
-            } else if (unit.view.arrived()) {
-                this.startScare(unit);
+            } else {
+                this.tickTravel(unit, dt, this.closeEnough(unit, seat.world, ARRIVE_STUCK) || unit.view.arrived(), () => {
+                    this.startScare(unit);
+                });
             }
             return;
         }
@@ -244,8 +259,10 @@ export class RaiderIncident implements IIncident {
             }
             return;
         }
-        if (unit.phase === "toLeave" && (unit.view.arrived() || this.nearLeave(unit))) {
-            this.removeUnit(unit, true);
+        if (unit.phase === "toLeave") {
+            this.tickTravel(unit, dt, unit.view.arrived() || this.nearLeave(unit), () => {
+                this.removeUnit(unit, true);
+            });
         }
     }
 
@@ -268,7 +285,6 @@ export class RaiderIncident implements IIncident {
         }
         unit.actor = actor;
         unit.view.bind(actor, ctx.pathfinder, ctx.yawOffset ?? 0, this.def.flySpeed ?? 2.2);
-        this.assignGoal(unit);
         console.log("[Event] 攻击怪出现", unit.spawn.name);
     }
 
@@ -298,6 +314,8 @@ export class RaiderIncident implements IIncident {
     private goStation(unit: Unit, station: StationBinding): void {
         unit.station = station;
         unit.hitsLeft = this.hitsNeed();
+        unit.stuck = 0;
+        unit.retried = false;
         unit.view.setLookTarget(station.node.worldPosition);
         unit.view.goto(this.stationStand(unit, station));
         unit.phase = "toStation";
@@ -339,6 +357,8 @@ export class RaiderIncident implements IIncident {
 
     private goGuest(unit: Unit, seat: OccupiedSeat): void {
         unit.seat = seat;
+        unit.stuck = 0;
+        unit.retried = false;
         unit.view.setLookTarget(seat.world);
         unit.view.goto(this.standAt(unit, seat.world, GUEST_GAP));
         unit.phase = "toGuest";
@@ -377,6 +397,8 @@ export class RaiderIncident implements IIncident {
             this.removeUnit(unit, true);
             return;
         }
+        unit.stuck = 0;
+        unit.retried = false;
         unit.view.setLookTarget(leave.worldPosition);
         unit.view.goto(leave.worldPosition);
         unit.phase = "toLeave";
@@ -533,10 +555,85 @@ export class RaiderIncident implements IIncident {
             || unit.phase === "toLeave";
     }
 
+    private tickTravel(unit: Unit, dt: number, near: boolean, onArrive: () => void): void {
+        if (near) {
+            unit.stuck = 0;
+            onArrive();
+            return;
+        }
+        if (!unit.view.arrived() && !unit.view.idle()) {
+            unit.stuck = 0;
+            return;
+        }
+        unit.stuck += dt;
+        if (unit.stuck < STUCK_SEC) {
+            return;
+        }
+        unit.stuck = 0;
+        if (unit.phase === "toStation" && this.atStation(unit, ARRIVE_STUCK)) {
+            onArrive();
+            return;
+        }
+        if (!unit.retried) {
+            unit.retried = true;
+            this.retryMove(unit);
+            console.log("[Event] 攻击怪卡住，重寻路", unit.phase);
+            return;
+        }
+        if (unit.phase === "toLeave") {
+            this.removeUnit(unit, true);
+            return;
+        }
+        this.assignGoal(unit);
+    }
+
+    private atStation(unit: Unit, range = ARRIVE_STATION): boolean {
+        const station = unit.station;
+        if (!station) {
+            return false;
+        }
+        if (this.closeEnough(unit, station.node.worldPosition, range)) {
+            return true;
+        }
+        return unit.view.arrived() && this.closeEnough(unit, station.node.worldPosition, ARRIVE_STUCK);
+    }
+
+    private retryMove(unit: Unit): void {
+        if (unit.phase === "toStation" && unit.station) {
+            unit.view.goto(this.stationStand(unit, unit.station));
+            return;
+        }
+        if (unit.phase === "toGuest" && unit.seat) {
+            unit.view.goto(this.standAt(unit, unit.seat.world, GUEST_GAP));
+            return;
+        }
+        if (unit.phase === "toLeave" && this._leave) {
+            unit.view.goto(this._leave.worldPosition);
+        }
+    }
+
     private stationStand(unit: Unit, binding: StationBinding): Vec3 {
-        const from = unit.view.node?.worldPosition ?? unit.spawn.worldPosition;
-        return this._ctx?.registry.standPoint(binding, unit.view.home.y, from)
-            ?? this.standAt(unit, binding.node.worldPosition, STATION_GAP);
+        let best = this.standAt(unit, binding.node.worldPosition, STATION_GAP);
+        let bestDrift = this.snapDrift(best);
+        for (let i = 1; i < STATION_GAPS.length; i++) {
+            const point = this.standAt(unit, binding.node.worldPosition, STATION_GAPS[i]);
+            const drift = this.snapDrift(point);
+            if (drift < bestDrift) {
+                best = point;
+                bestDrift = drift;
+            }
+        }
+        return this._ctx?.pathfinder?.snap(best) ?? best;
+    }
+
+    private snapDrift(world: Vec3): number {
+        const snapped = this._ctx?.pathfinder?.snap(world);
+        if (!snapped) {
+            return Number.MAX_VALUE;
+        }
+        const dx = snapped.x - world.x;
+        const dz = snapped.z - world.z;
+        return dx * dx + dz * dz;
     }
 
     private nearLeave(unit: Unit): boolean {

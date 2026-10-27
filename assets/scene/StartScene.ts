@@ -25,13 +25,14 @@ export class StartScene extends Component {
         uiMgr.registerWindow(UIConfig.SelectWnd.name, UIConfig.SelectWnd.path, UIConfig.SelectWnd.cache, BundlesEnum.UI);
         uiMgr.registerWindow(UIConfig.LoadingWnd.name, UIConfig.LoadingWnd.path, UIConfig.LoadingWnd.cache);
         uiMgr.registerWindow(UIConfig.SettingWnd.name, UIConfig.SettingWnd.path, UIConfig.SettingWnd.cache, BundlesEnum.UI);
-        uiMgr.registerWindow(UIConfig.BattleWnd.name, UIConfig.BattleWnd.path, UIConfig.BattleWnd.cache, BundlesEnum.UI);
+
+        uiMgr.registerWindow(UIConfig.TipWnd.name, UIConfig.TipWnd.path, UIConfig.TipWnd.cache, BundlesEnum.Game);
         uiMgr.registerWindow(UIConfig.WinWnd.name, UIConfig.WinWnd.path, UIConfig.WinWnd.cache, BundlesEnum.Game);
         uiMgr.registerWindow(UIConfig.LoseWnd.name, UIConfig.LoseWnd.path, UIConfig.LoseWnd.cache, BundlesEnum.Game);
         uiMgr.registerWindow(UIConfig.TopWnd.name, UIConfig.TopWnd.path, UIConfig.TopWnd.cache, BundlesEnum.Game);
-
-        uiMgr.registerWindow(UIConfig.TipWnd.name, UIConfig.TipWnd.path, UIConfig.TipWnd.cache, BundlesEnum.UI);
-        uiMgr.registerWindow(UIConfig.ConfirmWnd.name, UIConfig.ConfirmWnd.path, UIConfig.ConfirmWnd.cache, BundlesEnum.UI);
+        uiMgr.registerWindow(UIConfig.ConfirmWnd.name, UIConfig.ConfirmWnd.path, UIConfig.ConfirmWnd.cache, BundlesEnum.Game);
+        uiMgr.registerWindow(UIConfig.ReadyWnd.name, UIConfig.ReadyWnd.path, UIConfig.ReadyWnd.cache, BundlesEnum.Game);
+        uiMgr.registerWindow(UIConfig.InviteWnd.name, UIConfig.InviteWnd.path, UIConfig.InviteWnd.cache, BundlesEnum.Game);
 
         const openWnd = BattleContext.pendingStartWindow ?? UIConfig.StartWnd.name;
         BattleContext.pendingStartWindow = null;

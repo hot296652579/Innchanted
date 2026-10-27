@@ -73,6 +73,15 @@ export class RaiderView {
         return this._agent?.arrived() ?? true;
     }
 
+    idle(): boolean {
+        const pathfinder = this._pathfinder;
+        const agent = this._agent;
+        if (!pathfinder || !agent) {
+            return true;
+        }
+        return pathfinder.getVelocity(agent.agentId).lengthSqr() < MOVE_SPEED_SQ;
+    }
+
     playIdle(): void {
         this._action = false;
         this.playClip(["idle", "wait"], true);

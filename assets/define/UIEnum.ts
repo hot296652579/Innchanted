@@ -39,14 +39,6 @@ export const UIConfig = {
         cache: false,
     },
 
-    /** 战斗 */
-    BattleWnd: {
-        name: "BattleWnd",
-        path: "prefab/battle/BattleWnd",
-        bundle: "ui",
-        cache: true,
-    },
-
     /** Tip */
     TipWnd: {
         name: "TipWnd",
@@ -83,7 +75,7 @@ export const UIConfig = {
     /** 胜利 */
     WinWnd: {
         name: "WinWnd",
-        path: "ui/prefab/WinWnd",
+        path: "prefab/ui/WinWnd",
         bundle: "game",
         cache: false,
     },
@@ -91,7 +83,7 @@ export const UIConfig = {
     /** 失败 */
     LoseWnd: {
         name: "LoseWnd",
-        path: "ui/prefab/LoseWnd",
+        path: "prefab/ui/LoseWnd",
         bundle: "game",
         cache: false,
     },
@@ -113,6 +105,21 @@ export const UIConfig = {
     RevokeWnd: {
         name: "RevokeWnd",
         path: "ui/prefab/RevokeWnd",
+        bundle: "game",
+        cache: false,
+    },
+
+    /** Poup 准备*/
+    ReadyWnd: {
+        name: "ReadyWnd",
+        path: "prefab/ui/poup/ReadyWnd",
+        bundle: "game",
+        cache: false,
+    },
+    /** Poup 招待*/
+    InviteWnd: {
+        name: "InviteWnd",
+        path: "prefab/ui/poup/InviteWnd",
         bundle: "game",
         cache: false,
     },

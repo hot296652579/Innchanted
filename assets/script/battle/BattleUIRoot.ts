@@ -23,15 +23,31 @@ export default class BattleUIRoot extends Component {
 
         const uiMgr = UIManager.getInstance();
         uiMgr.registerWindow(UIConfig.TipWnd.name, UIConfig.TipWnd.path, UIConfig.TipWnd.cache, BundlesEnum.UI);
+        uiMgr.registerWindow(UIConfig.ReadyWnd.name, UIConfig.ReadyWnd.path, UIConfig.ReadyWnd.cache, BundlesEnum.Game);
+        uiMgr.registerWindow(UIConfig.InviteWnd.name, UIConfig.InviteWnd.path, UIConfig.InviteWnd.cache, BundlesEnum.Game);
         uiMgr.openWindow(UIConfig.TopWnd.name);
-        EventManager.getInstance().on(GameEvent.SHOW_TIPS, this.onShowTips, this);
+        const events = EventManager.getInstance();
+        events.on(GameEvent.SHOW_TIPS, this.onShowTips, this);
+        events.on(GameEvent.SHIFT_READY, this.onReady, this);
+        events.on(GameEvent.GUEST_INVITE, this.onInvite, this);
     }
 
     private onShowTips(text: string): void {
         void UIUtils.showTips(text);
     }
 
+    private onReady(): void {
+        void UIManager.getInstance().openWindow(UIConfig.ReadyWnd.name);
+    }
+
+    private onInvite(): void {
+        void UIManager.getInstance().openWindow(UIConfig.InviteWnd.name);
+    }
+
     protected onDestroy(): void {
-        EventManager.getInstance().off(GameEvent.SHOW_TIPS, this.onShowTips, this);
+        const events = EventManager.getInstance();
+        events.off(GameEvent.SHOW_TIPS, this.onShowTips, this);
+        events.off(GameEvent.SHIFT_READY, this.onReady, this);
+        events.off(GameEvent.GUEST_INVITE, this.onInvite, this);
     }
 }

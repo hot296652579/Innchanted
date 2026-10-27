@@ -61,6 +61,7 @@ export class ShiftController {
     private _ice: GroundIceView | null = null;
     private _fx: FxView | null = null;
     private _playerAgentId = -1;
+    private _inviteWait: number | null = null;
 
     async start(args: ShiftStartArgs): Promise<void> {
         await ConfigManager.getInstance().loadTable("items", BundlesEnum.Table);
@@ -131,6 +132,8 @@ export class ShiftController {
         this.tagEnemies(args.levelRoot);
         this.bindClick(args);
         await this.bindIce(args.planeRoot);
+        this._inviteWait = Math.max(0, level.delay ?? 0);
+        EventManager.getInstance().emit(GameEvent.SHIFT_READY);
         console.log(`[Shift] 就绪 关卡 ${level.id} ${level.duration}s 台子 ${this._registry.all.length} 个`);
     }
 
@@ -144,6 +147,7 @@ export class ShiftController {
         this._winds?.update();
         this._events?.update(dt);
         this.tickHunt(dt);
+        this.tickInvite(dt);
         this._ice?.update(dt);
         this._fx?.tick(dt);
         this.tickScore(dt);
@@ -155,6 +159,7 @@ export class ShiftController {
         events.off(GameEvent.GROUND_ICE_FREEZE, this.onIceFreeze, this);
         events.off(GameEvent.GROUND_ICE_THAW, this.onIceThaw, this);
         this._huntId = null;
+        this._inviteWait = null;
         this._playerAgentId = -1;
         this._ice?.clear();
         this._ice = null;
@@ -284,6 +289,18 @@ export class ShiftController {
             return;
         }
         this._interact.arrive(binding);
+    }
+
+    private tickInvite(dt: number): void {
+        if (this._inviteWait === null) {
+            return;
+        }
+        this._inviteWait -= dt;
+        if (this._inviteWait > 0) {
+            return;
+        }
+        this._inviteWait = null;
+        EventManager.getInstance().emit(GameEvent.GUEST_INVITE);
     }
 
     private tickHunt(dt: number): void {
