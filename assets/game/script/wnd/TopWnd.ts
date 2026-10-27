@@ -40,13 +40,13 @@ export class TopWnd extends BaseWindow {
 
     private onTime(remain: number): void {
         if (this._time) {
-            this._time.string = `剩余时间:${Math.max(0, remain)}S`;
+            this._time.string = `${Math.max(0, remain)}S`;
         }
     }
 
     private onGold(gold: number): void {
         if (this._gold) {
-            this._gold.string = `获得金币:${Math.max(0, gold)}`;
+            this._gold.string = `x${Math.max(0, gold)}`;
         }
     }
 }
