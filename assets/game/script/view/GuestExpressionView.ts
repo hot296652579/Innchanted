@@ -10,8 +10,7 @@ const EXPRESS_SEC = 1;
 const UI_Y_OFFSET = 8;
 const SLEEP_Y_OFFSET = 48;
 const WAKE_Y_OFFSET = 48;
-const WAKE_RISE = 48;
-const DEATH_RISE = 90;
+const FACE_RISE = 90;
 const ATTENTION_Y_OFFSET = 40;
 const TALK_Y_OFFSET = 72;
 const TALK_PATH = "prefab/expression/Talk";
@@ -293,7 +292,7 @@ export class GuestExpressionView {
             kind,
             remain: EXPRESS_SEC,
             yOffset: this.yOffsetOf(kind),
-            riseTo: kind === "wake" ? WAKE_RISE : kind === "death" ? DEATH_RISE : 0,
+            riseTo: FACE_RISE,
             onDone: onDone ?? null,
         };
     }
@@ -316,10 +315,8 @@ export class GuestExpressionView {
         } else if (session.world) {
             this.placeWorld(session.node, session.world, y);
         }
-        if (session.kind === "death") {
-            const fade = session.node.getComponent(UIOpacity) ?? session.node.addComponent(UIOpacity);
-            fade.opacity = Math.round(255 * (1 - t));
-        }
+        const fade = session.node.getComponent(UIOpacity) ?? session.node.addComponent(UIOpacity);
+        fade.opacity = Math.round(255 * (1 - t));
     }
 
     private follow(face: Node, target: Node, yOffset: number): void {
