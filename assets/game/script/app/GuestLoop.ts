@@ -55,6 +55,7 @@ interface GuestRuntime {
     view: PlayerView | null;
     agent: GridAgent;
     eatLeft: number;
+    lined: boolean;
 }
 
 export enum ServeResult {
@@ -163,6 +164,7 @@ export class GuestLoop {
         this._faces.update();
         this._escort.update();
         this.tickHold(dt);
+        this.releaseLine();
         for (let i = this._runtimes.length - 1; i >= 0; i--) {
             const runtime = this._runtimes[i];
             this.tickRuntime(runtime, dt);
@@ -440,7 +442,7 @@ export class GuestLoop {
         const agent = new GridAgent(this.pathfinder, agentId, SEAT_ARRIVE);
         const view = node.getComponent(PlayerView) ?? node.addComponent(PlayerView);
         view.bind(this.pathfinder, agentId, startPos.y - this.pathfinder.getPosition(agentId).y, this._yawOffset, 8);
-        const runtime: GuestRuntime = { layout, guest, fsm, view, agent, eatLeft: 0 };
+        const runtime: GuestRuntime = { layout, guest, fsm, view, agent, eatLeft: 0, lined: false };
         this._runtimes.push(runtime);
         if (isEscortGuest(layout.guestType) && def.markPrefab) {
             void this._escort.ensureMark(def.markPrefab);
@@ -449,10 +451,7 @@ export class GuestLoop {
             fsm.queue();
             agent.arriveRadius = QUEUE_ARRIVE;
             this._queue.push(runtime);
-            if (this._waitPoint) {
-                runtime.agent.goto(this.waitSlot(this._waitPoint, this._queue.length - 1));
-                this.setWalking(runtime, true);
-            }
+            this.releaseLine();
             console.log("[Guest] 排队", guest.id, guest.orderId);
             return;
         }
@@ -473,6 +472,9 @@ export class GuestLoop {
         if (runtime.agent.arrived()) {
             const guest = runtime.guest;
             if (guest.atWait && !runtime.layout.table) {
+                if (!runtime.lined) {
+                    return;
+                }
                 runtime.agent.stop();
                 this.faceWaitLine(runtime.layout.guestNode);
                 this.showEscortAsk(runtime);
@@ -732,13 +734,55 @@ export class GuestLoop {
         }
     }
 
+    private releaseLine(): void {
+        if (!this._waitPoint) {
+            return;
+        }
+        for (let i = 0; i < this._queue.length; i++) {
+            const runtime = this._queue[i];
+            if (runtime.lined) {
+                continue;
+            }
+            if (i > 0 && !this.lineOpen(this._queue[i - 1])) {
+                return;
+            }
+            runtime.lined = true;
+            runtime.agent.goto(this.waitSlot(this._waitPoint, i));
+            this.setWalking(runtime, true);
+        }
+    }
+
+    /** 前一个人已经离开出生点够远，后一个才能朝自己的排队位走。 */
+    private lineOpen(front: GuestRuntime): boolean {
+        if (!front.lined) {
+            return false;
+        }
+        if (front.agent.arrived()) {
+            return true;
+        }
+        const spawn = this._spawnAt?.worldPosition;
+        if (!spawn) {
+            return true;
+        }
+        const pos = front.layout.guestNode.worldPosition;
+        const dx = pos.x - spawn.x;
+        const dz = pos.z - spawn.z;
+        return dx * dx + dz * dz >= WAIT_GAP * WAIT_GAP;
+    }
+
     private repackQueue(): void {
         if (!this._waitPoint) {
             return;
         }
         for (let i = 0; i < this._queue.length; i++) {
-            this._queue[i].agent.goto(this.waitSlot(this._waitPoint, i));
+            const runtime = this._queue[i];
+            if (!runtime.lined) {
+                continue;
+            }
+            runtime.agent.goto(this.waitSlot(this._waitPoint, i));
+            this.setWalking(runtime, true);
         }
+        this.releaseLine();
     }
 
     private captureQueueDir(): void {
@@ -764,11 +808,24 @@ export class GuestLoop {
 
     private waitSlot(waitPoint: Node, index: number): Vec3 {
         const origin = waitPoint.worldPosition;
-        _waitPos.set(
-            origin.x + this._queueDir.x * WAIT_GAP * index,
-            origin.y,
-            origin.z + this._queueDir.z * WAIT_GAP * index,
-        );
+        let gap = WAIT_GAP * index;
+        for (let step = 0; step < 6; step++) {
+            _waitPos.set(
+                origin.x + this._queueDir.x * gap,
+                origin.y,
+                origin.z + this._queueDir.z * gap,
+            );
+            if (index === 0) {
+                return _waitPos;
+            }
+            const snap = this.pathfinder.snap(_waitPos);
+            const along = (snap.x - origin.x) * this._queueDir.x + (snap.z - origin.z) * this._queueDir.z;
+            if (along >= WAIT_GAP * index * 0.7) {
+                _waitPos.set(snap.x, origin.y, snap.z);
+                return _waitPos;
+            }
+            gap += WAIT_GAP;
+        }
         return _waitPos;
     }
 
