@@ -130,13 +130,12 @@ export class InteractService {
                 if (station.type === StationType.Place) {
                     this.fx.burst(binding.node, "place", 0.5, binding.holdPoint);
                 }
-                if (station.type === StationType.Table) {
+                if (station.type === StationType.Table || station.type === StationType.RoundTable) {
                     this.tryServe(binding);
                 }
                 break;
             case "Serve":// 上菜
                 this.dropHand(binding);
-                this.playerView.playThrow();
                 if (!this.tryServe(binding)) {
                     events.emit(GameEvent.SHOW_TIPS, "这不是客人要的");
                     return;
@@ -343,11 +342,15 @@ export class InteractService {
 
     private tryServe(binding: StationBinding): boolean {
         const result = this.guests.tryServe(binding);
-        if (result === ServeResult.Done) {
-            EventManager.getInstance().emit(GameEvent.SHOW_TIPS, "客人吃完离开了");
+        if (result === ServeResult.Done || result === ServeResult.Next) {
+            this.playOrderServed(binding);
+            if (result === ServeResult.Done) {
+                EventManager.getInstance().emit(GameEvent.SHOW_TIPS, "客人吃完离开了");
+            }
             return true;
         }
-        if (result === ServeResult.Next || result === ServeResult.Wake) {
+        if (result === ServeResult.Wake) {
+            this.playerView.playThrow();
             return true;
         }
         const slot = binding.station.slot;
@@ -355,6 +358,13 @@ export class InteractService {
             EventManager.getInstance().emit(GameEvent.SHOW_TIPS, "这不是客人要的");
         }
         return false;
+    }
+
+    /** 每上一道对的菜：投掷动画 + 客人身边紫色特效。美食家多订单每次都播。 */
+    private playOrderServed(binding: StationBinding): void {
+        this.playerView.playThrow();
+        const guest = this.guests.guestNodeAt(binding.station.id);
+        this.fx.burst(binding.node, "serve", 1.2, guest ?? binding.node, 0.8);
     }
 }
 

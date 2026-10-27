@@ -13,7 +13,6 @@ import { GridAgent } from "../sim/GridAgent";
 import { RecastPathfinder } from "../sim/RecastPathfinder";
 import { findNamedDescendant, StationBinding, StationRegistry } from "../sim/StationRegistry";
 import { EscortView } from "../view/EscortView";
-import { FxView } from "../view/FxView";
 import { ExpressionKind, GuestExpressionView } from "../view/GuestExpressionView";
 import { GuestOrderView } from "../view/GuestOrderView";
 import { PlayerView } from "../view/PlayerView";
@@ -56,6 +55,7 @@ interface GuestRuntime {
     view: PlayerView | null;
     agent: GridAgent;
     eatLeft: number;
+    leaveAfterEat: boolean;
     lined: boolean;
 }
 
@@ -101,7 +101,6 @@ export class GuestLoop {
         private readonly pathfinder: RecastPathfinder,
         private readonly registry: StationRegistry,
         camera: Camera | null,
-        private readonly _fx: FxView,
     ) {
         this._orders = new GuestOrderView();
         this._faces = new GuestExpressionView(camera);
@@ -237,6 +236,17 @@ export class GuestLoop {
         return this.seatedAt(tableId) !== null;
     }
 
+    /** 这张桌客人节点，给上菜特效跟在客人身边。 */
+    guestNodeAt(tableId: string): Node | null {
+        for (let i = 0; i < this._runtimes.length; i++) {
+            const runtime = this._runtimes[i];
+            if (runtime.guest.tableId === tableId && runtime.guest.usingTable) {
+                return runtime.layout.guestNode;
+            }
+        }
+        return null;
+    }
+
     /** 这张桌是否被客人占着（去坐、坐着、反应中）。 */
     hasGuestAt(tableId: string): boolean {
         return this.tableBusy(tableId);
@@ -323,8 +333,8 @@ export class GuestLoop {
                 continue;
             }
             this.takeSlot(binding);
-            this._fx.burst(runtime.layout.guestNode, "serve", 1, runtime.layout.guestNode, 0.6);
             if (guest.advanceOrder()) {
+                this.playEat(runtime, false);
                 this.showOrder(runtime);
                 return ServeResult.Next;
             }
@@ -333,7 +343,8 @@ export class GuestLoop {
             }
             this.dropCoin(binding, guest.orderIds);
             this.hideOrder(guest.id);
-            this.eatThenLeave(runtime);
+            this.playEat(runtime, true);
+            this.react(runtime, "happy");
             this.emit(GameEvent.GUEST_SERVED, guest.id, guest.orderId);
             this.emit(GameEvent.SHELL_SPAWNED, binding.station.id);
             return ServeResult.Done;
@@ -445,7 +456,7 @@ export class GuestLoop {
         const agent = new GridAgent(this.pathfinder, agentId, SEAT_ARRIVE);
         const view = node.getComponent(PlayerView) ?? node.addComponent(PlayerView);
         view.bind(this.pathfinder, agentId, startPos.y - this.pathfinder.getPosition(agentId).y, this._yawOffset, 8);
-        const runtime: GuestRuntime = { layout, guest, fsm, view, agent, eatLeft: 0, lined: false };
+        const runtime: GuestRuntime = { layout, guest, fsm, view, agent, eatLeft: 0, leaveAfterEat: false, lined: false };
         this._runtimes.push(runtime);
         if (isEscortGuest(layout.guestType) && def.markPrefab) {
             void this._escort.ensureMark(def.markPrefab);
@@ -468,7 +479,11 @@ export class GuestLoop {
         if (runtime.eatLeft > 0) {
             runtime.eatLeft -= dt;
             if (runtime.eatLeft <= 0) {
-                this.walkOut(runtime);
+                if (runtime.leaveAfterEat) {
+                    this.walkOut(runtime);
+                } else {
+                    this.playClip(runtime.layout.guestNode, CLIP_STAND, true);
+                }
             }
             return;
         }
@@ -528,10 +543,10 @@ export class GuestLoop {
         this._faces.hideHint(guestId);
     }
 
-    /** 订单全部上完：播吃饭，开心表情，吃完再走。 */
-    private eatThenLeave(runtime: GuestRuntime): void {
+    /** 播吃饭。还有下一道则吃完站回等待；最后一道吃完离席。 */
+    private playEat(runtime: GuestRuntime, leaveAfter: boolean): void {
+        runtime.leaveAfterEat = leaveAfter;
         runtime.eatLeft = Math.max(this.playClip(runtime.layout.guestNode, CLIP_EAT, false), EAT_FACE_SEC);
-        this.react(runtime, "happy");
     }
 
     /** 头顶播表情。生气播完后离席。 */
