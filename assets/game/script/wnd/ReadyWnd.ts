@@ -4,7 +4,8 @@ import { UILayerType } from "db://assets/framework/ui/UILayer";
 import { UIManager } from "db://assets/framework/ui/UIManager";
 const { ccclass } = _decorator;
 
-const SLIDE_SEC = 1;
+const POP_SEC = 0.25;
+const SHOW_SEC = 1;
 const TOP_INSET = 260;
 
 @ccclass("ReadyWnd")
@@ -12,22 +13,23 @@ export class ReadyWnd extends BaseWindow {
     windowLayer = UILayerType.TOP_POPUP;
 
     protected onOpenRefresh(): void {
-        this.playSlide();
+        this.playPop();
     }
 
-    protected playSlide(): void {
+    protected playPop(): void {
         Tween.stopAllByTarget(this.node);
         const size = view.getVisibleSize();
         const z = this.node.position.z;
-        const top = size.height * 0.5 - TOP_INSET;
-        this.node.setPosition(-size.width * 0.5, top, z);
+        this.node.setPosition(0, size.height * 0.5 - TOP_INSET, z);
+        this.node.setScale(0, 0, 1);
         tween(this.node)
-            .to(SLIDE_SEC, { position: new Vec3(0, top, z) })
-            .call(() => this.finishSlide())
+            .to(POP_SEC, { scale: new Vec3(1, 1, 1) }, { easing: "backOut" })
+            .delay(SHOW_SEC)
+            .call(() => this.finishShow())
             .start();
     }
 
-    private finishSlide(): void {
+    private finishShow(): void {
         if (!this.isValid) {
             return;
         }
