@@ -7,7 +7,8 @@ const PATHS: Record<string, string> = {
     fire: "effect/fire/fire01",
     smoke: "effect/smokeLight/smokeLight01",
     drink: "effect/changeColor/changeYellow",
-    bank: "effect/collectColor/collectPurple",
+    bank: "effect/bossAttackSmoke/attckSmoke",
+    serve: "effect/collectColor/collectPurple",
 };
 
 const Y_OFFSET: Record<string, number> = {

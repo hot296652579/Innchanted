@@ -88,7 +88,7 @@ export class ShiftController {
         await this._barrels.load();
 
         const level = findLevel(BattleContext.selectedLevelId);
-        this._guests = new GuestLoop(this._pathfinder, this._registry, args.camera);
+        this._guests = new GuestLoop(this._pathfinder, this._registry, args.camera, this._fx);
         await this._guests.load();
         await this._guests.start(
             args.levelRoot,

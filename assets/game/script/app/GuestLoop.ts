@@ -13,6 +13,7 @@ import { GridAgent } from "../sim/GridAgent";
 import { RecastPathfinder } from "../sim/RecastPathfinder";
 import { findNamedDescendant, StationBinding, StationRegistry } from "../sim/StationRegistry";
 import { EscortView } from "../view/EscortView";
+import { FxView } from "../view/FxView";
 import { ExpressionKind, GuestExpressionView } from "../view/GuestExpressionView";
 import { GuestOrderView } from "../view/GuestOrderView";
 import { PlayerView } from "../view/PlayerView";
@@ -100,6 +101,7 @@ export class GuestLoop {
         private readonly pathfinder: RecastPathfinder,
         private readonly registry: StationRegistry,
         camera: Camera | null,
+        private readonly _fx: FxView,
     ) {
         this._orders = new GuestOrderView();
         this._faces = new GuestExpressionView(camera);
@@ -321,6 +323,7 @@ export class GuestLoop {
                 continue;
             }
             this.takeSlot(binding);
+            this._fx.burst(runtime.layout.guestNode, "serve", 1, runtime.layout.guestNode, 0.6);
             if (guest.advanceOrder()) {
                 this.showOrder(runtime);
                 return ServeResult.Next;

@@ -311,7 +311,7 @@ export class InteractService {
         const count = hand.count;
         this.actor.hand = null;
         this.holds.bankInto(binding.station.id);
-        this.fx.burst(binding.node, "bank", 1, binding.holdPoint);
+        this.fx.burst(binding.node, "bank", 1, binding.node, 0.5);
         const events = EventManager.getInstance();
         events.emit(GameEvent.SHELL_BANKED, count);
         events.emit(GameEvent.SHOW_TIPS, `金币已存入宝箱 x${count}`);
