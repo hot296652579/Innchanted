@@ -1,0 +1,121 @@
+{
+  "ver": "2.3.14",
+  "importer": "gltf",
+  "imported": true,
+  "uuid": "09ace8b4-75b7-4c79-8957-91f3676dc356",
+  "files": [],
+  "subMetas": {
+    "97b51": {
+      "importer": "gltf-mesh",
+      "uuid": "09ace8b4-75b7-4c79-8957-91f3676dc356@97b51",
+      "displayName": "",
+      "id": "97b51",
+      "name": "Cube.003.mesh",
+      "userData": {
+        "gltfIndex": 0,
+        "triangleCount": 168
+      },
+      "ver": "1.1.1",
+      "imported": true,
+      "files": [
+        ".bin",
+        ".json"
+      ],
+      "subMetas": {}
+    },
+    "e39f7": {
+      "importer": "texture",
+      "uuid": "09ace8b4-75b7-4c79-8957-91f3676dc356@e39f7",
+      "displayName": "",
+      "id": "e39f7",
+      "name": "UnnamedTexture.texture",
+      "userData": {
+        "wrapModeS": "repeat",
+        "wrapModeT": "repeat",
+        "minfilter": "linear",
+        "magfilter": "linear",
+        "mipfilter": "linear",
+        "anisotropy": 0,
+        "isUuid": false,
+        "imageUuidOrDatabaseUri": "db://assets/game/fbx/KayKit_Furniture_Bits_1.0_FREE/Assets/gltf/furniturebits_texture.png"
+      },
+      "ver": "1.0.22",
+      "imported": false,
+      "files": [],
+      "subMetas": {}
+    },
+    "d7b52": {
+      "importer": "gltf-material",
+      "uuid": "09ace8b4-75b7-4c79-8957-91f3676dc356@d7b52",
+      "displayName": "",
+      "id": "d7b52",
+      "name": "furniture_texture.material",
+      "userData": {
+        "gltfIndex": 0
+      },
+      "ver": "1.0.14",
+      "imported": true,
+      "files": [
+        ".json"
+      ],
+      "subMetas": {}
+    },
+    "093a0": {
+      "importer": "gltf-scene",
+      "uuid": "09ace8b4-75b7-4c79-8957-91f3676dc356@093a0",
+      "displayName": "",
+      "id": "093a0",
+      "name": "table_medium.prefab",
+      "userData": {
+        "gltfIndex": 0
+      },
+      "ver": "1.0.14",
+      "imported": true,
+      "files": [
+        ".json"
+      ],
+      "subMetas": {}
+    }
+  },
+  "userData": {
+    "imageMetas": [
+      {
+        "name": "furniturebits_texture",
+        "uri": "db://assets/game/fbx/KayKit_Furniture_Bits_1.0_FREE/Assets/gltf/furniturebits_texture.png"
+      }
+    ],
+    "lods": {
+      "enable": false,
+      "hasBuiltinLOD": false,
+      "options": [
+        {
+          "screenRatio": 0.25,
+          "faceCount": 1
+        },
+        {
+          "screenRatio": 0.125,
+          "faceCount": 0.25
+        },
+        {
+          "screenRatio": 0.01,
+          "faceCount": 0.1
+        }
+      ]
+    },
+    "assetFinder": {
+      "meshes": [
+        "09ace8b4-75b7-4c79-8957-91f3676dc356@97b51"
+      ],
+      "skeletons": [],
+      "textures": [
+        "09ace8b4-75b7-4c79-8957-91f3676dc356@e39f7"
+      ],
+      "materials": [
+        "09ace8b4-75b7-4c79-8957-91f3676dc356@d7b52"
+      ],
+      "scenes": [
+        "09ace8b4-75b7-4c79-8957-91f3676dc356@093a0"
+      ]
+    }
+  }
+}
