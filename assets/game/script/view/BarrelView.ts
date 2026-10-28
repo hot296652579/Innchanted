@@ -1,4 +1,4 @@
-import { Camera, Color, instantiate, Material, MeshRenderer, Node, Prefab, ProgressBar, Sprite, UITransform, Vec3, Widget } from "cc";
+import { Camera, Color, instantiate, Material, MeshRenderer, Node, Prefab, ProgressBar, Sprite, tween, Tween, UITransform, Vec3, Widget } from "cc";
 import { BundlesEnum } from "../../../define/BundlesEnum";
 import { ResourceManager } from "../../../framework/resource/ResourceManager";
 import { UILayerRoot, UILayerType } from "../../../framework/ui/UILayer";
@@ -16,6 +16,12 @@ const BAR_TINT: Record<BarrelColor, Color> = {
 };
 const _world = new Vec3();
 const _local = new Vec3();
+const SCALE_ONE = new Vec3(1, 1, 1);
+const SCALE_SQUASH = new Vec3(0.55, 0.55, 0.55);
+const SCALE_POP = new Vec3(1.22, 1.22, 1.22);
+const PULSE_SMALL = 0.88;
+const PULSE_BIG = 1.14;
+const PULSE_SEC = 0.3;
 
 const PULP_PATH: Partial<Record<BarrelColor, string>> = {
     [BarrelColor.Brown]: "prefab/items/OriginalPulp_Brown",
@@ -43,6 +49,7 @@ export class BarrelView {
     private readonly _pulp = new Map<BarrelColor, Prefab>();
     private readonly _drink = new Map<BarrelColor, Prefab>();
     private readonly _sessions = new Map<string, BarSession>();
+    private readonly _pulpPulse = new Map<string, { node: Node; rest: Vec3 }[]>();
 
     constructor(
         private readonly camera: Camera | null,
@@ -122,9 +129,45 @@ export class BarrelView {
     }
 
     hide(binding: StationBinding): void {
+        this.stopPulpPulse(binding);
         const session = this._sessions.get(binding.station.id);
         if (session?.bar.isValid) {
             session.bar.active = false;
+        }
+    }
+
+    startPulpPulse(binding: StationBinding): void {
+        this.stopPulpPulse(binding);
+        const node = binding.node;
+        if (!node?.isValid) {
+            return;
+        }
+        Tween.stopAllByTarget(node);
+        const rest = node.scale.clone();
+        const small = rest.clone().multiplyScalar(PULSE_SMALL);
+        const big = rest.clone().multiplyScalar(PULSE_BIG);
+        tween(node)
+            .repeatForever(
+                tween()
+                    .to(PULSE_SEC, { scale: small }, { easing: "sineInOut" })
+                    .to(PULSE_SEC, { scale: big }, { easing: "sineInOut" }),
+            )
+            .start();
+        this._pulpPulse.set(binding.station.id, [{ node, rest }]);
+    }
+
+    stopPulpPulse(binding: StationBinding): void {
+        const entries = this._pulpPulse.get(binding.station.id);
+        this._pulpPulse.delete(binding.station.id);
+        if (!entries) {
+            return;
+        }
+        for (let i = 0; i < entries.length; i++) {
+            const entry = entries[i];
+            Tween.stopAllByTarget(entry.node);
+            if (entry.node.isValid) {
+                entry.node.setScale(entry.rest);
+            }
         }
     }
 
@@ -150,7 +193,10 @@ export class BarrelView {
     }
 
     putPulp(color: BarrelColor): void {
-        this.putPrefab(this._pulp.get(color));
+        const item = this.putPrefab(this._pulp.get(color));
+        if (item) {
+            this.duang(item);
+        }
     }
 
     putDrink(color: BarrelColor): void {
@@ -164,10 +210,10 @@ export class BarrelView {
         }
     }
 
-    private putPrefab(prefab: Prefab | undefined): void {
+    private putPrefab(prefab: Prefab | undefined): Node | null {
         if (!prefab) {
             console.warn("[Barrel] 缺少物品预设");
-            return;
+            return null;
         }
         const item = instantiate(prefab);
         item.name = prefab.name;
@@ -175,6 +221,17 @@ export class BarrelView {
         const n = this.playerHold.children.length;
         item.setPosition(0, Math.max(0, n - 1) * 0.12, 0);
         item.mobility = 2;
+        return item;
+    }
+
+    private duang(node: Node): void {
+        Tween.stopAllByTarget(node);
+        node.setScale(SCALE_ONE);
+        tween(node)
+            .to(0.06, { scale: SCALE_SQUASH }, { easing: "quadIn" })
+            .to(0.14, { scale: SCALE_POP }, { easing: "backOut" })
+            .to(0.08, { scale: SCALE_ONE }, { easing: "quadIn" })
+            .start();
     }
 
     private prepareFill(session: BarSession, color: BarrelColor): void {

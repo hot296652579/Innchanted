@@ -51,6 +51,9 @@ export class BarrelSystem {
         this.cancelOther(binding.station.id);
         this._active = binding;
         this._view.begin(binding, tank.acceptColor ?? tank.color ?? BarrelColor.Brown);
+        if (action === "AcceptPulp") {
+            this._view.startPulpPulse(binding);
+        }
         console.log("[Barrel] 开始", action, binding.station.id, tank.acceptColor);
         return true;
     }
