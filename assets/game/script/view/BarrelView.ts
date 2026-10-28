@@ -2,8 +2,8 @@ import { Camera, Color, instantiate, Material, MeshRenderer, Node, Prefab, Progr
 import { BundlesEnum } from "../../../define/BundlesEnum";
 import { ResourceManager } from "../../../framework/resource/ResourceManager";
 import { UILayerRoot, UILayerType } from "../../../framework/ui/UILayer";
-import { BARREL_COLORS, BARREL_MAX_CHARGES, BarrelColor } from "../domain/Barrel";
-import { StationBinding } from "../sim/StationRegistry";
+import { BARREL_COLORS, BARREL_MAT_PATH, BARREL_MAX_CHARGES, BarrelColor } from "../domain/Barrel";
+import { findNamedDescendant, StationBinding } from "../sim/StationRegistry";
 
 const BAR_NAME = "AcceptLoading";
 const BAR_NODE = "Bar";
@@ -12,23 +12,18 @@ const BAR_TINT: Record<BarrelColor, Color> = {
     [BarrelColor.Brown]: new Color(104, 7, 7, 255),
     [BarrelColor.Green]: new Color(116, 238, 21, 255),
     [BarrelColor.Red]: new Color(238, 21, 47, 255),
+    [BarrelColor.Yellow]: new Color(238, 194, 21, 255),
 };
 const _world = new Vec3();
 const _local = new Vec3();
 
-const MAT_PATH: Record<BarrelColor, string> = {
-    [BarrelColor.Brown]: "mat/brown_material",
-    [BarrelColor.Green]: "mat/green_material",
-    [BarrelColor.Red]: "mat/red_material",
-};
-
-const PULP_PATH: Record<BarrelColor, string> = {
+const PULP_PATH: Partial<Record<BarrelColor, string>> = {
     [BarrelColor.Brown]: "prefab/items/OriginalPulp_Brown",
     [BarrelColor.Green]: "prefab/items/OriginalPulp_Green",
     [BarrelColor.Red]: "prefab/items/OriginalPulp_Red",
 };
 
-const DRINK_PATH: Record<BarrelColor, string> = {
+const DRINK_PATH: Partial<Record<BarrelColor, string>> = {
     [BarrelColor.Brown]: "prefab/items/MagicDrink_Brown",
     [BarrelColor.Green]: "prefab/items/MagicDrink_Green",
     [BarrelColor.Red]: "prefab/items/MagicDrink_Red",
@@ -58,18 +53,27 @@ export class BarrelView {
         const res = ResourceManager.getInstance();
         this._barPrefab = await res.loadPrefab("prefab/AcceptLoading", BundlesEnum.Game);
         this._white = await res.load("mat/white_material", Material, BundlesEnum.Game);
-        for (const color of BARREL_COLORS) {
-            const mat = await res.load(MAT_PATH[color], Material, BundlesEnum.Game);
+        const matColors = Object.keys(BARREL_MAT_PATH) as BarrelColor[];
+        for (const color of matColors) {
+            const mat = await res.load(BARREL_MAT_PATH[color], Material, BundlesEnum.Game);
             if (mat) {
                 this._colorMat.set(color, mat as Material);
             }
-            const pulp = await res.loadPrefab(PULP_PATH[color], BundlesEnum.Game);
-            if (pulp) {
-                this._pulp.set(color, pulp);
+        }
+        for (const color of BARREL_COLORS) {
+            const pulpPath = PULP_PATH[color];
+            if (pulpPath) {
+                const pulp = await res.loadPrefab(pulpPath, BundlesEnum.Game);
+                if (pulp) {
+                    this._pulp.set(color, pulp);
+                }
             }
-            const drink = await res.loadPrefab(DRINK_PATH[color], BundlesEnum.Game);
-            if (drink) {
-                this._drink.set(color, drink);
+            const drinkPath = DRINK_PATH[color];
+            if (drinkPath) {
+                const drink = await res.loadPrefab(drinkPath, BundlesEnum.Game);
+                if (drink) {
+                    this._drink.set(color, drink);
+                }
             }
         }
         if (!this._barPrefab) {
@@ -130,14 +134,17 @@ export class BarrelView {
         const color = tank?.color ?? null;
         const tint = color ? this._colorMat.get(color) : null;
         for (let i = 0; i < BARREL_MAX_CHARGES; i++) {
-            const node = binding.node.getChildByName(`volume${i}`);
-            const renderer = node?.getComponent(MeshRenderer);
-            if (!renderer) {
+            const node = findNamedDescendant(binding.node, `volume${i}`);
+            if (!node) {
                 continue;
             }
             const mat = i < filled && tint ? tint : this._white;
-            if (mat) {
-                renderer.setMaterial(mat, 0);
+            if (!mat) {
+                continue;
+            }
+            const renderers = node.getComponentsInChildren(MeshRenderer);
+            for (let r = 0; r < renderers.length; r++) {
+                renderers[r].setSharedMaterial(mat, 0);
             }
         }
     }

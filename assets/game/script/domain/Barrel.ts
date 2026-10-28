@@ -2,9 +2,17 @@ export enum BarrelColor {
     Brown = "brown",
     Green = "green",
     Red = "red",
+    Yellow = "yellow",
 }
 
 export const BARREL_COLORS: BarrelColor[] = [BarrelColor.Brown, BarrelColor.Green, BarrelColor.Red];
+
+export const BARREL_MAT_PATH: Record<BarrelColor, string> = {
+    [BarrelColor.Brown]: "mat/brown_material",
+    [BarrelColor.Green]: "mat/green_material",
+    [BarrelColor.Red]: "mat/red_material",
+    [BarrelColor.Yellow]: "mat/yellow_material",
+};
 
 export const BARREL_MAX_CHARGES = 3;
 export const BARREL_ACCEPT_SEC = 1;
