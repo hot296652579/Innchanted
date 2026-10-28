@@ -1,0 +1,45 @@
+{
+  "ver": "1.0.27",
+  "importer": "image",
+  "imported": true,
+  "uuid": "b8d24e17-6a3c-4f91-8e2b-0c5d9a1f47e3",
+  "files": [
+    ".json",
+    ".png"
+  ],
+  "subMetas": {
+    "6c48a": {
+      "importer": "texture",
+      "uuid": "b8d24e17-6a3c-4f91-8e2b-0c5d9a1f47e3@6c48a",
+      "displayName": "barbarian_guest2_texture",
+      "id": "6c48a",
+      "name": "texture",
+      "userData": {
+        "wrapModeS": "repeat",
+        "wrapModeT": "repeat",
+        "minfilter": "linear",
+        "magfilter": "linear",
+        "mipfilter": "none",
+        "anisotropy": 0,
+        "isUuid": true,
+        "imageUuidOrDatabaseUri": "b8d24e17-6a3c-4f91-8e2b-0c5d9a1f47e3",
+        "visible": false
+      },
+      "ver": "1.0.22",
+      "imported": true,
+      "files": [
+        ".json"
+      ],
+      "subMetas": {}
+    }
+  },
+  "userData": {
+    "type": "texture",
+    "hasAlpha": true,
+    "fixAlphaTransparencyArtifacts": false,
+    "redirect": "b8d24e17-6a3c-4f91-8e2b-0c5d9a1f47e3@6c48a",
+    "compressSettings": {
+      "useCompressTexture": false
+    }
+  }
+}

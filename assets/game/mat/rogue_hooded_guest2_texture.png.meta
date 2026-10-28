@@ -1,0 +1,45 @@
+{
+  "ver": "1.0.27",
+  "importer": "image",
+  "imported": true,
+  "uuid": "3c1e6092-ad4f-4183-b5e7-406f2c0d93d7",
+  "files": [
+    ".json",
+    ".png"
+  ],
+  "subMetas": {
+    "6c48a": {
+      "importer": "texture",
+      "uuid": "3c1e6092-ad4f-4183-b5e7-406f2c0d93d7@6c48a",
+      "displayName": "rogue_hooded_guest2_texture",
+      "id": "6c48a",
+      "name": "texture",
+      "userData": {
+        "wrapModeS": "repeat",
+        "wrapModeT": "repeat",
+        "minfilter": "linear",
+        "magfilter": "linear",
+        "mipfilter": "none",
+        "anisotropy": 0,
+        "isUuid": true,
+        "imageUuidOrDatabaseUri": "3c1e6092-ad4f-4183-b5e7-406f2c0d93d7",
+        "visible": false
+      },
+      "ver": "1.0.22",
+      "imported": true,
+      "files": [
+        ".json"
+      ],
+      "subMetas": {}
+    }
+  },
+  "userData": {
+    "type": "texture",
+    "hasAlpha": true,
+    "fixAlphaTransparencyArtifacts": false,
+    "redirect": "3c1e6092-ad4f-4183-b5e7-406f2c0d93d7@6c48a",
+    "compressSettings": {
+      "useCompressTexture": false
+    }
+  }
+}
