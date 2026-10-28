@@ -5,20 +5,39 @@
   "__editorExtras__": {},
   "_native": "",
   "_effectAsset": {
-    "__uuid__": "f648964e-8d32-41fc-9ac9-7a1e714dd17b",
+    "__uuid__": "c8f66d17-351a-48da-a12c-0212d28575c4",
     "__expectedType__": "cc.EffectAsset"
   },
   "_techIdx": 0,
   "_defines": [
     {
-      "DCC_APP_NAME": 2,
       "USE_ALBEDO_MAP": true
     },
+    {},
+    {},
     {},
     {},
     {}
   ],
   "_states": [
+    {
+      "rasterizerState": {},
+      "depthStencilState": {},
+      "blendState": {
+        "targets": [
+          {}
+        ]
+      }
+    },
+    {
+      "rasterizerState": {},
+      "depthStencilState": {},
+      "blendState": {
+        "targets": [
+          {}
+        ]
+      }
+    },
     {
       "rasterizerState": {},
       "depthStencilState": {},
@@ -61,8 +80,18 @@
       "mainTexture": {
         "__uuid__": "c76f1a4d-1911-4a84-8345-a51a6fe162c5@6c48a",
         "__expectedType__": "cc.Texture2D"
-      }
+      },
+      "mainColor": {
+        "__type__": "cc.Color",
+        "r": 255,
+        "g": 255,
+        "b": 255,
+        "a": 255
+      },
+      "roughness": 0.45
     },
+    {},
+    {},
     {},
     {},
     {}
