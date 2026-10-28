@@ -123,8 +123,8 @@ export default class RecastDetourManager {
             walkableSlopeAngle: 35,
             walkableHeight: 10,
             walkableClimb: 1.0,
-            // 1 体素 = 0.2m。太大时桌椅之间的通道会被侵蚀掐断
-            walkableRadius: 1,
+            // 1 体素 = 0.2m。2 体素 = 0.4m，和客人身宽接近，避免贴墙穿模
+            walkableRadius: 2,
             maxEdgeLen: 12.,
             maxSimplificationError: 0.8,
             minRegionArea: 8,
