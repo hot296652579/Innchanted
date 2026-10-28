@@ -200,7 +200,10 @@ export class BarrelView {
     }
 
     putDrink(color: BarrelColor): void {
-        this.putPrefab(this._drink.get(color));
+        const item = this.putPrefab(this._drink.get(color));
+        if (item) {
+            this.duang(item);
+        }
     }
 
     clearHand(): void {

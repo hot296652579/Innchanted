@@ -67,7 +67,7 @@ export class NavBakeStarter extends Component {
             this.debugMaterial!,
             bakeRoot.layer,
             bakeRoot,
-            (mesh) => !this.isUnderHoldPoint(mesh.node, bakeRoot),
+            (mesh) => !this.skipBake(mesh.node, bakeRoot),
         );
 
         if (this.recastDetourManager.navmeshdebug) {
@@ -83,10 +83,12 @@ export class NavBakeStarter extends Component {
         }
     }
 
-    private isUnderHoldPoint(node: Node, stopAt: Node): boolean {
+    /** 货物、门板、门口地毯不当障碍。地毯叠在地板上会把门口网格掐断。 */
+    private skipBake(node: Node, stopAt: Node): boolean {
         let current: Node | null = node;
         while (current && current !== stopAt) {
-            if (current.name === "HoldPoint") {
+            const name = current.name;
+            if (name === 'HoldPoint' || name === 'Door' || name === 'rug_rectangle_stripes_B' || name.startsWith('door_')) {
                 return true;
             }
             current = current.parent;
