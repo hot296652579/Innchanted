@@ -1,22 +1,16 @@
 [
   {
-    "id": "guest",
-    "prefab": "prefab/guest/RegularGuest",
-    "waitTime": 25,
-    "orders": [
-      { "orderId": "chickenlegbaked", "orderPrefab": "prefab/items/ChickenLegBaked" }
-    ]
-  },
-  {
     "id": "regularguest",
+    "name": "普通客人",
     "prefab": "prefab/guest/RegularGuest",
     "waitTime": 25,
     "orders": [
-      { "orderId": "chickenlegbaked", "orderPrefab": "prefab/items/ChickenLegBaked" }
+      { "orderId": "magicdrink_green", "orderPrefab": "prefab/items/MagicDrink_Green" }
     ]
   },
   {
     "id": "sleepguest",
+    "name": "睡觉客人",
     "prefab": "prefab/guest/SleepGuest",
     "waitTime": 20,
     "orders": [
@@ -27,6 +21,7 @@
   },
   {
     "id": "onetimeguest",
+    "name": "提示一次性客人",
     "prefab": "prefab/guest/OneTimeGuest",
     "waitTime": 25,
     "orders": [
@@ -37,6 +32,7 @@
   },
   {
     "id": "gourmetguest",
+    "name": "美食家客人",
     "prefab": "prefab/guest/GourmetGuest",
     "waitTime": 25,
     "orders": [
@@ -47,6 +43,7 @@
   },
   {
     "id": "soldierguest",
+    "name": "需引座士兵客人",
     "prefab": "prefab/guest/soldier/SoldierGuest",
     "waitTime": 15,
     "orders": [
@@ -59,6 +56,7 @@
   },
   {
     "id": "mageguest",
+    "name": "需引座法师客人",
     "prefab": "prefab/guest/mage/MageGuest",
     "waitTime": 15,
     "orders": [
