@@ -9,10 +9,10 @@ const BAR_NAME = "AcceptLoading";
 const BAR_NODE = "Bar";
 const UI_Y_OFFSET = 80;
 const BAR_TINT: Record<BarrelColor, Color> = {
-    [BarrelColor.Brown]: new Color(104, 7, 7, 255),
-    [BarrelColor.Green]: new Color(116, 238, 21, 255),
-    [BarrelColor.Red]: new Color(238, 21, 47, 255),
-    [BarrelColor.Yellow]: new Color(238, 194, 21, 255),
+    [BarrelColor.Brown]: new Color(195, 101, 50, 255),
+    [BarrelColor.Green]: new Color(82, 170, 72, 255),
+    [BarrelColor.Red]: new Color(210, 34, 39, 255),
+    [BarrelColor.Yellow]: new Color(234, 194, 83, 255),
 };
 const _world = new Vec3();
 const _local = new Vec3();
@@ -184,8 +184,7 @@ export class BarrelView {
             return;
         }
         fill.customMaterial = null;
-        const main = this._colorMat.get(color)?.getProperty("mainColor") as Color | undefined;
-        fill.color = main?.clone() ?? BAR_TINT[color];
+        fill.color = BAR_TINT[color].clone();
         fill.sizeMode = Sprite.SizeMode.CUSTOM;
         fill.type = Sprite.Type.FILLED;
         fill.fillType = Sprite.FillType.HORIZONTAL;
