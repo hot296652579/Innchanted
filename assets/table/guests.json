@@ -2,19 +2,27 @@
   {
     "id": "regularguest",
     "name": "普通客人",
-    "prefab": "prefab/guest/RegularGuest",
+    "prefab": [
+      "prefab/guest/RegularGuest",
+      "prefab/guest/RegularGuest1",
+      "prefab/guest/RegularGuest2"
+    ],
     "waitTime": 25,
     "orders": [
-      { "orderId": "magicdrink_green", "orderPrefab": "prefab/items/MagicDrink_Green" }
+      { "orderId": ["magicdrink_brown", "magicdrink_green"] }
     ]
   },
   {
     "id": "sleepguest",
     "name": "睡觉客人",
-    "prefab": "prefab/guest/SleepGuest",
+    "prefab": [
+      "prefab/guest/SleepGuest",
+      "prefab/guest/SleepGuest1",
+      "prefab/guest/SleepGuest2"
+    ],
     "waitTime": 20,
     "orders": [
-      { "orderId": "chickenlegbaked", "orderPrefab": "prefab/items/ChickenLegBaked" }
+      { "orderId": ["chickenlegbaked"] }
     ],
     "sleepItemId": "medicinebottle_olivegreen",
     "sleepPrefab": "prefab/expression/Sleep"
@@ -22,10 +30,14 @@
   {
     "id": "onetimeguest",
     "name": "提示一次性客人",
-    "prefab": "prefab/guest/OneTimeGuest",
+    "prefab": [
+      "prefab/guest/OneTimeGuest",
+      "prefab/guest/OneTimeGuest1",
+      "prefab/guest/OneTimeGuest2"
+    ],
     "waitTime": 25,
     "orders": [
-      { "orderId": "chickenlegbaked", "orderPrefab": "prefab/items/ChickenLegBaked" }
+      { "orderId": ["chickenlegbaked"] }
     ],
     "hintTime": 1,
     "hintPrefab": "prefab/expression/QuestionMark"
@@ -33,21 +45,29 @@
   {
     "id": "gourmetguest",
     "name": "美食家客人",
-    "prefab": "prefab/guest/GourmetGuest",
+    "prefab": [
+      "prefab/guest/GourmetGuest",
+      "prefab/guest/GourmetGuest1",
+      "prefab/guest/GourmetGuest2"
+    ],
     "waitTime": 25,
     "orders": [
-      { "orderId": "magicdrink_green", "orderPrefab": "prefab/items/MagicDrink_Green" },
-      { "orderId": "chickenlegbaked", "orderPrefab": "prefab/items/ChickenLegBaked" },
-      { "orderId": "burgerbaked", "orderPrefab": "prefab/items/BurgerBaked" }
+      { "orderId": ["magicdrink_brown", "magicdrink_green", "magicdrink_red"] },
+      { "orderId": ["chickenlegbaked"] },
+      { "orderId": ["burgerbaked"] }
     ]
   },
   {
     "id": "soldierguest",
     "name": "需引座士兵客人",
-    "prefab": "prefab/guest/soldier/SoldierGuest",
+    "prefab": [
+      "prefab/guest/soldier/SoldierGuest",
+      "prefab/guest/soldier/SoldierGuest1",
+      "prefab/guest/soldier/SoldierGuest2"
+    ],
     "waitTime": 15,
     "orders": [
-      { "orderId": "chickenlegbaked", "orderPrefab": "prefab/items/ChickenLegBaked" }
+      { "orderId": ["chickenlegbaked"] }
     ],
     "escort": true,
     "confirmTime": 0.5,
@@ -57,10 +77,14 @@
   {
     "id": "mageguest",
     "name": "需引座法师客人",
-    "prefab": "prefab/guest/mage/MageGuest",
+    "prefab": [
+      "prefab/guest/mage/MageGuest",
+      "prefab/guest/mage/MageGuest1",
+      "prefab/guest/mage/MageGuest2"
+    ],
     "waitTime": 15,
     "orders": [
-      { "orderId": "burgerbaked", "orderPrefab": "prefab/items/BurgerBaked" }
+      { "orderId": ["burgerbaked"] }
     ],
     "escort": true,
     "confirmTime": 0.5,

@@ -16,8 +16,8 @@ import { EscortView } from "../view/EscortView";
 import { ExpressionKind, GuestExpressionView } from "../view/GuestExpressionView";
 import { GuestOrderView } from "../view/GuestOrderView";
 import { PlayerView } from "../view/PlayerView";
-import { findGuestDef, GuestDef, guestPrefabPath, isEscortGuest } from "./GuestCatalog";
-import { goldOf } from "./ItemCatalog";
+import { findGuestDef, GuestDef, guestPrefabPaths, isEscortGuest, pickGuestOrders } from "./GuestCatalog";
+import { goldOf, itemPrefabPath } from "./ItemCatalog";
 
 const SPAWN_GAP = 1;
 const SEAT_ARRIVE = 1.0;
@@ -112,9 +112,10 @@ export class GuestLoop {
         await this._orders.load();
         await this._faces.load();
         await this._escort.load();
-        this._coinPrefab = await ResourceManager.getInstance().loadPrefab("prefab/items/Coin", BundlesEnum.Game);
+        const coinPath = itemPrefabPath("coin") || "prefab/items/Coin";
+        this._coinPrefab = await ResourceManager.getInstance().loadPrefab(coinPath, BundlesEnum.Game);
         if (!this._coinPrefab) {
-            console.warn("[Guest] 未找到 prefab/items/Coin");
+            console.warn("[Guest] 未找到", coinPath);
         }
     }
 
@@ -354,7 +355,7 @@ export class GuestLoop {
 
     private async prepareGuests(guestIds: string[], slots: SeatSlot[]): Promise<PendingGuest[]> {
         const types: string[] = [];
-        const prefabs = new Map<string, Prefab>();
+        const pools = new Map<string, Prefab[]>();
         const res = ResourceManager.getInstance();
         for (let i = 0; i < guestIds.length; i++) {
             const def = findGuestDef(guestIds[i]);
@@ -362,25 +363,32 @@ export class GuestLoop {
                 console.warn("[Guest] 关卡客人未配置", guestIds[i]);
                 continue;
             }
-            if (!prefabs.has(def.id)) {
-                const path = guestPrefabPath(def);
-                const prefab = await res.loadPrefab(path, BundlesEnum.Game);
-                if (!prefab) {
-                    console.warn("[Guest] 未找到", path);
-                    continue;
+            if (!pools.has(def.id)) {
+                const loaded: Prefab[] = [];
+                const paths = guestPrefabPaths(def);
+                for (let j = 0; j < paths.length; j++) {
+                    const prefab = await res.loadPrefab(paths[j], BundlesEnum.Game);
+                    if (!prefab) {
+                        console.warn("[Guest] 未找到", paths[j]);
+                        continue;
+                    }
+                    loaded.push(prefab);
                 }
-                prefabs.set(def.id, prefab);
+                pools.set(def.id, loaded);
+            }
+            if ((pools.get(def.id)?.length ?? 0) === 0) {
+                continue;
             }
             types.push(def.id);
         }
         const plans = planGuests(types, slots);
         const pending: PendingGuest[] = [];
         for (let i = 0; i < plans.length; i++) {
-            const prefab = prefabs.get(plans[i].guestType);
-            if (!prefab) {
+            const pool = pools.get(plans[i].guestType);
+            if (!pool?.length) {
                 continue;
             }
-            pending.push({ ...plans[i], prefab });
+            pending.push({ ...plans[i], prefab: pool[Math.floor(Math.random() * pool.length)] });
         }
         return pending;
     }
@@ -446,7 +454,11 @@ export class GuestLoop {
             return;
         }
         const node = layout.guestNode;
-        const guest = new Guest(node.name, def);
+        const guest = new Guest(node.name, {
+            waitTime: def.waitTime,
+            orders: pickGuestOrders(def),
+            sleepItemId: def.sleepItemId,
+        });
         guest.tableId = layout.table?.station.id ?? "";
         const fsm = new GuestFsm(guest);
         this._orders.bind(guest.id, node);

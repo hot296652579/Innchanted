@@ -7,19 +7,25 @@ export type ItemDef = {
     gold?: number;
     use?: string;
     effects?: string[];
+    prefab?: string;
 };
 
+export function allItemDefs(): ItemDef[] {
+    return ConfigManager.getInstance().getTable<ItemDef>("items") ?? [];
+}
+
 export function findItemDef(itemId: string): ItemDef | null {
-    const table = ConfigManager.getInstance().getTable<ItemDef>("items");
-    if (!table) {
-        return null;
-    }
+    const table = allItemDefs();
     for (let i = 0; i < table.length; i++) {
         if (table[i].id === itemId) {
             return table[i];
         }
     }
     return null;
+}
+
+export function itemPrefabPath(itemId: string): string {
+    return findItemDef(itemId)?.prefab ?? "";
 }
 
 /** 上菜后掉落的金币数量。成品在 items.json 配 gold；没配则 1。 */

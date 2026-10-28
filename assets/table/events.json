@@ -61,7 +61,7 @@
     "id": "raider",
     "kind": "raider",
     "category": "raid",
-    "delay": 8,
+    "delay": 15,
     "duration": 8,
     "count": 3,
     "goals": ["station", "guest"],

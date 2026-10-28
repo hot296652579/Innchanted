@@ -1,14 +1,15 @@
 import { instantiate, Node, Prefab } from "cc";
 import { BundlesEnum } from "../../../define/BundlesEnum";
 import { ResourceManager } from "../../../framework/resource/ResourceManager";
-import { allGuestDefs, guestOrders } from "../app/GuestCatalog";
+import { allOrderItemIds } from "../app/GuestCatalog";
+import { itemPrefabPath } from "../app/ItemCatalog";
 
 const ORDER_NAME = "OrderPoint";
 const ORDER_Y = 2.5;
 
 type Flash = { remain: number; onHint: () => void };
 
-/** 客人头顶订单：按配置加载对应食物预设。提示一次的客人 1 秒后收起订单。 */
+/** 客人头顶订单：按 items.json 的 prefab 加载食物预设。提示一次的客人 1 秒后收起订单。 */
 export class GuestOrderView {
     private readonly _prefabs = new Map<string, Prefab>();
     private readonly _points = new Map<string, Node>();
@@ -16,23 +17,20 @@ export class GuestOrderView {
 
     async load(): Promise<void> {
         const res = ResourceManager.getInstance();
-        const defs = allGuestDefs();
-        const seen = new Set<string>();
-        for (let i = 0; i < defs.length; i++) {
-            const orders = guestOrders(defs[i]);
-            for (let j = 0; j < orders.length; j++) {
-                const order = orders[j];
-                if (seen.has(order.orderId)) {
-                    continue;
-                }
-                seen.add(order.orderId);
-                const prefab = await res.loadPrefab(order.orderPrefab, BundlesEnum.Game);
-                if (!prefab) {
-                    console.warn("[Guest] 未找到订单预设", order.orderPrefab);
-                    continue;
-                }
-                this._prefabs.set(order.orderId, prefab);
+        const ids = allOrderItemIds();
+        for (let i = 0; i < ids.length; i++) {
+            const itemId = ids[i];
+            const path = itemPrefabPath(itemId);
+            if (!path) {
+                console.warn("[Guest] 物品未配置预设", itemId);
+                continue;
             }
+            const prefab = await res.loadPrefab(path, BundlesEnum.Game);
+            if (!prefab) {
+                console.warn("[Guest] 未找到订单预设", path);
+                continue;
+            }
+            this._prefabs.set(itemId, prefab);
         }
     }
 

@@ -4,6 +4,7 @@ import { ConfigManager } from "../../../framework/config/ConfigManager";
 import { ResourceManager } from "../../../framework/resource/ResourceManager";
 import { ItemStack } from "../domain/ItemStack";
 import { Station, StationType } from "../domain/Station";
+import { itemPrefabPath } from "./ItemCatalog";
 
 export type CombineFrom = "hand" | "station";
 export type CombineTo = "hand" | "station";
@@ -178,12 +179,17 @@ export class CombineCatalog {
         const table = combineRecipes();
         for (let i = 0; i < table.length; i++) {
             const row = table[i];
-            if (!row.prefab || this._prefabs.has(row.output.itemId)) {
+            if (this._prefabs.has(row.output.itemId)) {
                 continue;
             }
-            const prefab = await res.loadPrefab(row.prefab, BundlesEnum.Game);
+            const path = itemPrefabPath(row.output.itemId) || row.prefab;
+            if (!path) {
+                console.warn("[Combine] 物品未配置预设", row.output.itemId);
+                continue;
+            }
+            const prefab = await res.loadPrefab(path, BundlesEnum.Game);
             if (!prefab) {
-                console.warn("[Combine] 未找到", row.prefab);
+                console.warn("[Combine] 未找到", path);
                 continue;
             }
             this._prefabs.set(row.output.itemId, prefab);

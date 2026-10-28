@@ -2,6 +2,7 @@ import { Camera, instantiate, Node, Prefab, ProgressBar, UITransform, Vec3, Widg
 import { BundlesEnum } from "../../../define/BundlesEnum";
 import { ResourceManager } from "../../../framework/resource/ResourceManager";
 import { UILayerRoot, UILayerType } from "../../../framework/ui/UILayer";
+import { itemPrefabPath } from "../app/ItemCatalog";
 import { StationBinding } from "../sim/StationRegistry";
 
 const BAR_NAME = "LoadingBar";
@@ -27,8 +28,16 @@ export class ProcessorView {
     async load(): Promise<void> {
         const res = ResourceManager.getInstance();
         this._barPrefab = await res.loadPrefab("prefab/LoadingBar", BundlesEnum.Game);
-        await this.loadOutput(res, "prefab/items/BurgerBaked", "burgerbaked");
-        await this.loadOutput(res, "prefab/items/ChickenLegBaked", "chickenlegbaked");
+        const cooked = ["burgerbaked", "chickenlegbaked", "steakbaked"];
+        for (let i = 0; i < cooked.length; i++) {
+            const itemId = cooked[i];
+            const path = itemPrefabPath(itemId);
+            if (!path) {
+                console.warn("[Cook] 物品未配置预设", itemId);
+                continue;
+            }
+            await this.loadOutput(res, path, itemId);
+        }
         if (!this._barPrefab) {
             console.warn("[Cook] 未找到 prefab/LoadingBar");
         }
