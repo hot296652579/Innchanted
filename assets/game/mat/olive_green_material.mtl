@@ -78,14 +78,14 @@
   "_props": [
     {
       "mainTexture": {
-        "__uuid__": "c76f1a4d-1911-4a84-8345-a51a6fe162c5@6c48a",
+        "__uuid__": "f354f65e-e663-4e7c-934e-727b7c841e62@6c48a",
         "__expectedType__": "cc.Texture2D"
       },
       "tilingOffset": {
         "__type__": "cc.Vec4",
         "x": 1,
         "y": 1,
-        "z": -0.623,
+        "z": -0.502,
         "w": 0.5
       },
       "mainColor": {
