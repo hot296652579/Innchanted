@@ -27923,7 +27923,7 @@
       "__uuid__": "8002a7f8-664a-447b-ac22-9bda1a97cd7e",
       "__expectedType__": "cc.Material"
     },
-    "showDebug": true,
+    "showDebug": false,
     "stationRoot": {
       "__id__": 339
     },

@@ -1,7 +1,6 @@
 [
-  { "id": "potato", "stack": 3, "displayName": "土豆" },
-  { "id": "onion", "stack": 3, "displayName": "洋葱" },
   { "id": "steak", "stack": 3, "displayName": "牛排" },
+  { "id": "steakbaked", "stack": 3, "displayName": "烤牛排", "gold": 8 },
   { "id": "burger", "stack": 3, "displayName": "汉堡" },
   { "id": "burgerbaked", "stack": 3, "displayName": "烤汉堡", "gold": 8 },
   { "id": "chickenleg", "stack": 3, "displayName": "鸡腿" },
