@@ -25,7 +25,7 @@
     "_active": true,
     "_components": [],
     "_prefab": {
-      "__id__": 10
+      "__id__": 12
     },
     "_lpos": {
       "__type__": "cc.Vec3",
@@ -73,10 +73,10 @@
       "__id__": 2
     },
     "asset": {
-      "__uuid__": "79b29458-aea1-4980-b9f0-0b74b06b6bb7@4887e",
+      "__uuid__": "205b393c-efb1-4c86-a0f6-33818ba7e1c9@ba8c2",
       "__expectedType__": "cc.Prefab"
     },
-    "fileId": "8cQkipU8NWravJVpK/fQES",
+    "fileId": "89NjqQjHpdB68cnXkSwOwp",
     "instance": {
       "__id__": 4
     },
@@ -102,6 +102,9 @@
       },
       {
         "__id__": 9
+      },
+      {
+        "__id__": 10
       }
     ],
     "removedComponents": []
@@ -114,12 +117,12 @@
     "propertyPath": [
       "_name"
     ],
-    "value": "bottle_B_green"
+    "value": "bottle_B_brown"
   },
   {
     "__type__": "cc.TargetInfo",
     "localID": [
-      "8cQkipU8NWravJVpK/fQES"
+      "89NjqQjHpdB68cnXkSwOwp"
     ]
   },
   {
@@ -167,6 +170,26 @@
       "y": 0,
       "z": 0
     }
+  },
+  {
+    "__type__": "CCPropertyOverrideInfo",
+    "targetInfo": {
+      "__id__": 11
+    },
+    "propertyPath": [
+      "_materials",
+      "0"
+    ],
+    "value": {
+      "__uuid__": "31f3d7ba-ae41-4424-8568-a1ece8748f02",
+      "__expectedType__": "cc.Material"
+    }
+  },
+  {
+    "__type__": "cc.TargetInfo",
+    "localID": [
+      "feX0HSTsJR26f0ihK6lV2S"
+    ]
   },
   {
     "__type__": "cc.PrefabInfo",
