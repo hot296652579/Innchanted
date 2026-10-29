@@ -9,6 +9,7 @@ export type CookRecipe = {
 };
 
 const FALLBACK: CookRecipe[] = [
+    { stationType: StationType.Cook, input: "steak", output: "steakbaked", duration: 2 },
     { stationType: StationType.Cook, input: "burger", output: "burgerbaked", duration: 2 },
     { stationType: StationType.Cook, input: "chickenleg", output: "chickenlegbaked", duration: 2 },
 ];

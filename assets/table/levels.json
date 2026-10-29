@@ -1,33 +1,33 @@
 [
   {
     "id": 1,
-    "map": 2,
+    "map": 1,
     "duration": 180,
     "stars": [12, 24, 40],
-    "eventIds": ["raider", "threaten", "whirlwind", "ice", "lock", "fuelthief", "thief"],
+    "eventIds": [],
     "delay": 10,
     "guestInterval": 1,
-    "guests": ["regularguest", "regularguest","soldierguest", "mageguest", "sleepguest", "onetimeguest", "gourmetguest", "gourmetguest",  "soldierguest"]
+    "guests": ["regularguest", "regularguest2","soldierguest1","regularguest","regularguest1","regularguest2"]
   },
   {
     "id": 2,
-    "map": 1,
+    "map": 2,
     "duration": 180,
     "stars": [18, 36, 55],
-    "eventIds": ["lock", "thief"],
+    "eventIds": [],
     "delay": 10,
     "guestInterval": 1,
-    "guests": ["regularguest", "regularguest", "gourmetguest"]
+    "guests": ["regularguest", "regularguest2","soldierguest1","regularguest","regularguest1","regularguest2"]
   },
   {
     "id": 3,
-    "map": 1,
+    "map": 3,
     "duration": 180,
     "stars": [22, 44, 70],
-    "eventIds": ["lock", "whirlwind"],
+    "eventIds": ["thief"],
     "delay": 10,
     "guestInterval": 1,
-    "guests": ["soldierguest", "regularguest", "regularguest", "gourmetguest"]
+    "guests":["regularguest", "regularguest2","soldierguest1","regularguest","regularguest1","regularguest2","regularguest","regularguest1","regularguest2"]
   },
   {
     "id": 4,
