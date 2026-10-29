@@ -5,9 +5,9 @@
 @desc
 **/
 
-import { _decorator, Vec3, Node, Material, MeshRenderer, Line, Color, director, isValid, UIMeshRenderer, v3 } from "cc";
-import { RecastConfig, RecastJSCrowd, RecastJSPlugin } from "../../navigation/recastJsPlugin";
+import { _decorator, Color, director, isValid, Line, Material, MeshRenderer, Node, UIMeshRenderer, v3, Vec3 } from "cc";
 import { IAgentParameters, INavMeshParameters, IObstacle, OffMeshLinkConfig } from "../../navigation/INavigationEngine";
+import { RecastConfig, RecastJSCrowd, RecastJSPlugin } from "../../navigation/recastJsPlugin";
 
 const { ccclass, property } = _decorator;
 let CON_LINK_ID = 1000;
@@ -123,8 +123,8 @@ export default class RecastDetourManager {
             walkableSlopeAngle: 35,
             walkableHeight: 10,
             walkableClimb: 1.0,
-            // 1 体素 = 0.2m。2 体素 = 0.4m，和客人身宽接近，避免贴墙穿模
-            walkableRadius: 2,
+            // 1 体素 = 0.2m。越大，桶/灶/桌周围预留的不可走圈越宽
+            walkableRadius: 0.7,
             maxEdgeLen: 12.,
             maxSimplificationError: 0.8,
             minRegionArea: 8,
