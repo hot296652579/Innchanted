@@ -111,9 +111,17 @@ export class ThreatenView {
         return this.playClip(["death", "die"], false);
     }
 
-    setLookTarget(world: Vec3): void {
+    setLookTarget(world: Vec3, instant = false): void {
         this._look.set(world);
         this._hasLook = true;
+        const pos = this._node?.worldPosition;
+        if (!pos) {
+            return;
+        }
+        this.faceXZ(world.x - pos.x, world.z - pos.z);
+        if (instant && this._node) {
+            this._node.setRotationFromEuler(0, this._targetYaw, 0);
+        }
     }
 
     hide(): void {
@@ -133,16 +141,20 @@ export class ThreatenView {
         const agentPos = pathfinder.getPosition(agent.agentId);
         node.setWorldPosition(agentPos.x, agentPos.y + this._yOffset, agentPos.z);
 
-        const next = pathfinder.getNextPoint(agent.agentId);
-        const toNextX = next.x - agentPos.x;
-        const toNextZ = next.z - agentPos.z;
         const velocity = pathfinder.getVelocity(agent.agentId);
-        if (toNextX * toNextX + toNextZ * toNextZ > 0.01) {
-            this.faceXZ(toNextX, toNextZ);
-        } else if (velocity.lengthSqr() > 0.04) {
-            this.faceXZ(velocity.x, velocity.z);
-        } else if (this._hasLook) {
+        if (this._action && this._hasLook) {
             this.faceXZ(this._look.x - agentPos.x, this._look.z - agentPos.z);
+        } else {
+            const next = pathfinder.getNextPoint(agent.agentId);
+            const toNextX = next.x - agentPos.x;
+            const toNextZ = next.z - agentPos.z;
+            if (toNextX * toNextX + toNextZ * toNextZ > 0.01) {
+                this.faceXZ(toNextX, toNextZ);
+            } else if (velocity.lengthSqr() > 0.04) {
+                this.faceXZ(velocity.x, velocity.z);
+            } else if (this._hasLook) {
+                this.faceXZ(this._look.x - agentPos.x, this._look.z - agentPos.z);
+            }
         }
         this.applyYaw(dt);
 

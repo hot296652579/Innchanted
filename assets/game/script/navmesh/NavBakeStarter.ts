@@ -86,12 +86,18 @@ export class NavBakeStarter extends Component {
         }
     }
 
-    /** 货物、门板、门口地毯不当障碍。地毯叠在地板上会把门口网格掐断。 */
+    /** 货物、门板、门口地毯、凳子不当障碍。凳子会把桌前通道掐死。 */
     private skipBake(node: Node, stopAt: Node): boolean {
         let current: Node | null = node;
         while (current && current !== stopAt) {
             const name = current.name;
-            if (name === 'HoldPoint' || name === 'rug_rectangle_stripes_B' || name.startsWith('Door')) {
+            if (
+                name === 'HoldPoint'
+                || name === 'rug_rectangle_stripes_B'
+                || name.startsWith('Door')
+                || name.startsWith('chair')
+                || name.toLowerCase().includes('stool')
+            ) {
                 return true;
             }
             current = current.parent;

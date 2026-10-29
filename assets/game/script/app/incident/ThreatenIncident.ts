@@ -233,7 +233,7 @@ export class ThreatenIncident implements IIncident {
         this._view.stop();
         const target = this._target;
         if (target) {
-            this._view.setLookTarget(target.world);
+            this._view.setLookTarget(target.world, true);
         }
         const scared = target ? this._ctx?.scareGuest?.(target.tableId) ?? false : false;
         if (!scared) {
