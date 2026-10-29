@@ -1,4 +1,5 @@
 import { ConfigManager } from "../../../framework/config/ConfigManager";
+import { allLevels, LevelGuestOrderSlots } from "./LevelCatalog";
 
 export type GuestOrderDef = {
     orderId: string | string[];
@@ -7,7 +8,7 @@ export type GuestOrderDef = {
 export type GuestDef = {
     id: string;
     waitTime: number;
-    orders: GuestOrderDef[];
+    orders?: GuestOrderDef[];
     prefab?: string | string[];
     escort?: boolean;
     confirmTime?: number;
@@ -46,10 +47,19 @@ export function guestPrefabPaths(def: GuestDef): string[] {
     return fallback ? [fallback] : [`prefab/guest/${def.id}`];
 }
 
+/** 关卡有配置用关卡的，否则用客人表默认订单。 */
+export function ordersForGuest(def: GuestDef, levelSlots?: LevelGuestOrderSlots): GuestOrderDef[] {
+    const fromLevel = normalizeOrderSlots(levelSlots);
+    if (fromLevel.length) {
+        return fromLevel;
+    }
+    return guestOrders(def);
+}
+
 /** 每个订单槽随机抽一个物品，多道菜仍按配置顺序。 */
-export function pickGuestOrders(def: GuestDef): { orderId: string }[] {
+export function pickGuestOrders(def: GuestDef, levelSlots?: LevelGuestOrderSlots): { orderId: string }[] {
     const picked: { orderId: string }[] = [];
-    const orders = guestOrders(def);
+    const orders = ordersForGuest(def, levelSlots);
     for (let i = 0; i < orders.length; i++) {
         const orderId = pickOne(orderItemIds(orders[i]));
         if (orderId) {
@@ -62,22 +72,32 @@ export function pickGuestOrders(def: GuestDef): { orderId: string }[] {
 export function allOrderItemIds(): string[] {
     const ids: string[] = [];
     const seen = new Set<string>();
-    const defs = allGuestDefs();
-    for (let i = 0; i < defs.length; i++) {
-        const orders = guestOrders(defs[i]);
-        for (let j = 0; j < orders.length; j++) {
-            const items = orderItemIds(orders[j]);
-            for (let k = 0; k < items.length; k++) {
-                const id = items[k];
-                if (seen.has(id)) {
-                    continue;
-                }
-                seen.add(id);
-                ids.push(id);
-            }
+    collectOrderIds(allGuestDefs().map((def) => guestOrders(def)), seen, ids);
+    const levels = allLevels();
+    for (let i = 0; i < levels.length; i++) {
+        const map = levels[i].guestOrders;
+        if (!map) {
+            continue;
+        }
+        const types = Object.keys(map);
+        for (let j = 0; j < types.length; j++) {
+            collectOrderIds([normalizeOrderSlots(map[types[j]])], seen, ids);
         }
     }
     return ids;
+}
+
+/** 关卡里的 regularguest2 / soldierguest1 归一成客人类型。 */
+export function resolveGuestType(id: string): string {
+    const raw = (id || "").toLowerCase();
+    if (findGuestDef(raw)) {
+        return raw;
+    }
+    const type = guestTypeFromNode(raw);
+    if (findGuestDef(type)) {
+        return type;
+    }
+    return raw;
 }
 
 /** Guest0 / Guest_1 / RegularGuest2 → guest / regularguest。 */
@@ -99,7 +119,7 @@ export function isGuestNodeName(name: string): boolean {
 }
 
 export function allGuestDefs(): GuestDef[] {
-    return ConfigManager.getInstance().getTable<GuestDef>("guests");
+    return ConfigManager.getInstance().getTable<GuestDef>("guests") ?? [];
 }
 
 export function findGuestDef(typeId: string): GuestDef | null {
@@ -114,6 +134,42 @@ export function findGuestDef(typeId: string): GuestDef | null {
 
 export function isEscortGuest(typeId: string): boolean {
     return !!findGuestDef(typeId)?.escort;
+}
+
+function normalizeOrderSlots(slots?: LevelGuestOrderSlots | GuestOrderDef[]): GuestOrderDef[] {
+    if (!slots || !slots.length) {
+        return [];
+    }
+    if (typeof slots[0] === "string") {
+        return [{ orderId: (slots as string[]).filter((id) => !!id) }];
+    }
+    const orders: GuestOrderDef[] = [];
+    for (let i = 0; i < slots.length; i++) {
+        const slot = slots[i];
+        if (Array.isArray(slot)) {
+            orders.push({ orderId: slot.filter((id) => !!id) });
+        } else if (slot && typeof slot === "object") {
+            orders.push(slot);
+        }
+    }
+    return orders;
+}
+
+function collectOrderIds(groups: GuestOrderDef[][], seen: Set<string>, ids: string[]): void {
+    for (let i = 0; i < groups.length; i++) {
+        const orders = groups[i];
+        for (let j = 0; j < orders.length; j++) {
+            const items = orderItemIds(orders[j]);
+            for (let k = 0; k < items.length; k++) {
+                const id = items[k];
+                if (!id || seen.has(id)) {
+                    continue;
+                }
+                seen.add(id);
+                ids.push(id);
+            }
+        }
+    }
 }
 
 function asList(value: string | string[] | undefined): string[] {

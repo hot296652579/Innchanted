@@ -98,6 +98,7 @@ export class ShiftController {
             level.guests,
             level.delay,
             level.guestInterval,
+            level.guestOrders,
         );
 
         const combines = new CombineCatalog();

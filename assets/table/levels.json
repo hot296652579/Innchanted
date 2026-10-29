@@ -7,7 +7,10 @@
     "eventIds": [],
     "delay": 10,
     "guestInterval": 1,
-    "guests": ["regularguest", "regularguest2","soldierguest1","regularguest","regularguest1","regularguest2"]
+    "guests": ["regularguest", "regularguest2", "regularguest1", "regularguest", "regularguest1", "regularguest2"],
+    "guestOrders": {
+      "regularguest": ["magicdrink_brown", "magicdrink_green"]
+    }
   },
   {
     "id": 2,
@@ -17,7 +20,10 @@
     "eventIds": [],
     "delay": 10,
     "guestInterval": 1,
-    "guests": ["regularguest", "regularguest2","soldierguest1","regularguest","regularguest1","regularguest2"]
+    "guests": ["regularguest", "regularguest2", "regularguest", "regularguest1", "regularguest2","regularguest"],
+    "guestOrders": {
+      "regularguest": ["magicdrink_brown", "magicdrink_green", "magicdrink_red"]
+    }
   },
   {
     "id": 3,
@@ -27,7 +33,10 @@
     "eventIds": ["thief"],
     "delay": 10,
     "guestInterval": 1,
-    "guests":["regularguest", "regularguest2","soldierguest1","regularguest","regularguest1","regularguest2","regularguest","regularguest1","regularguest2"]
+    "guests": ["regularguest", "regularguest2", "regularguest", "regularguest1", "regularguest2", "regularguest", "regularguest1", "regularguest2"],
+    "guestOrders": {
+      "regularguest": ["steakbaked"]
+    }
   },
   {
     "id": 4,
@@ -37,7 +46,16 @@
     "eventIds": ["lock", "fuelthief"],
     "delay": 10,
     "guestInterval": 1,
-    "guests": ["soldierguest", "mageguest", "regularguest", "regularguest", "gourmetguest"]
+    "guests": ["soldierguest", "mageguest", "regularguest", "regularguest", "gourmetguest"],
+    "guestOrders": {
+      "regularguest": ["magicdrink_brown", "magicdrink_green", "magicdrink_red", "steakbaked"],
+      "soldierguest": ["chickenlegbaked", "steakbaked"],
+      "mageguest": ["burgerbaked"],
+      "gourmetguest": [
+        ["magicdrink_brown", "magicdrink_green", "magicdrink_red"],
+        ["burgerbaked"]
+      ]
+    }
   },
   {
     "id": 5,
@@ -47,7 +65,18 @@
     "eventIds": ["lock", "threaten"],
     "delay": 10,
     "guestInterval": 1,
-    "guests": ["soldierguest", "sleepguest", "regularguest", "gourmetguest", "onetimeguest"]
+    "guests": ["soldierguest", "sleepguest", "regularguest", "gourmetguest", "onetimeguest"],
+    "guestOrders": {
+      "regularguest": ["magicdrink_brown", "magicdrink_green", "magicdrink_red", "steakbaked"],
+      "soldierguest": ["chickenlegbaked", "steakbaked"],
+      "sleepguest": ["chickenlegbaked"],
+      "onetimeguest": ["chickenlegbaked", "burgerbaked"],
+      "gourmetguest": [
+        ["magicdrink_brown", "magicdrink_green"],
+        ["chickenlegbaked"],
+        ["burgerbaked"]
+      ]
+    }
   },
   {
     "id": 6,
@@ -57,7 +86,19 @@
     "eventIds": ["raider", "lock", "thief"],
     "delay": 10,
     "guestInterval": 1,
-    "guests": ["soldierguest", "mageguest", "sleepguest", "regularguest", "gourmetguest", "onetimeguest"]
+    "guests": ["soldierguest", "mageguest", "sleepguest", "regularguest", "gourmetguest", "onetimeguest"],
+    "guestOrders": {
+      "regularguest": ["magicdrink_brown", "magicdrink_green", "magicdrink_red", "steakbaked", "burgerbaked"],
+      "soldierguest": ["chickenlegbaked", "steakbaked"],
+      "mageguest": ["burgerbaked", "steakbaked"],
+      "sleepguest": ["chickenlegbaked"],
+      "onetimeguest": ["chickenlegbaked", "burgerbaked"],
+      "gourmetguest": [
+        ["magicdrink_brown", "magicdrink_green", "magicdrink_red"],
+        ["steakbaked"],
+        ["burgerbaked"]
+      ]
+    }
   },
   {
     "id": 7,
@@ -67,7 +108,19 @@
     "eventIds": ["raider", "threaten", "whirlwind"],
     "delay": 10,
     "guestInterval": 1,
-    "guests": ["soldierguest", "mageguest", "sleepguest", "onetimeguest", "gourmetguest", "regularguest", "regularguest"]
+    "guests": ["soldierguest", "mageguest", "sleepguest", "onetimeguest", "gourmetguest", "regularguest", "regularguest"],
+    "guestOrders": {
+      "regularguest": ["magicdrink_brown", "magicdrink_green", "magicdrink_red", "steakbaked", "burgerbaked"],
+      "soldierguest": ["chickenlegbaked", "steakbaked"],
+      "mageguest": ["burgerbaked", "steakbaked"],
+      "sleepguest": ["chickenlegbaked", "steakbaked"],
+      "onetimeguest": ["chickenlegbaked", "burgerbaked", "steakbaked"],
+      "gourmetguest": [
+        ["magicdrink_brown", "magicdrink_green", "magicdrink_red"],
+        ["chickenlegbaked", "steakbaked"],
+        ["burgerbaked"]
+      ]
+    }
   },
   {
     "id": 8,
@@ -77,7 +130,19 @@
     "eventIds": ["ice", "lock", "fuelthief", "thief"],
     "delay": 5,
     "guestInterval": 1,
-    "guests": ["soldierguest", "mageguest", "sleepguest", "onetimeguest", "gourmetguest", "regularguest", "regularguest"]
+    "guests": ["soldierguest", "mageguest", "sleepguest", "onetimeguest", "gourmetguest", "regularguest", "regularguest"],
+    "guestOrders": {
+      "regularguest": ["magicdrink_brown", "magicdrink_green", "magicdrink_red", "steakbaked", "burgerbaked"],
+      "soldierguest": ["chickenlegbaked", "steakbaked"],
+      "mageguest": ["burgerbaked", "steakbaked"],
+      "sleepguest": ["chickenlegbaked", "steakbaked"],
+      "onetimeguest": ["chickenlegbaked", "burgerbaked", "steakbaked"],
+      "gourmetguest": [
+        ["magicdrink_brown", "magicdrink_green", "magicdrink_red"],
+        ["chickenlegbaked", "steakbaked"],
+        ["burgerbaked"]
+      ]
+    }
   },
   {
     "id": 9,
@@ -87,7 +152,19 @@
     "eventIds": ["raider", "threaten", "whirlwind", "lock", "thief"],
     "delay": 5,
     "guestInterval": 1,
-    "guests": ["soldierguest", "mageguest", "sleepguest", "onetimeguest", "gourmetguest", "gourmetguest", "regularguest", "regularguest"]
+    "guests": ["soldierguest", "mageguest", "sleepguest", "onetimeguest", "gourmetguest", "gourmetguest", "regularguest", "regularguest"],
+    "guestOrders": {
+      "regularguest": ["magicdrink_brown", "magicdrink_green", "magicdrink_red", "steakbaked", "burgerbaked"],
+      "soldierguest": ["chickenlegbaked", "steakbaked"],
+      "mageguest": ["burgerbaked", "steakbaked"],
+      "sleepguest": ["chickenlegbaked", "steakbaked"],
+      "onetimeguest": ["chickenlegbaked", "burgerbaked", "steakbaked"],
+      "gourmetguest": [
+        ["magicdrink_brown", "magicdrink_green", "magicdrink_red"],
+        ["chickenlegbaked", "steakbaked"],
+        ["burgerbaked"]
+      ]
+    }
   },
   {
     "id": 10,
@@ -97,6 +174,18 @@
     "eventIds": ["raider", "threaten", "whirlwind", "ice", "lock", "fuelthief", "thief", "skeleton"],
     "delay": 5,
     "guestInterval": 1,
-    "guests": ["regularguest", "regularguest","soldierguest", "mageguest", "sleepguest", "onetimeguest", "gourmetguest", "gourmetguest",  "soldierguest"]
+    "guests": ["regularguest", "regularguest", "soldierguest", "mageguest", "sleepguest", "onetimeguest", "gourmetguest", "gourmetguest", "soldierguest"],
+    "guestOrders": {
+      "regularguest": ["magicdrink_brown", "magicdrink_green", "magicdrink_red", "steakbaked", "burgerbaked"],
+      "soldierguest": ["chickenlegbaked", "steakbaked"],
+      "mageguest": ["burgerbaked", "steakbaked"],
+      "sleepguest": ["chickenlegbaked", "steakbaked"],
+      "onetimeguest": ["chickenlegbaked", "burgerbaked", "steakbaked"],
+      "gourmetguest": [
+        ["magicdrink_brown", "magicdrink_green", "magicdrink_red"],
+        ["chickenlegbaked", "steakbaked"],
+        ["burgerbaked"]
+      ]
+    }
   }
 ]

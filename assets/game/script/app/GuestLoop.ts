@@ -16,8 +16,9 @@ import { EscortView } from "../view/EscortView";
 import { ExpressionKind, GuestExpressionView } from "../view/GuestExpressionView";
 import { GuestOrderView } from "../view/GuestOrderView";
 import { PlayerView } from "../view/PlayerView";
-import { findGuestDef, GuestDef, guestPrefabPaths, isEscortGuest, pickGuestOrders } from "./GuestCatalog";
+import { findGuestDef, GuestDef, guestPrefabPaths, isEscortGuest, pickGuestOrders, resolveGuestType } from "./GuestCatalog";
 import { goldOf, itemPrefabPath } from "./ItemCatalog";
+import { LevelGuestOrderSlots } from "./LevelCatalog";
 
 const SPAWN_GAP = 1;
 const SEAT_ARRIVE = 1.0;
@@ -96,6 +97,7 @@ export class GuestLoop {
     private _player: Node | null = null;
     private _hold: Hold | null = null;
     private _escortId: string | null = null;
+    private _levelOrders: Record<string, LevelGuestOrderSlots> | null = null;
 
     constructor(
         private readonly pathfinder: RecastPathfinder,
@@ -128,11 +130,13 @@ export class GuestLoop {
         guestIds?: string[],
         guestDelay?: number,
         guestInterval?: number,
+        guestOrders?: Record<string, LevelGuestOrderSlots>,
     ): Promise<void> {
         this._yawOffset = yawOffset;
         this._player = player ?? null;
         this._spawnGap = Math.max(0.1, guestInterval ?? SPAWN_GAP);
         this.resetShift();
+        this._levelOrders = guestOrders ?? null;
         const hall = scanHall(levelRoot, stationRoot, this.registry);
         if (!hall) {
             console.warn("[Guest] 缺少 Table / SeatPoint / LeavePoint");
@@ -358,7 +362,7 @@ export class GuestLoop {
         const pools = new Map<string, Prefab[]>();
         const res = ResourceManager.getInstance();
         for (let i = 0; i < guestIds.length; i++) {
-            const def = findGuestDef(guestIds[i]);
+            const def = findGuestDef(resolveGuestType(guestIds[i]));
             if (!def) {
                 console.warn("[Guest] 关卡客人未配置", guestIds[i]);
                 continue;
@@ -456,7 +460,7 @@ export class GuestLoop {
         const node = layout.guestNode;
         const guest = new Guest(node.name, {
             waitTime: def.waitTime,
-            orders: pickGuestOrders(def),
+            orders: pickGuestOrders(def, this._levelOrders?.[def.id]),
             sleepItemId: def.sleepItemId,
         });
         guest.tableId = layout.table?.station.id ?? "";
@@ -706,6 +710,7 @@ export class GuestLoop {
         this._spawned = 0;
         this._hold = null;
         this._escortId = null;
+        this._levelOrders = null;
         this._faces.hideTalk(PLAYER_TALK);
         this._escort.clear();
     }
