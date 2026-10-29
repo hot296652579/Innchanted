@@ -40,20 +40,18 @@
   },
   {
     "id": 4,
-    "map": 2,
+    "map": 4,
     "duration": 180,
     "stars": [28, 52, 85],
     "eventIds": ["lock", "fuelthief"],
     "delay": 10,
     "guestInterval": 1,
-    "guests": ["soldierguest", "mageguest", "regularguest", "regularguest", "gourmetguest"],
+    "guests": ["regularguest", "regularguest2", "gourmetguest","regularguest1", "regularguest2", "gourmetguest","regularguest","regularguest1","gourmetguest"],
     "guestOrders": {
       "regularguest": ["magicdrink_brown", "magicdrink_green", "magicdrink_red", "steakbaked"],
-      "soldierguest": ["chickenlegbaked", "steakbaked"],
-      "mageguest": ["burgerbaked"],
       "gourmetguest": [
         ["magicdrink_brown", "magicdrink_green", "magicdrink_red"],
-        ["burgerbaked"]
+        ["steakbaked"]
       ]
     }
   },
