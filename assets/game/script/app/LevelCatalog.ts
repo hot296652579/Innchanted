@@ -39,11 +39,11 @@ export function findLevel(levelId: number): LevelDef {
     return table[0] ?? FALLBACK[0];
 }
 
-/** 场景预设：1/2/3 对应 Level1/2/3。没写 map 时按关卡号，超过 3 用 Level3。 */
+/** 场景预设：map 几就用 Level几。没写 map 时按关卡号。 */
 export function mapOf(level: LevelDef): number {
     const n = level.map ?? level.id;
-    if (n === 2 || n === 3) {
-        return n;
+    if (Number.isFinite(n) && n >= 1) {
+        return Math.floor(n);
     }
     return 1;
 }
