@@ -11,7 +11,11 @@ import { IIncident, IncidentContext, OccupiedSeat, showDeathMark } from "./Incid
 
 type Phase = "spawning" | "toGuest" | "throw" | "toHome" | "rest" | "dying" | "waitSpawn" | "done";
 
-const STAND_GAP = 1.05;
+const STAND_RING = 2;
+const STAND_DIRS = 8;
+const ARRIVE = 2.4;
+const ARRIVE_STUCK = 3.6;
+const STUCK_SEC = 0.35;
 
 /** 恐吓：餐桌有客人就从 ThreatenPoint 快跑过去，Throw 一次吓跑客人。 */
 export class ThreatenIncident implements IIncident {
@@ -22,6 +26,8 @@ export class ThreatenIncident implements IIncident {
     private _target: OccupiedSeat | null = null;
     private _phase: Phase = "done";
     private _remain = 0;
+    private _stuck = 0;
+    private _retried = false;
 
     constructor(readonly def: EventDef) {}
 
@@ -104,7 +110,26 @@ export class ThreatenIncident implements IIncident {
             return;
         }
         if (this._phase === "toGuest") {
-            if (this._view.arrived()) {
+            if (this.nearTarget(ARRIVE) || this._view.arrived()) {
+                this.startThrow();
+                return;
+            }
+            if (!this._view.idle()) {
+                this._stuck = 0;
+                return;
+            }
+            this._stuck += dt;
+            if (this._stuck < STUCK_SEC) {
+                return;
+            }
+            this._stuck = 0;
+            const target = this._target;
+            if (!this._retried && target) {
+                this._retried = true;
+                this._view.goto(this.standAt(target));
+                return;
+            }
+            if (this.nearTarget(ARRIVE_STUCK)) {
                 this.startThrow();
             }
             return;
@@ -184,15 +209,17 @@ export class ThreatenIncident implements IIncident {
     }
 
     private tryRaid(): void {
-        const seat = this._ctx?.occupiedSeat?.() ?? null;
+        const seat = this.nearestSeat(this._ctx?.occupiedSeats?.() ?? []);
         if (!seat) {
             this.waitAtHome();
             console.log("[Event] 没有入座客人，再等", this.interval(), "s");
             return;
         }
         this._target = seat;
+        this._stuck = 0;
+        this._retried = false;
         this._view.setLookTarget(seat.world);
-        this._view.goto(this.standAt(seat.world));
+        this._view.goto(this.standAt(seat));
         this._phase = "toGuest";
         console.log("[Event] 恐吓怪冲向", seat.tableId);
     }
@@ -246,19 +273,62 @@ export class ThreatenIncident implements IIncident {
         return this._actor?.name ?? this.def.id;
     }
 
-    private standAt(world: Vec3): Vec3 {
-        const from = this._view.node?.worldPosition ?? this._view.home;
-        let dx = from.x - world.x;
-        let dz = from.z - world.z;
-        const len = Math.sqrt(dx * dx + dz * dz);
-        if (len < 0.001) {
-            dx = 0;
-            dz = 1;
-        } else {
-            dx /= len;
-            dz /= len;
+    private nearestSeat(seats: OccupiedSeat[]): OccupiedSeat | null {
+        if (seats.length === 0) {
+            return null;
         }
-        return new Vec3(world.x + dx * STAND_GAP, this._view.home.y, world.z + dz * STAND_GAP);
+        const from = this._view.node?.worldPosition ?? this._view.home;
+        let best = seats[0];
+        let bestDist = Number.MAX_VALUE;
+        for (let i = 0; i < seats.length; i++) {
+            const seat = seats[i];
+            const dx = seat.world.x - from.x;
+            const dz = seat.world.z - from.z;
+            const dist = dx * dx + dz * dz;
+            if (dist < bestDist) {
+                bestDist = dist;
+                best = seat;
+            }
+        }
+        return best;
+    }
+
+    private nearTarget(range: number): boolean {
+        const pos = this._view.node?.worldPosition;
+        const target = this._target?.world;
+        if (!pos || !target) {
+            return false;
+        }
+        const dx = pos.x - target.x;
+        const dz = pos.z - target.z;
+        return dx * dx + dz * dz <= range * range;
+    }
+
+    /** 绕桌子一圈取样，优先可走且离自己近的点，桌后通道也能走过去。 */
+    private standAt(seat: OccupiedSeat): Vec3 {
+        const tablePos = this._ctx?.registry.get(seat.tableId)?.node.worldPosition ?? seat.world;
+        const from = this._view.node?.worldPosition ?? this._view.home;
+        let best = seat.world;
+        let bestScore = Number.MAX_VALUE;
+        for (let i = 0; i < STAND_DIRS; i++) {
+            const angle = (Math.PI * 2 * i) / STAND_DIRS;
+            const point = new Vec3(
+                tablePos.x + Math.sin(angle) * STAND_RING,
+                this._view.home.y,
+                tablePos.z + Math.cos(angle) * STAND_RING,
+            );
+            const snapped = this._ctx?.pathfinder?.snap(point) ?? point;
+            const driftX = snapped.x - point.x;
+            const driftZ = snapped.z - point.z;
+            const toX = snapped.x - from.x;
+            const toZ = snapped.z - from.z;
+            const score = (driftX * driftX + driftZ * driftZ) * 80 + toX * toX + toZ * toZ;
+            if (score < bestScore) {
+                bestScore = score;
+                best = snapped;
+            }
+        }
+        return best;
     }
 
     private findSpawn(ctx: IncidentContext): Node | null {

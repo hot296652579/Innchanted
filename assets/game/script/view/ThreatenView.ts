@@ -50,7 +50,7 @@ export class ThreatenView {
             maxSpeed,
             collisionQueryRange: 1.2,
             pathOptimizationRange: 4,
-            separationWeight: 1,
+            separationWeight: 0,
         });
         const agentPos = pathfinder.getPosition(agentId);
         this._yOffset = startPos.y - agentPos.y;
@@ -75,6 +75,15 @@ export class ThreatenView {
 
     arrived(): boolean {
         return this._agent?.arrived() ?? true;
+    }
+
+    idle(): boolean {
+        const pathfinder = this._pathfinder;
+        const agent = this._agent;
+        if (!pathfinder || !agent) {
+            return true;
+        }
+        return pathfinder.getVelocity(agent.agentId).lengthSqr() < MOVE_SPEED_SQ;
     }
 
     playIdle(): void {

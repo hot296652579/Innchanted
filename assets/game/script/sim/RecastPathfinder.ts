@@ -44,4 +44,8 @@ export class RecastPathfinder implements IPathfinder {
     setMaxSpeed(agentId: number, speed: number): void {
         this.recast.crowd?.updateAgentParameters(agentId, { maxSpeed: Math.max(0.2, speed) } as IAgentParameters);
     }
+
+    setAgentRadius(agentId: number, radius: number): void {
+        this.recast.crowd?.updateAgentParameters(agentId, { radius: Math.max(0.01, radius) } as IAgentParameters);
+    }
 }

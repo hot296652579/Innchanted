@@ -20,4 +20,5 @@ export interface IPathfinder {
     getVelocity(agentId: number): Vec3;
     getNextPoint(agentId: number): Vec3;
     setMaxSpeed?(agentId: number, speed: number): void;
+    setAgentRadius?(agentId: number, radius: number): void;
 }

@@ -532,6 +532,7 @@ export class GuestLoop {
         if (!layout.seatPoint || !layout.table) {
             return;
         }
+        this.pathfinder.setAgentRadius(agent.agentId, 0.05);
         agent.stop();
         this.setWalking(runtime, false);
         const pos = layout.seatPoint.worldPosition;
@@ -581,6 +582,7 @@ export class GuestLoop {
         this.clearEscort(runtime.guest.id);
         this._faces.hide(runtime.guest.id);
         runtime.eatLeft = 0;
+        this.pathfinder.setAgentRadius(runtime.agent.agentId, AGENT.radius);
         this.setWalking(runtime, true);
         runtime.agent.goto(leavePoint.worldPosition);
         if (table) {
