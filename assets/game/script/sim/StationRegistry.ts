@@ -161,16 +161,23 @@ function ensureHoldPoint(node: Node, localY: number): Node {
     return hold;
 }
 
-export function findNamedDescendant(root: Node, name: string): Node | null {
+export function findNamedDescendant(root: Node | null, name: string): Node | null {
+    if (!root?.isValid) {
+        return null;
+    }
     if (root.name === name) {
         return root;
+    }
+    const kids = root.children;
+    if (!kids) {
+        return null;
     }
     const direct = root.getChildByName(name);
     if (direct) {
         return direct;
     }
-    for (let i = 0; i < root.children.length; i++) {
-        const found = findNamedDescendant(root.children[i], name);
+    for (let i = 0; i < kids.length; i++) {
+        const found = findNamedDescendant(kids[i], name);
         if (found) {
             return found;
         }

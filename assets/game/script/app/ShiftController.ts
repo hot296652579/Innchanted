@@ -62,14 +62,19 @@ export class ShiftController {
     private _fx: FxView | null = null;
     private _playerAgentId = -1;
     private _inviteWait: number | null = null;
+    private _alive = true;
 
     async start(args: ShiftStartArgs): Promise<void> {
+        this._alive = true;
         await ConfigManager.getInstance().loadTable("items", BundlesEnum.Table);
         await ConfigManager.getInstance().loadTable("recipes", BundlesEnum.Table);
         await ConfigManager.getInstance().loadTable("guests", BundlesEnum.Table);
         await ConfigManager.getInstance().loadTable("events", BundlesEnum.Table);
         await ConfigManager.getInstance().loadTable("combines", BundlesEnum.Table);
         await ConfigManager.getInstance().loadTable("levels", BundlesEnum.Table);
+        if (this.leftBattle(args)) {
+            return;
+        }
 
         this._registry.scan(args.stationRoot);
         this._pathfinder = new RecastPathfinder(args.recast);
@@ -80,16 +85,28 @@ export class ShiftController {
 
         this._fx = new FxView();
         await this._fx.load();
+        if (this.leftBattle(args)) {
+            return;
+        }
 
         this._processors = new ProcessorSystem(args.camera, this._registry, this._fx);
         await this._processors.load();
+        if (this.leftBattle(args)) {
+            return;
+        }
 
         this._barrels = new BarrelSystem(args.camera, this._registry, this._actor!, this.requireHold(args.player), this._playerView!);
         await this._barrels.load();
+        if (this.leftBattle(args)) {
+            return;
+        }
 
         const level = findLevel(BattleContext.selectedLevelId);
         this._guests = new GuestLoop(this._pathfinder, this._registry, args.camera);
         await this._guests.load();
+        if (this.leftBattle(args)) {
+            return;
+        }
         await this._guests.start(
             args.levelRoot,
             args.stationRoot,
@@ -100,9 +117,15 @@ export class ShiftController {
             level.guestInterval,
             level.guestOrders,
         );
+        if (this.leftBattle(args)) {
+            return;
+        }
 
         const combines = new CombineCatalog();
         await combines.load();
+        if (this.leftBattle(args)) {
+            return;
+        }
 
         this._winds = new WhirlwindView();
         this._interact = new InteractService(this._actor!, holds, this._processors, this._barrels, combines, this._guests, this._playerView!, this._fx, this._winds);
@@ -133,6 +156,9 @@ export class ShiftController {
         this.tagEnemies(args.levelRoot);
         this.bindClick(args);
         await this.bindIce(args.planeRoot);
+        if (this.leftBattle(args)) {
+            return;
+        }
         this._inviteWait = Math.max(0, level.delay ?? 0);
         EventManager.getInstance().emit(GameEvent.SHIFT_READY);
         console.log(`[Shift] 就绪 关卡 ${level.id} ${level.duration}s 台子 ${this._registry.all.length} 个`);
@@ -155,6 +181,7 @@ export class ShiftController {
     }
 
     clear(): void {
+        this._alive = false;
         const events = EventManager.getInstance();
         events.off(GameEvent.SHELL_BANKED, this.onBanked, this);
         events.off(GameEvent.GROUND_ICE_FREEZE, this.onIceFreeze, this);
@@ -410,7 +437,14 @@ export class ShiftController {
         return 0.4;
     }
 
+    private leftBattle(args: ShiftStartArgs): boolean {
+        return !this._alive || !args.host.isValid || !args.levelRoot.isValid;
+    }
+
     private tagEnemies(levelRoot: Node): void {
+        if (!levelRoot?.isValid) {
+            return;
+        }
         this._levelRoot = levelRoot;
         const defs = allEventDefs();
         for (let i = 0; i < defs.length; i++) {

@@ -244,6 +244,9 @@ export class RecastJSPlugin implements INavigationEnginePlugin {
      */
     static createMeshRenderer(scene : cc.Node,positions : number[],indices : number[]){
         let node = new cc.Node();
+        if (!scene?.isValid) {
+            return node;
+        }
         scene.addChild(node);
         const m4 = new math.Mat4();
         math.Mat4.invert(m4, node.getWorldMatrix(m4));

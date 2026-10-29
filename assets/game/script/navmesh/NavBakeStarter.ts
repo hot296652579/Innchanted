@@ -69,6 +69,9 @@ export class NavBakeStarter extends Component {
             bakeRoot,
             (mesh) => !this.skipBake(mesh.node, bakeRoot),
         );
+        if (!this.isValid) {
+            return;
+        }
 
         if (this.recastDetourManager.navmeshdebug) {
             this.recastDetourManager.navmeshdebug.active = this.showDebug;

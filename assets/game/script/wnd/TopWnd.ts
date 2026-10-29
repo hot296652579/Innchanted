@@ -1,4 +1,6 @@
-import { _decorator, Label, Node } from "cc";
+import { _decorator, director, Label, Node } from "cc";
+import { BattleContext } from "db://assets/define/BattleContext";
+import { UIConfig } from "db://assets/define/UIEnum";
 import { EventManager } from "../../../framework/event/EventManager";
 import { GameEvent } from "../../../framework/event/EventName";
 import BaseWindow from "../../../framework/ui/BaseWindow";
@@ -14,6 +16,9 @@ export class TopWnd extends BaseWindow {
     @property(Node)
     lbLevelGold: Node = null!;
 
+    @property(Node)
+    btnBack: Node = null!;
+
     windowLayer = UILayerType.SCENE_UI;
 
     private _time: Label | null = null;
@@ -25,6 +30,8 @@ export class TopWnd extends BaseWindow {
         const bus = EventManager.getInstance();
         bus.on(GameEvent.LEVEL_TIME_CHANGED, this.onTime, this);
         bus.on(GameEvent.LEVEL_GOLD_CHANGED, this.onGold, this);
+
+        this.btnBack?.on(Node.EventType.TOUCH_END, this.onBack, this);
     }
 
     protected onOpenRefresh(): void {
@@ -48,5 +55,10 @@ export class TopWnd extends BaseWindow {
         if (this._gold) {
             this._gold.string = `x${Math.max(0, gold)}`;
         }
+    }
+
+    private onBack(): void {
+        BattleContext.pendingStartWindow = UIConfig.SelectWnd.name;
+        director.loadScene("scene/Start");
     }
 }

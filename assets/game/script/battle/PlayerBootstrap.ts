@@ -16,6 +16,9 @@ export class PlayerBootstrap extends Component {
             return;
         }
         const recast = await baker.waitReady();
+        if (!this.isValid) {
+            return;
+        }
         const player = baker.player;
         const stationRoot = baker.stationRoot;
         if (!player || !stationRoot || !baker.camera) {
@@ -43,5 +46,6 @@ export class PlayerBootstrap extends Component {
 
     onDestroy(): void {
         this._shift?.clear();
+        this._shift = null;
     }
 }

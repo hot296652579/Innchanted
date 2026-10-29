@@ -24,6 +24,7 @@ export default class RecastDetourManager {
     private debugMaterial!: Material;
     private debugLayer: number = 1;
     private static instance: RecastDetourManager;
+    private static _load: Promise<RecastDetourManager> | null = null;
     private obstacleList: { node: Node, obstacle: IObstacle }[] = [];
     private linkList !: OffMeshLinkConfig & { node: Node[] };
     private config!: INavMeshParameters;
@@ -117,16 +118,19 @@ export default class RecastDetourManager {
             comps = comps.filter(meshFilter);
         }
         let instance = await this.getInstance(debugMaterial, debugLayer, root);
+        instance.root = root;
+        if (!isValid(root)) {
+            return instance;
+        }
         let navmeshParameters = {
             cs: 0.2,
             ch: 0.2,
             walkableSlopeAngle: 35,
             walkableHeight: 10,
             walkableClimb: 1.0,
-            // 1 体素 = 0.2m。越大，桶/灶/桌周围预留的不可走圈越宽
-            walkableRadius: 0.7,
+            walkableRadius: 0.8,//1 体素 = 0.2m。越大，桶/灶/桌周围预留的不可走圈越宽
             maxEdgeLen: 12.,
-            maxSimplificationError: 0.8,
+            maxSimplificationError: 1,
             minRegionArea: 8,
             mergeRegionArea: 20,
             maxVertsPerPoly: 3,
@@ -138,6 +142,9 @@ export default class RecastDetourManager {
         instance.config = navmeshParameters;
         instance.meshes = comps;
         instance.navigationPlugin.createNavMesh(comps, navmeshParameters);
+        if (!isValid(root)) {
+            return instance;
+        }
         instance.init();
         return instance;
     }
@@ -147,20 +154,31 @@ export default class RecastDetourManager {
 
 
     protected static async getInstance(debugMaterial?: Material, debugLayer?: number, root?: Node) {
-        if (this.instance) {
-            return this.instance;
+        if (!this._load) {
+            this._load = this.createInstance();
         }
-        let instance = new RecastDetourManager();
+        const instance = await this._load;
+        if (root) {
+            instance.root = root;
+        }
+        if (debugMaterial) {
+            instance.debugMaterial = debugMaterial;
+        }
+        if (debugLayer !== undefined) {
+            instance.debugLayer = debugLayer;
+        }
+        return instance;
+    }
+
+    private static async createInstance(): Promise<RecastDetourManager> {
+        const instance = new RecastDetourManager();
         this.instance = instance;
-        instance.root = root;
-        instance.debugMaterial = debugMaterial!;
-        instance.debugLayer = debugLayer!;
         let navigationPlugin: RecastJSPlugin;
-        await new Promise(resolve => {
+        await new Promise((resolve) => {
             navigationPlugin = new RecastJSPlugin(() => {
                 resolve(null);
             });
-        })
+        });
         instance.navigationPlugin = navigationPlugin!;
         return instance;
     }
@@ -173,10 +191,16 @@ export default class RecastDetourManager {
     }
 
     init() {
+        if (!isValid(this.root)) {
+            return;
+        }
         if (this.crowd) {
             this.removeAllAgents();
         }
-        let scene = director.getScene()!;
+        let scene = director.getScene();
+        if (!scene) {
+            return;
+        }
         let crowd = this.navigationPlugin.createCrowd(100, 1, scene);
         this.crowd = crowd as RecastJSCrowd;
         this.updateNavMeshDebug();
@@ -186,7 +210,7 @@ export default class RecastDetourManager {
         if (isValid(this.navmeshdebug)) {
             this.navmeshdebug.destroy();
         }
-        if (!this.root) {
+        if (!isValid(this.root)) {
             return;
         }
         this.navmeshdebug = this.navigationPlugin.createDebugNavMesh(this.root);
