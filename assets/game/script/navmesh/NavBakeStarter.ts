@@ -88,7 +88,7 @@ export class NavBakeStarter extends Component {
         let current: Node | null = node;
         while (current && current !== stopAt) {
             const name = current.name;
-            if (name === 'HoldPoint' || name === 'Door' || name === 'rug_rectangle_stripes_B' || name.startsWith('door_')) {
+            if (name === 'HoldPoint' || name === 'rug_rectangle_stripes_B' || name.startsWith('Door')) {
                 return true;
             }
             current = current.parent;
