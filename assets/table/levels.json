@@ -44,7 +44,7 @@
     "duration": 180,
     "stars": [28, 52, 85],
     "eventIds": ["thief", "threaten"],
-    "delay": 10,
+    "delay": 15,
     "guestInterval": 1,
     "guests": ["regularguest", "regularguest2", "gourmetguest","regularguest1", "regularguest2", "gourmetguest","regularguest","regularguest1","gourmetguest"],
     "guestOrders": {
@@ -61,7 +61,7 @@
     "duration": 180,
     "stars": [32, 60, 95],
     "eventIds": ["fuelthief"],
-    "delay": 10,
+    "delay": 15,
     "guestInterval": 1,
     "guests": ["onetimeguest","regularguest", "regularguest1", "regularguest2", "gourmetguest","onetimeguest","regularguest","regularguest1","regularguest2","gourmetguest"],
     "guestOrders": {
@@ -80,7 +80,7 @@
     "duration": 180,
     "stars": [38, 70, 110],
     "eventIds": ["thief","threaten","fuelthief"],
-    "delay": 10,
+    "delay": 15,
     "guestInterval": 1,
     "guests": ["soldierguest", "mageguest","soldierguest", "mageguest", "regularguest1", "regularguest", "gourmetguest", "onetimeguest"],
     "guestOrders": {
@@ -100,9 +100,9 @@
     "duration": 190,
     "stars": [45, 80, 125],
     "eventIds": ["threaten", "whirlwind","fuelthief","thief"],
-    "delay": 10,
+    "delay": 15,
     "guestInterval": 1,
-    "guests": ["soldierguest", "soldierguest","mageguest", "mageguest", "sleepguest", "onetimeguest", "gourmetguest", "regularguest", "regularguest"],
+    "guests": ["soldierguest", "soldierguest","regularguest1","regularguest2","mageguest", "mageguest", "sleepguest", "onetimeguest", "gourmetguest", "regularguest", "regularguest"],
     "guestOrders": {
       "regularguest": ["magicdrink_brown", "magicdrink_green", "magicdrink_red", "steakbaked", "burgerbaked"],
       "soldierguest": ["steakbaked"],
@@ -118,13 +118,13 @@
   },
   {
     "id": 8,
-    "map": 2,
-    "duration": 190,
+    "map": 8,
+    "duration": 200,
     "stars": [52, 95, 145],
-    "eventIds": ["ice", "lock", "fuelthief", "thief"],
-    "delay": 5,
+    "eventIds": ["ice", "lock", "fuelthief", "thief","whirlwind","threaten"],
+    "delay": 15,
     "guestInterval": 1,
-    "guests": ["soldierguest", "mageguest", "sleepguest", "onetimeguest", "gourmetguest", "regularguest", "regularguest"],
+    "guests": ["regularguest","regularguest1","regularguest2","regularguest","soldierguest", "soldierguest", "sleepguest", "onetimeguest", "gourmetguest", "regularguest", "regularguest"],
     "guestOrders": {
       "regularguest": ["magicdrink_brown", "magicdrink_green", "magicdrink_red", "steakbaked", "burgerbaked"],
       "soldierguest": ["chickenlegbaked", "steakbaked"],
@@ -140,11 +140,11 @@
   },
   {
     "id": 9,
-    "map": 2,
+    "map": 9,
     "duration": 200,
     "stars": [60, 110, 165],
     "eventIds": ["raider", "threaten", "whirlwind", "lock", "thief"],
-    "delay": 5,
+    "delay": 15,
     "guestInterval": 1,
     "guests": ["soldierguest", "mageguest", "sleepguest", "onetimeguest", "gourmetguest", "gourmetguest", "regularguest", "regularguest"],
     "guestOrders": {
@@ -162,11 +162,11 @@
   },
   {
     "id": 10,
-    "map": 2,
+    "map": 10,
     "duration": 210,
     "stars": [75, 130, 200],
     "eventIds": ["raider", "threaten", "whirlwind", "ice", "lock", "fuelthief", "thief", "skeleton"],
-    "delay": 5,
+    "delay": 10,
     "guestInterval": 1,
     "guests": ["regularguest", "regularguest", "soldierguest", "mageguest", "sleepguest", "onetimeguest", "gourmetguest", "gourmetguest", "soldierguest"],
     "guestOrders": {

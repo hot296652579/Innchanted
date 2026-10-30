@@ -92,8 +92,8 @@
     "category": "status",
     "delay": 5,
     "duration": 0,
-    "freezeTime": 15,
-    "failText": "有灶炉被锁住 15 秒！"
+    "freezeTime": 5,
+    "failText": "有灶炉被锁住 5 秒！"
   },
   {
     "id": "ice",

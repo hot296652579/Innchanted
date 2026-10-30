@@ -5935,7 +5935,7 @@
     "propertyPath": [
       "_name"
     ],
-    "value": "Table1"
+    "value": "Table-001"
   },
   {
     "__type__": "cc.TargetInfo",
@@ -6065,7 +6065,7 @@
     "propertyPath": [
       "_name"
     ],
-    "value": "Table2"
+    "value": "Table-002"
   },
   {
     "__type__": "cc.TargetInfo",
@@ -6195,7 +6195,7 @@
     "propertyPath": [
       "_name"
     ],
-    "value": "Table3"
+    "value": "Table-003"
   },
   {
     "__type__": "cc.TargetInfo",
@@ -30830,7 +30830,7 @@
     "propertyPath": [
       "_active"
     ],
-    "value": false
+    "value": true
   },
   {
     "__type__": "cc.Node",
