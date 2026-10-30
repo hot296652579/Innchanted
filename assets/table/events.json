@@ -69,7 +69,7 @@
     "hitCount": 4,
     "spawnName": "AttackPoints",
     "prefabs": ["prefab/enemys/AttackEnemy1", "prefab/enemys/AttackEnemy2"],
-    "flySpeed": 2.2,
+    "flySpeed": 2,
     "warnText": "有怪物来砸店了！",
     "failText": "操作台被砸坏了！"
   },
@@ -81,7 +81,7 @@
     "duration": 0,
     "count": 1,
     "stationTypes": ["cook", "place", "itemstand"],
-    "unlockItemId": "medicinebottle_red",
+    "unlockItemId": "medicinebottle_olivegreen",
     "prefab": "effect/whirlwind/whirlwindLight01",
     "warnText": "旋风来了！",
     "failText": "操作台被旋风卷起了，用药水才能解开！"
