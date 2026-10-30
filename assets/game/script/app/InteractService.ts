@@ -20,7 +20,8 @@ import {
 } from "./Combine";
 import { ActionKind, resolveDefaultAction } from "./DefaultAction";
 import { GuestLoop, ServeResult } from "./GuestLoop";
-import { findItemDef, isDrinkable, itemEffects } from "./ItemCatalog";
+import { findEventDef } from "./EventCatalog";
+import { findItemDef, isDrinkable } from "./ItemCatalog";
 import { ProcessorSystem } from "./ProcessorSystem";
 
 /** 到达台子后：先决策再执行。不负责寻路。 */
@@ -37,7 +38,7 @@ export class InteractService {
         private readonly winds: WhirlwindView,
     ) { }
 
-    /** 点自身：喝掉手里的药剂。新药只改 items.json 的 use / effects。 */
+    /** 点自身：喝掉手里的药剂。解冻药看 ice 事件的 unlockItemId。 */
     useSelf(): boolean {
         const hand = this.actor.hand;
         const drinkable = !!hand && !hand.empty && isDrinkable(hand.itemId);
@@ -57,14 +58,13 @@ export class InteractService {
         this.fx.burst(this.playerView.node, "drink", 1, drinkAt);
         const events = EventManager.getInstance();
         events.emit(GameEvent.ITEM_HELD_CHANGED, this.actor.id, this.actor.hand);
-        const effects = itemEffects(itemId);
-        for (let i = 0; i < effects.length; i++) {
-            if (effects[i] === "thaw") {
-                events.emit(GameEvent.GROUND_ICE_THAW, 1);
-            }
+        const ice = findEventDef("ice");
+        if (ice?.unlockItemId && itemId === ice.unlockItemId) {
+            events.emit(GameEvent.GROUND_ICE_THAW, ice.freezeTime ?? 1);
+            console.log("[Player] 喝药解冻", itemId);
         }
         events.emit(GameEvent.SHOW_TIPS, `喝了${def?.displayName ?? "药剂"}`);
-        console.log("[Player] 喝药", itemId, effects);
+        console.log("[Player] 喝药", itemId);
         return true;
     }
 

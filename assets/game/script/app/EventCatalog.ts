@@ -131,6 +131,7 @@ const FALLBACK: EventDef[] = [
         duration: 0,
         freezeTime: 1,
         slowScale: 0.4,
+        unlockItemId: "medicinebottle_yellow",
         actorName: "Dragon",
         prefab: "prefab/enemys/Dragon",
         flySpeed: 5,

@@ -43,7 +43,7 @@
     "map": 4,
     "duration": 180,
     "stars": [28, 52, 85],
-    "eventIds": ["thief", "threaten"],
+    "eventIds": ["thief","whirlwind"],
     "delay": 15,
     "guestInterval": 1,
     "guests": ["regularguest", "regularguest2", "gourmetguest","regularguest1", "regularguest2", "gourmetguest","regularguest","regularguest1","gourmetguest"],
