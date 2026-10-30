@@ -128,7 +128,7 @@ export default class RecastDetourManager {
             walkableSlopeAngle: 35,
             walkableHeight: 10,
             walkableClimb: 1.0,
-            walkableRadius: 1,//1 体素 = 0.2m。越大，桶/灶/桌周围预留的不可走圈越宽
+            walkableRadius: 1.0,//1 体素 = 0.2m。越大，桶/灶/桌周围预留的不可走圈越宽
             maxEdgeLen: 12.,
             maxSimplificationError: 1,
             minRegionArea: 8,

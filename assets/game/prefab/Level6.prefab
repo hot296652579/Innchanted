@@ -514,7 +514,7 @@
     ],
     "value": {
       "__type__": "cc.Vec3",
-      "x": -5.363,
+      "x": -5.242,
       "y": 0.408,
       "z": 0.385
     }
@@ -6004,7 +6004,7 @@
     ],
     "value": {
       "__type__": "cc.Vec3",
-      "x": -4.661,
+      "x": -4.342,
       "y": 0.5,
       "z": 1.208
     }
@@ -29978,7 +29978,7 @@
       "__uuid__": "8002a7f8-664a-447b-ac22-9bda1a97cd7e",
       "__expectedType__": "cc.Material"
     },
-    "showDebug": false,
+    "showDebug": true,
     "stationRoot": {
       "__id__": 384
     },

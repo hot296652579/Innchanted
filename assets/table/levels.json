@@ -82,12 +82,11 @@
     "eventIds": ["thief","threaten","fuelthief"],
     "delay": 10,
     "guestInterval": 1,
-    "guests": ["soldierguest", "mageguest", "sleepguest", "regularguest", "gourmetguest", "onetimeguest"],
+    "guests": ["soldierguest", "mageguest","soldierguest", "mageguest", "regularguest1", "regularguest", "gourmetguest", "onetimeguest"],
     "guestOrders": {
       "regularguest": ["magicdrink_brown", "magicdrink_green", "steakbaked"],
       "soldierguest": ["magicdrink_green","magicdrink_brown"],
       "mageguest":["magicdrink_green","magicdrink_brown"],
-      "sleepguest": ["steakbaked"],
       "onetimeguest": ["steakbaked"],
       "gourmetguest": [
         ["magicdrink_brown", "magicdrink_green"],
