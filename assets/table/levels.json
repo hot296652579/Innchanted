@@ -96,22 +96,22 @@
   },
   {
     "id": 7,
-    "map": 2,
+    "map": 7,
     "duration": 190,
     "stars": [45, 80, 125],
-    "eventIds": ["raider", "threaten", "whirlwind"],
+    "eventIds": ["threaten", "whirlwind","fuelthief","thief"],
     "delay": 10,
     "guestInterval": 1,
-    "guests": ["soldierguest", "mageguest", "sleepguest", "onetimeguest", "gourmetguest", "regularguest", "regularguest"],
+    "guests": ["soldierguest", "soldierguest","mageguest", "mageguest", "sleepguest", "onetimeguest", "gourmetguest", "regularguest", "regularguest"],
     "guestOrders": {
       "regularguest": ["magicdrink_brown", "magicdrink_green", "magicdrink_red", "steakbaked", "burgerbaked"],
-      "soldierguest": ["chickenlegbaked", "steakbaked"],
+      "soldierguest": ["steakbaked"],
       "mageguest": ["burgerbaked", "steakbaked"],
-      "sleepguest": ["chickenlegbaked", "steakbaked"],
-      "onetimeguest": ["chickenlegbaked", "burgerbaked", "steakbaked"],
+      "sleepguest": [ "steakbaked"],
+      "onetimeguest": [ "burgerbaked", "steakbaked"],
       "gourmetguest": [
         ["magicdrink_brown", "magicdrink_green", "magicdrink_red"],
-        ["chickenlegbaked", "steakbaked"],
+        [ "steakbaked"],
         ["burgerbaked"]
       ]
     }
