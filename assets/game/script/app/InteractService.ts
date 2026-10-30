@@ -1,6 +1,7 @@
 import { EventManager } from "../../../framework/event/EventManager";
 import { GameEvent } from "../../../framework/event/EventName";
 import { Actor } from "../domain/Actor";
+import { colorFromItemId, isPulp } from "../domain/Barrel";
 import { ITEM_STACK_CAP, isCoin, ItemStack } from "../domain/ItemStack";
 import { Station, StationType } from "../domain/Station";
 import { stackFromHoldPoint, StationBinding } from "../sim/StationRegistry";
@@ -399,8 +400,9 @@ function refuseTip(station: Station, hand?: ItemStack | null): string {
         return "空手才能接原浆";
     }
     if (station.type === StationType.MagicBarrel) {
-        if (station.barrel && station.barrel.charges > 0) {
-            return "桶里还有饮料，先接完再灌";
+        const pulpColor = held && isPulp(held.itemId) ? colorFromItemId(held.itemId) : null;
+        if (pulpColor && station.barrel?.color && station.barrel.color !== pulpColor) {
+            return "只能灌相同颜色的原浆";
         }
         return "只有原浆才能灌进魔法桶";
     }

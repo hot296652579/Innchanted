@@ -31575,7 +31575,7 @@
     ],
     "value": {
       "__type__": "cc.Vec3",
-      "x": -9.737,
+      "x": -11.188,
       "y": 4.583,
       "z": -17.601
     }
@@ -31619,7 +31619,7 @@
     "propertyPath": [
       "_active"
     ],
-    "value": false
+    "value": true
   },
   {
     "__type__": "cc.PrefabInfo",

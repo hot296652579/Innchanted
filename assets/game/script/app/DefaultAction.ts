@@ -135,7 +135,7 @@ function resolveMagicBarrel(hand: ItemStack | null, station: Station): ActionKin
         if (!color) {
             return "RefuseSwap";
         }
-        if (tank.charges > 0) {
+        if (tank.charges > 0 && tank.color && tank.color !== color) {
             return "RefuseSwap";
         }
         return "AcceptFill";
