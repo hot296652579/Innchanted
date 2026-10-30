@@ -24,6 +24,10 @@ export type EventDef = {
     goals?: string[];
     hitCount?: number;
     prefabs?: string[];
+    introSpawnName?: string;
+    introPrefab?: string;
+    introTalk?: string;
+    introTalkSec?: number;
 };
 
 const FALLBACK: EventDef[] = [
@@ -97,6 +101,10 @@ const FALLBACK: EventDef[] = [
         hitCount: 4,
         spawnName: "AttackPoints",
         prefabs: ["prefab/enemys/AttackEnemy1", "prefab/enemys/AttackEnemy2"],
+        introSpawnName: "WizardSwapnPoint",
+        introPrefab: "prefab/enemys/Wizard",
+        introTalk: "给我狠狠的砸！",
+        introTalkSec: 1,
         flySpeed: 2.2,
         warnText: "有怪物来砸店了！",
         failText: "操作台被砸坏了！",

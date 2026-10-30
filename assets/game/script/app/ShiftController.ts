@@ -147,6 +147,8 @@ export class ShiftController {
             showFace: (id, follow, kind) => this._guests?.playFace(id, follow, kind),
             showFaceAt: (id, world, kind) => this._guests?.playFaceAt(id, world, kind),
             hideFace: (id) => this._guests?.hideFace(id),
+            showTalk: (id, follow, text) => this._guests?.showTalk(id, follow, text),
+            hideTalk: (id) => this._guests?.hideTalk(id),
             windStations: (types, count, unlockItemId, prefab) =>
                 this._winds?.seal(this._registry, types, count, unlockItemId, prefab) ?? Promise.resolve(0),
             burstFx: (host, key, duration, worldFrom, liftY) =>

@@ -6,10 +6,12 @@ import { ResourceManager } from "../../../../framework/resource/ResourceManager"
 import { findNamedDescendant, StationBinding } from "../../sim/StationRegistry";
 import { Enemy } from "../../view/Enemy";
 import { RaiderView } from "../../view/RaiderView";
+import { WizardView } from "../../view/WizardView";
 import { EventDef } from "../EventCatalog";
 import { IIncident, IncidentContext, OccupiedSeat, showDeathMark } from "./Incident";
 
-type Phase = "boot" | "run" | "done";
+type Phase = "boot" | "intro" | "run" | "done";
+type IntroPhase = "spawn" | "talk" | "fade";
 type UnitPhase = "smoke" | "appearing" | "toStation" | "hitStation" | "toGuest" | "scare" | "toLeave" | "dying";
 
 const SMOKE_SEC = 1;
@@ -24,6 +26,12 @@ const FILL_GAP = 0.2;
 const DEFAULT_GOALS = ["station", "guest"];
 const DEFAULT_TYPES = ["cook", "place", "itemstand"];
 const DEFAULT_PREFABS = ["prefab/enemys/AttackEnemy1", "prefab/enemys/AttackEnemy2"];
+const INTRO_SPAWN = "WizardSwapnPoint";
+const INTRO_PREFAB = "prefab/enemys/Wizard";
+const INTRO_TALK = "给我狠狠的砸！";
+const INTRO_TALK_SEC = 1;
+const INTRO_FADE_SEC = 0.4;
+const WIZARD_TALK_ID = "raider_wizard";
 
 /** 攻击怪不选这些台。后续加条件往这张表里写。 */
 const STATION_BLOCKS: Array<(binding: StationBinding) => boolean> = [
@@ -54,6 +62,10 @@ export class RaiderIncident implements IIncident {
     private _spawns: Node[] = [];
     private _leave: Node | null = null;
     private _enemyPrefabs: Prefab[] = [];
+    private _wizardPrefab: Prefab | null = null;
+    private _wizard = new WizardView();
+    private _intro: IntroPhase = "spawn";
+    private _introRemain = 0;
     private _spawnWait = 0;
     private _hitUnit: Unit | null = null;
     private _nextId = 1;
@@ -123,6 +135,10 @@ export class RaiderIncident implements IIncident {
     }
 
     tick(dt: number): void {
+        if (this._phase === "intro") {
+            this.tickIntro(dt);
+            return;
+        }
         if (this._phase !== "run") {
             return;
         }
@@ -136,11 +152,12 @@ export class RaiderIncident implements IIncident {
     }
 
     cancel(): void {
+        this._phase = "done";
+        this.clearIntro();
         for (let i = this._units.length - 1; i >= 0; i--) {
             this.removeUnit(this._units[i], false);
         }
         this._units.length = 0;
-        this._phase = "done";
     }
 
     private async boot(): Promise<void> {
@@ -164,9 +181,14 @@ export class RaiderIncident implements IIncident {
             return;
         }
         this._enemyPrefabs = loaded;
-        this._phase = "run";
-        this._spawnWait = 0;
-        this.trySpawn();
+        const introPath = this.def.introPrefab ?? INTRO_PREFAB;
+        this._wizardPrefab = introPath ? await res.loadPrefab(introPath, BundlesEnum.Game) : null;
+        if (this._phase !== "boot") {
+            return;
+        }
+        if (!this.startIntro()) {
+            this.startRaid();
+        }
     }
 
     private trySpawn(): void {
@@ -194,6 +216,71 @@ export class RaiderIncident implements IIncident {
         this._units.push(unit);
         this._spawnWait = this._units.length >= this.cap() ? this.interval() : FILL_GAP;
         console.log("[Event] 攻击怪冒烟", spawn.name, this._units.length, "/", this.cap());
+    }
+
+    private startIntro(): boolean {
+        const ctx = this._ctx;
+        const prefab = this._wizardPrefab;
+        if (!ctx || !prefab) {
+            return false;
+        }
+        const spawn = findNamedDescendant(ctx.levelRoot, this.def.introSpawnName ?? INTRO_SPAWN);
+        if (!spawn) {
+            console.warn("[Event] 场景里没有", this.def.introSpawnName ?? INTRO_SPAWN);
+            return false;
+        }
+        const actor = instantiate(prefab);
+        actor.name = "Wizard";
+        ctx.levelRoot.addChild(actor);
+        actor.setWorldPosition(spawn.worldPosition);
+        actor.setWorldRotation(spawn.worldRotation);
+        actor.active = true;
+        this._wizard.bind(actor);
+        this._intro = "spawn";
+        this._introRemain = this._wizard.playSpawn();
+        this._phase = "intro";
+        console.log("[Event] 巫师出场", spawn.name, this._introRemain.toFixed(2), "s");
+        return true;
+    }
+
+    private tickIntro(dt: number): void {
+        this._introRemain -= dt;
+        if (this._introRemain > 0) {
+            return;
+        }
+        if (this._intro === "spawn") {
+            this._wizard.playIdle();
+            const follow = this._wizard.face ?? this._wizard.node;
+            const talk = this.def.introTalk ?? INTRO_TALK;
+            if (follow?.isValid) {
+                this._ctx?.showTalk?.(WIZARD_TALK_ID, follow, talk);
+            }
+            this._intro = "talk";
+            this._introRemain = this.def.introTalkSec ?? INTRO_TALK_SEC;
+            console.log("[Event] 巫师喊话", talk);
+            return;
+        }
+        if (this._intro === "talk") {
+            this._ctx?.hideTalk?.(WIZARD_TALK_ID);
+            this._intro = "fade";
+            this._introRemain = INTRO_FADE_SEC;
+            this._wizard.fadeOut(INTRO_FADE_SEC);
+            console.log("[Event] 巫师淡出");
+            return;
+        }
+        this.clearIntro();
+        this.startRaid();
+    }
+
+    private startRaid(): void {
+        this._phase = "run";
+        this._spawnWait = 0;
+        this.trySpawn();
+    }
+
+    private clearIntro(): void {
+        this._ctx?.hideTalk?.(WIZARD_TALK_ID);
+        this._wizard.destroy();
     }
 
     private tickUnit(unit: Unit, dt: number): void {

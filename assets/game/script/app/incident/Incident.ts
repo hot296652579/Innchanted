@@ -23,6 +23,8 @@ export type IncidentContext = {
     showFace?: (id: string, follow: Node, kind: string) => void;
     showFaceAt?: (id: string, world: Vec3, kind: string) => void;
     hideFace?: (id: string) => void;
+    showTalk?: (id: string, follow: Node, text: string) => void;
+    hideTalk?: (id: string) => void;
     windStations?: (types: string[], count: number, unlockItemId: string, prefab?: string) => Promise<number>;
     burstFx?: (host: Node, key: string, duration: number, worldFrom?: Node | null, liftY?: number) => void;
     camera?: Camera;

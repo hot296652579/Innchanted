@@ -315,6 +315,14 @@ export class GuestLoop {
         this._faces.hide(id);
     }
 
+    showTalk(id: string, follow: Node, text: string): void {
+        this._faces.showTalk(id, follow, text);
+    }
+
+    hideTalk(id: string): void {
+        this._faces.hideTalk(id);
+    }
+
     /** 台上物品给这桌客人：解药则叫醒，对上订单则推进或付钱离开。 */
     tryServe(binding: StationBinding): ServeResult | null {
         const itemId = binding.station.slot?.itemId;

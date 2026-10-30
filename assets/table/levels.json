@@ -17,10 +17,10 @@
     "map": 2,
     "duration": 180,
     "stars": [18, 36, 55],
-    "eventIds": ["skeleton"],
+    "eventIds": [],
     "delay": 10,
     "guestInterval": 1,
-    "guests": ["regularguest", "regularguest2", "regularguest", "regularguest1", "regularguest2","regularguest"],
+    "guests": ["regularguest", "regularguest2","gourmetguest", "regularguest", "regularguest1", "regularguest2","regularguest","gourmetguest"],
     "guestOrders": {
       "regularguest": ["magicdrink_brown", "magicdrink_green", "magicdrink_red"]
     }
@@ -33,7 +33,7 @@
     "eventIds": ["thief"],
     "delay": 10,
     "guestInterval": 1,
-    "guests": ["regularguest", "regularguest2", "regularguest", "regularguest1", "regularguest2", "regularguest", "regularguest1", "regularguest2"],
+    "guests": ["regularguest", "regularguest2", "regularguest","gourmetguest","regularguest1", "regularguest2", "regularguest","gourmetguest", "regularguest1", "regularguest2"],
     "guestOrders": {
       "regularguest": ["steakbaked"]
     }
