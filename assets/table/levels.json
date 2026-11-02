@@ -21,7 +21,10 @@
       { "target": "OriginalBarrel0", "text": "点击棕色原浆桶，接取原浆", "wait": "pulp" },
       { "target": "Barrel", "text": "走到魔法桶，把原浆灌进去", "wait": "fill" },
       { "target": "Barrel", "text": "再点击魔法桶，就可以接取魔法饮料哦~", "wait": "drink" },
-      { "target": "guest", "text": "客人入座后，把饮料端上桌", "wait": "serve" }
+      { "target": "guest", "text": "等待客人入座后，把饮料端上桌", "wait": "serve" },
+      { "target": "guest", "text": "点击餐桌，拾取客人留下的金币", "wait": "coin" },
+      { "target": "TreasuerBox", "text": "把金币存进宝箱", "wait": "bank" },
+      { "target": "", "text": "客人会一批批到来哦，好好招待你的客人吧~", "wait": "tip", "duration": 4 }
     ]
   },
   {

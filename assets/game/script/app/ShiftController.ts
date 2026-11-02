@@ -290,9 +290,14 @@ export class ShiftController {
         if (!this._commands || !this._actor) {
             return;
         }
-        if (this._guide?.active && !this._guide.allowsClick(hit)) {
-            EventManager.getInstance().emit(GameEvent.SHOW_TIPS, "请点击箭头指示的位置");
-            return;
+        if (this._guide?.active) {
+            if (this._guide.consumeClick()) {
+                return;
+            }
+            if (!this._guide.allowsClick(hit)) {
+                EventManager.getInstance().emit(GameEvent.SHOW_TIPS, "请点击箭头指示的位置");
+                return;
+            }
         }
         if (hit.target.kind === "self") {
             this._guests?.cancelHold();

@@ -4,12 +4,14 @@ import { ConfigManager } from "../../../framework/config/ConfigManager";
 export type LevelGuestOrderSlots = string[] | string[][];
 
 /** 引导一步：target 是台子名，guest 表示入座客人的桌子。 */
-export type GuideWait = "pulp" | "fill" | "drink" | "serve";
+export type GuideWait = "pulp" | "fill" | "drink" | "serve" | "coin" | "bank" | "tip";
 
 export type GuideStepDef = {
     target: string;
     text: string;
     wait: GuideWait;
+    /** tip 步停留秒数，点任意处也可结束。 */
+    duration?: number;
 };
 
 export type LevelDef = {
