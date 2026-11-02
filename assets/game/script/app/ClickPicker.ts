@@ -11,6 +11,7 @@ import {
     MeshRenderer,
     Node,
     sys,
+    UIMeshRenderer,
     Vec3,
 } from "cc";
 import { CommandTarget } from "../domain/Command";
@@ -20,6 +21,8 @@ import { Enemy } from "../view/Enemy";
 const { ccclass } = _decorator;
 
 const PLAYER_SPHERE_R = 0.7;
+const KITCHEN_FLOOR = "floor_kitchen";
+const OVERLAY_NAMES = ["icesheet", "navmeshdebug", "debugnav"];
 
 export type ClickHit = {
     target: CommandTarget;
@@ -170,20 +173,64 @@ export class ClickPicker extends Component {
         };
     }
 
+    /** 只点 Plane 下的 floor_kitchen 地砖才走路。冰面/调试网格忽略；厨房外物体挡住则不寻路。 */
     private pickGround(ray: geometry.Ray): Vec3 | null {
+        if (!this.planeRoot) {
+            return null;
+        }
+        const kitchen = this.raycastHit(ray, this.planeRoot, (node) => this.isKitchenFloor(node));
+        if (!kitchen) {
+            return null;
+        }
+        const worldRoot = this.levelRoot ?? this.planeRoot;
+        const front = this.raycastHit(ray, worldRoot, (node) => !this.isOverlay(node));
+        if (front && !this.isKitchenFloor(front.node) && front.distance + 0.02 < kitchen.distance) {
+            return null;
+        }
         const floorY = this.player?.worldPosition.y ?? this.planeY();
-        if (Math.abs(ray.d.y) < 1e-5) {
-            return null;
-        }
-        const t = (floorY - ray.o.y) / ray.d.y;
-        if (t < 0) {
-            return null;
-        }
         return new Vec3(
-            ray.o.x + ray.d.x * t,
+            ray.o.x + ray.d.x * kitchen.distance,
             floorY,
-            ray.o.z + ray.d.z * t,
+            ray.o.z + ray.d.z * kitchen.distance,
         );
+    }
+
+    private isKitchenFloor(node: Node): boolean {
+        const plane = this.planeRoot;
+        if (!plane) {
+            return false;
+        }
+        let current: Node | null = node;
+        let underPlane = false;
+        let kitchen = false;
+        while (current) {
+            if (current.name.toLowerCase().includes(KITCHEN_FLOOR)) {
+                kitchen = true;
+            }
+            if (current === plane) {
+                underPlane = true;
+                break;
+            }
+            current = current.parent;
+        }
+        return underPlane && kitchen;
+    }
+
+    private isOverlay(node: Node): boolean {
+        if (node.getComponent(UIMeshRenderer)) {
+            return true;
+        }
+        let current: Node | null = node;
+        while (current) {
+            const name = current.name.toLowerCase();
+            for (let i = 0; i < OVERLAY_NAMES.length; i++) {
+                if (name.includes(OVERLAY_NAMES[i])) {
+                    return true;
+                }
+            }
+            current = current.parent;
+        }
+        return false;
     }
 
     private planeY(): number {
@@ -263,25 +310,51 @@ export class ClickPicker extends Component {
     }
 
     private raycastMeshes(ray: geometry.Ray, root: Node): Node | null {
+        return this.raycastHit(ray, root)?.node ?? null;
+    }
+
+    private raycastHit(
+        ray: geometry.Ray,
+        root: Node,
+        accept?: (node: Node) => boolean,
+    ): { node: Node; distance: number } | null {
         const renderers = root.getComponentsInChildren(MeshRenderer);
         let bestDistance = Number.MAX_VALUE;
         let bestNode: Node | null = null;
         for (let i = 0; i < renderers.length; i++) {
-            const model = renderers[i].model;
-            if (!model) {
+            const node = renderers[i].node;
+            if (accept && !accept(node)) {
                 continue;
             }
+            const distance = this.hitRenderer(ray, renderers[i]);
+            if (distance !== null && distance < bestDistance) {
+                bestDistance = distance;
+                bestNode = node;
+            }
+        }
+        if (!bestNode) {
+            return null;
+        }
+        return { node: bestNode, distance: bestDistance };
+    }
+
+    private hitRenderer(ray: geometry.Ray, renderer: MeshRenderer): number | null {
+        const model = renderer.model;
+        if (model) {
             const distance = geometry.intersect.rayModel(ray, model, {
                 mode: geometry.ERaycastMode.CLOSEST,
                 doubleSided: true,
                 distance: Number.MAX_SAFE_INTEGER,
             });
-            if (distance && distance < bestDistance) {
-                bestDistance = distance;
-                bestNode = renderers[i].node;
+            if (distance) {
+                return distance;
+            }
+            const aabbHit = geometry.intersect.rayAABB(ray, model.worldBounds);
+            if (aabbHit) {
+                return aabbHit;
             }
         }
-        return bestNode;
+        return null;
     }
 
     private isUiEvent(target: Node | null): boolean {
