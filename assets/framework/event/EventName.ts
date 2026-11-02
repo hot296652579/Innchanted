@@ -40,6 +40,8 @@ export enum GameEvent {
     ITEM_HELD_CHANGED = "ITEM_HELD_CHANGED",
     /** 放置台槽位变化 */
     STATION_SLOT_CHANGED = "STATION_SLOT_CHANGED",
+    /** 原浆桶/魔法桶完成接取或灌装（stationId, pulp|fill|drink） */
+    BARREL_DONE = "BARREL_DONE",
     /** 客人入座并亮出订单 */
     ORDER_SHOWN = "ORDER_SHOWN",
     /** 上菜成功 */

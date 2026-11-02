@@ -288,6 +288,19 @@ export class GuestLoop {
         return this.seatedAt(tableId) !== null;
     }
 
+    /** 已入座客人的桌子，给引导箭头跟着。 */
+    seatedFollow(): { tableId: string; node: Node } | null {
+        for (let i = 0; i < this._runtimes.length; i++) {
+            const runtime = this._runtimes[i];
+            const table = runtime.layout.table;
+            if (!table || !runtime.guest.seated) {
+                continue;
+            }
+            return { tableId: table.station.id, node: table.node };
+        }
+        return null;
+    }
+
     /** 这张桌客人节点，给上菜特效跟在客人身边。 */
     guestNodeAt(tableId: string): Node | null {
         for (let i = 0; i < this._runtimes.length; i++) {

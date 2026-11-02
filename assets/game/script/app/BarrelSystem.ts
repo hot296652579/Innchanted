@@ -160,6 +160,7 @@ export class BarrelSystem {
         this.playerView.playThrow();
         EventManager.getInstance().emit(GameEvent.ITEM_HELD_CHANGED, this.actor.id, this.actor.hand);
         EventManager.getInstance().emit(GameEvent.STATION_SLOT_CHANGED, binding.station.id);
+        EventManager.getInstance().emit(GameEvent.BARREL_DONE, binding.station.id, kind);
     }
 
     private givePulp(color: BarrelColor): void {

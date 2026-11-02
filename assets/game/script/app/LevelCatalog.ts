@@ -3,6 +3,15 @@ import { ConfigManager } from "../../../framework/config/ConfigManager";
 /** 一关里某种客人的订单：一维是随机池，二维是多道菜（每道再随机）。 */
 export type LevelGuestOrderSlots = string[] | string[][];
 
+/** 引导一步：target 是台子名，guest 表示入座客人的桌子。 */
+export type GuideWait = "pulp" | "fill" | "drink" | "serve";
+
+export type GuideStepDef = {
+    target: string;
+    text: string;
+    wait: GuideWait;
+};
+
 export type LevelDef = {
     id: number;
     duration: number;
@@ -14,6 +23,7 @@ export type LevelDef = {
     guestInterval?: number;
     restTimes?: number[];
     restDuration?: number;
+    guide?: GuideStepDef[];
     map?: number;
 };
 

@@ -25,6 +25,7 @@ import { CombineCatalog } from "./Combine";
 import { CommandService } from "./CommandService";
 import { allEventDefs } from "./EventCatalog";
 import { EventDirector } from "./EventDirector";
+import { GuideDirector } from "./GuideDirector";
 import { GuestLoop } from "./GuestLoop";
 import { InteractService } from "./InteractService";
 import { findLevel, guestWaves, settleStars } from "./LevelCatalog";
@@ -71,6 +72,7 @@ export class ShiftController {
     private _resting = false;
     private _restLeft = 0;
     private _ended = false;
+    private _guide: GuideDirector | null = null;
     private _alive = true;
 
     async start(args: ShiftStartArgs): Promise<void> {
@@ -178,23 +180,37 @@ export class ShiftController {
         this._restIndex = 0;
         this._resting = false;
         this._restLeft = 0;
+        this._guide = new GuideDirector(args.camera);
+        await this._guide.load();
+        if (this.leftBattle(args)) {
+            return;
+        }
+        this._guide.start(level.guide, this._registry, this._guests!);
         EventManager.getInstance().emit(GameEvent.SHIFT_READY);
         console.log(`[Shift] 就绪 关卡 ${level.id} ${level.duration}s 台子 ${this._registry.all.length} 个`);
     }
 
     update(dt: number): void {
+        this._guide?.update(dt);
         this._pathfinder?.update(dt);
         this._fsm?.update(dt);
+        this._barrels?.tick(dt);
+        const guiding = this._guide?.active ?? false;
+        const guestsOn = !guiding || (this._guide?.allowsGuests ?? false);
+        if (guestsOn) {
+            this._guests?.update(dt);
+            this.tickInvite(dt);
+        }
+        this._fx?.tick(dt);
+        if (guiding) {
+            return;
+        }
         this._processors?.tick(dt);
         this._processors?.update();
-        this._barrels?.tick(dt);
-        this._guests?.update(dt);
         this._winds?.update();
         this._events?.update(dt);
         this.tickHunt(dt);
-        this.tickInvite(dt);
         this._ice?.update(dt);
-        this._fx?.tick(dt);
         this.tickRest(dt);
         this.tickWin();
         this.tickScore(dt);
@@ -219,6 +235,8 @@ export class ShiftController {
         this._ice = null;
         this._fx?.clear();
         this._fx = null;
+        this._guide?.clear();
+        this._guide = null;
         this._events?.clear();
         this._winds?.clear();
         this._winds = null;
@@ -270,6 +288,10 @@ export class ShiftController {
 
     private onClick(hit: ClickHit): void {
         if (!this._commands || !this._actor) {
+            return;
+        }
+        if (this._guide?.active && !this._guide.allowsClick(hit)) {
+            EventManager.getInstance().emit(GameEvent.SHOW_TIPS, "请点击箭头指示的位置");
             return;
         }
         if (hit.target.kind === "self") {
