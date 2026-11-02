@@ -310,6 +310,7 @@ export class InteractService {
         }
         const count = hand.count;
         this.actor.hand = null;
+        binding.station.slot = null;
         this.holds.bankInto(binding.station.id);
         this.fx.burst(binding.node, "bank", 1, binding.node, 0.5);
         const events = EventManager.getInstance();
@@ -326,6 +327,9 @@ export class InteractService {
 
     /** HoldPoint 上已有模型时补回 slot，避免看起来有货、逻辑却当成空台。 */
     private syncSlot(binding: StationBinding): void {
+        if (binding.station.type === StationType.Chest) {
+            return;
+        }
         const slot = binding.station.slot;
         if (slot && !slot.empty) {
             return;

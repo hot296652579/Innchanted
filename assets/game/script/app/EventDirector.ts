@@ -41,6 +41,7 @@ function createIncident(def: EventDef): IIncident | null {
 export class EventDirector {
     private _pending: EventDef[] = [];
     private _elapsed = 0;
+    private _paused = false;
     private readonly _running: IIncident[] = [];
     private _ctx: IncidentContext | null = null;
 
@@ -75,13 +76,21 @@ export class EventDirector {
     start(ctx: IncidentContext, eventIds?: string[]): void {
         this._pending = eventsOf(eventIds);
         this._elapsed = 0;
+        this._paused = false;
         this._running.length = 0;
         this._ctx = ctx;
         console.log("[Event] 时间轴", this._pending.map((def) => def.id).join(", ") || "无");
     }
 
+    setPaused(paused: boolean): void {
+        this._paused = paused;
+    }
+
     update(dt: number): void {
         this._elapsed += dt;
+        if (this._paused) {
+            return;
+        }
         for (let i = this._running.length - 1; i >= 0; i--) {
             const incident = this._running[i];
             incident.tick(dt);
@@ -122,6 +131,7 @@ export class EventDirector {
         }
         this._running.length = 0;
         this._pending.length = 0;
+        this._paused = false;
         this._ctx = null;
     }
 

@@ -8,12 +8,25 @@ export type LevelDef = {
     duration: number;
     stars: number[];
     eventIds?: string[];
-    guests?: string[];
+    guests?: string[] | string[][];
     guestOrders?: Record<string, LevelGuestOrderSlots>;
     delay?: number;
     guestInterval?: number;
+    restTimes?: number[];
+    restDuration?: number;
     map?: number;
 };
+
+/** 关卡客人按波次。一维配置当成一整波。 */
+export function guestWaves(guests?: string[] | string[][]): string[][] {
+    if (!guests || guests.length === 0) {
+        return [];
+    }
+    if (Array.isArray(guests[0])) {
+        return guests as string[][];
+    }
+    return [guests as string[]];
+}
 
 const FALLBACK: LevelDef[] = [
     {
@@ -21,7 +34,13 @@ const FALLBACK: LevelDef[] = [
         duration: 180,
         stars: [20, 40, 70],
         eventIds: ["lock", "thief", "whirlwind"],
-        guests: ["soldierguest", "mageguest", "regularguest", "regularguest", "gourmetguest"],
+        restTimes: [30, 60],
+        restDuration: 5,
+        guests: [
+            ["soldierguest", "mageguest"],
+            ["regularguest", "regularguest"],
+            ["gourmetguest"],
+        ],
     },
 ];
 
@@ -39,6 +58,16 @@ export function findLevel(levelId: number): LevelDef {
     return table[0] ?? FALLBACK[0];
 }
 
+export function hasLevel(levelId: number): boolean {
+    const table = allLevels();
+    for (let i = 0; i < table.length; i++) {
+        if (table[i].id === levelId) {
+            return true;
+        }
+    }
+    return false;
+}
+
 /** 场景预设：map 几就用 Level几。没写 map 时按关卡号。 */
 export function mapOf(level: LevelDef): number {
     const n = level.map ?? level.id;
@@ -48,7 +77,7 @@ export function mapOf(level: LevelDef): number {
     return 1;
 }
 
-/** 入箱金币对照星级线。0～3。结算时再用。 */
+/** 入箱金币对照星级线。0～3。星级算法待定，结算暂不调用。 */
 export function starOfGold(level: LevelDef, gold: number): number {
     const stars = level.stars ?? [];
     let n = 0;
@@ -58,4 +87,9 @@ export function starOfGold(level: LevelDef, gold: number): number {
         }
     }
     return n;
+}
+
+/** 关卡星级。算法待定，暂时返回 0。 */
+export function settleStars(_level: LevelDef, _gold: number): number {
+    return 0;
 }

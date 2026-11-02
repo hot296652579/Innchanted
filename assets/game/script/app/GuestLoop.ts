@@ -18,7 +18,7 @@ import { GuestOrderView } from "../view/GuestOrderView";
 import { PlayerView } from "../view/PlayerView";
 import { findGuestDef, GuestDef, guestPrefabPaths, isEscortGuest, pickGuestOrders, resolveGuestType } from "./GuestCatalog";
 import { goldOf, itemPrefabPath } from "./ItemCatalog";
-import { LevelGuestOrderSlots } from "./LevelCatalog";
+import { guestWaves, LevelGuestOrderSlots } from "./LevelCatalog";
 
 const SPAWN_GAP = 1;
 const SEAT_ARRIVE = 1.0;
@@ -58,6 +58,7 @@ interface GuestRuntime {
     eatLeft: number;
     leaveAfterEat: boolean;
     lined: boolean;
+    wave: number;
 }
 
 export enum ServeResult {
@@ -89,9 +90,15 @@ export class GuestLoop {
     private _spawnAt: Node | null = null;
     private _guestFolder: Node | null = null;
     private readonly _pending: PendingGuest[] = [];
+    private readonly _pools = new Map<string, Prefab[]>();
+    private _slots: SeatSlot[] = [];
+    private _waves: string[][] = [];
+    private _waveIndex = 0;
+    private _spawnPaused = false;
     private _spawnWait = 0;
     private _spawnGap = SPAWN_GAP;
     private _spawned = 0;
+    private _served = 0;
     private _coinPrefab: Prefab | null = null;
     private _yawOffset = 0;
     private _player: Node | null = null;
@@ -127,7 +134,7 @@ export class GuestLoop {
         stationRoot: Node,
         yawOffset: number,
         player?: Node | null,
-        guestIds?: string[],
+        guestIds?: string[] | string[][],
         guestDelay?: number,
         guestInterval?: number,
         guestOrders?: Record<string, LevelGuestOrderSlots>,
@@ -144,6 +151,7 @@ export class GuestLoop {
         }
         this._leavePoint = hall.leavePoint;
         this._waitPoint = hall.waitPoint;
+        this._slots = hall.slots;
         this._spawnAt = findNamedDescendant(levelRoot, "GuestSwapnPoint")
             ?? findNamedDescendant(levelRoot, "GuestSpawnPoint");
         if (!this._spawnAt) {
@@ -153,13 +161,52 @@ export class GuestLoop {
         this._guestFolder = this.ensureGuestFolder(levelRoot);
         this.hidePlaced(this._guestFolder);
         this.captureQueueDir();
-        const pending = await this.prepareGuests(guestIds ?? [], hall.slots);
-        if (pending.some((item) => item.waitInLine) && !hall.waitPoint) {
+        this._waves = guestWaves(guestIds);
+        await this.ensurePools(this.flatIds(this._waves));
+        this.enqueueWave(0, Math.max(0, guestDelay ?? 0));
+        if (this._pending.some((item) => item.waitInLine) && !hall.waitPoint) {
             console.warn("[Guest] 有人没座位，但缺少 WaitPoint");
         }
-        this._pending.push(...pending);
-        this._spawnWait = Math.max(0, guestDelay ?? 0);
-        console.log(`[Guest] ${this._spawnWait}s 后出场，间隔 ${this._spawnGap}s，共 ${pending.length} 人`);
+    }
+
+    /** 当前波未出场名单已空，且这一波在场客人都已离店。 */
+    waveGuestsGone(): boolean {
+        if (this._waves.length === 0) {
+            return false;
+        }
+        if (this._pending.length > 0) {
+            return false;
+        }
+        for (let i = 0; i < this._runtimes.length; i++) {
+            if (this._runtimes[i].wave === this._waveIndex) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    pauseSpawn(): void {
+        this._spawnPaused = true;
+    }
+
+    dropPending(): void {
+        this._pending.length = 0;
+    }
+
+    beginWave(index: number, delay = 0): void {
+        this._spawnPaused = false;
+        this.enqueueWave(index, delay);
+    }
+
+    /** 没有在场/待出场客人，且后面没有未开的波次。 */
+    allGone(): boolean {
+        if (this._spawnPaused || this._waves.length === 0) {
+            return false;
+        }
+        if (this._pending.length > 0 || this._runtimes.length > 0) {
+            return false;
+        }
+        return this._waveIndex >= this._waves.length - 1;
     }
 
     /** 每帧：头顶 UI、引座长按、每个客人的走路/等待/吃饭。 */
@@ -358,6 +405,7 @@ export class GuestLoop {
             this.hideOrder(guest.id);
             this.playEat(runtime, true);
             this.react(runtime, "happy");
+            this._served += 1;
             this.emit(GameEvent.GUEST_SERVED, guest.id, guest.orderId);
             this.emit(GameEvent.SHELL_SPAWNED, binding.station.id);
             return ServeResult.Done;
@@ -365,38 +413,63 @@ export class GuestLoop {
         return null;
     }
 
-    private async prepareGuests(guestIds: string[], slots: SeatSlot[]): Promise<PendingGuest[]> {
-        const types: string[] = [];
-        const pools = new Map<string, Prefab[]>();
+    private enqueueWave(index: number, delay: number): void {
+        if (index < 0 || index >= this._waves.length) {
+            return;
+        }
+        this._waveIndex = index;
+        this._pending.length = 0;
+        this._pending.push(...this.planWave(this._waves[index]));
+        this._spawnWait = delay;
+        console.log(`[Guest] 第 ${index + 1}/${this._waves.length} 波 ${delay}s 后出场，间隔 ${this._spawnGap}s，共 ${this._pending.length} 人`);
+    }
+
+    private flatIds(waves: string[][]): string[] {
+        const ids: string[] = [];
+        for (let i = 0; i < waves.length; i++) {
+            ids.push(...waves[i]);
+        }
+        return ids;
+    }
+
+    private async ensurePools(guestIds: string[]): Promise<void> {
         const res = ResourceManager.getInstance();
+        for (let i = 0; i < guestIds.length; i++) {
+            const def = findGuestDef(resolveGuestType(guestIds[i]));
+            if (!def || this._pools.has(def.id)) {
+                continue;
+            }
+            const loaded: Prefab[] = [];
+            const paths = guestPrefabPaths(def);
+            for (let j = 0; j < paths.length; j++) {
+                const prefab = await res.loadPrefab(paths[j], BundlesEnum.Game);
+                if (!prefab) {
+                    console.warn("[Guest] 未找到", paths[j]);
+                    continue;
+                }
+                loaded.push(prefab);
+            }
+            this._pools.set(def.id, loaded);
+        }
+    }
+
+    private planWave(guestIds: string[]): PendingGuest[] {
+        const types: string[] = [];
         for (let i = 0; i < guestIds.length; i++) {
             const def = findGuestDef(resolveGuestType(guestIds[i]));
             if (!def) {
                 console.warn("[Guest] 关卡客人未配置", guestIds[i]);
                 continue;
             }
-            if (!pools.has(def.id)) {
-                const loaded: Prefab[] = [];
-                const paths = guestPrefabPaths(def);
-                for (let j = 0; j < paths.length; j++) {
-                    const prefab = await res.loadPrefab(paths[j], BundlesEnum.Game);
-                    if (!prefab) {
-                        console.warn("[Guest] 未找到", paths[j]);
-                        continue;
-                    }
-                    loaded.push(prefab);
-                }
-                pools.set(def.id, loaded);
-            }
-            if ((pools.get(def.id)?.length ?? 0) === 0) {
+            if ((this._pools.get(def.id)?.length ?? 0) === 0) {
                 continue;
             }
             types.push(def.id);
         }
-        const plans = planGuests(types, slots);
+        const plans = planGuests(types, this.openSlots());
         const pending: PendingGuest[] = [];
         for (let i = 0; i < plans.length; i++) {
-            const pool = pools.get(plans[i].guestType);
+            const pool = this._pools.get(plans[i].guestType);
             if (!pool?.length) {
                 continue;
             }
@@ -406,7 +479,7 @@ export class GuestLoop {
     }
 
     private tickSpawn(dt: number): void {
-        if (this._pending.length === 0) {
+        if (this._spawnPaused || this._pending.length === 0) {
             return;
         }
         this._spawnWait -= dt;
@@ -480,7 +553,7 @@ export class GuestLoop {
         const agent = new GridAgent(this.pathfinder, agentId, SEAT_ARRIVE);
         const view = node.getComponent(PlayerView) ?? node.addComponent(PlayerView);
         view.bind(this.pathfinder, agentId, startPos.y - this.pathfinder.getPosition(agentId).y, this._yawOffset, 8);
-        const runtime: GuestRuntime = { layout, guest, fsm, view, agent, eatLeft: 0, leaveAfterEat: false, lined: false };
+        const runtime: GuestRuntime = { layout, guest, fsm, view, agent, eatLeft: 0, leaveAfterEat: false, lined: false, wave: this._waveIndex };
         this._runtimes.push(runtime);
         if (isEscortGuest(layout.guestType) && def.markPrefab) {
             void this._escort.ensureMark(def.markPrefab);
@@ -716,8 +789,14 @@ export class GuestLoop {
         this._queue.length = 0;
         this._freeSeats.length = 0;
         this._pending.length = 0;
+        this._pools.clear();
+        this._slots = [];
+        this._waves = [];
+        this._waveIndex = 0;
+        this._spawnPaused = false;
         this._spawnWait = 0;
         this._spawned = 0;
+        this._served = 0;
         this._hold = null;
         this._escortId = null;
         this._levelOrders = null;
@@ -748,6 +827,24 @@ export class GuestLoop {
         this._hold = { kind, guestId: runtime.guest.id, tableId, elapsed: 0, duration };
         this._escort.showBar(follow, 0);
         return true;
+    }
+
+    /** 还没被占用的普通桌，给下一波分座。 */
+    private openSlots(): SeatSlot[] {
+        const taken = new Set<string>();
+        for (let i = 0; i < this._runtimes.length; i++) {
+            const table = this._runtimes[i].layout.table;
+            if (table && this._runtimes[i].guest.usingTable) {
+                taken.add(table.station.id);
+            }
+        }
+        const free: SeatSlot[] = [];
+        for (let i = 0; i < this._slots.length; i++) {
+            if (!taken.has(this._slots[i].table.station.id)) {
+                free.push(this._slots[i]);
+            }
+        }
+        return free;
     }
 
     private collectEmptyTables(): void {

@@ -123,4 +123,11 @@ export const UIConfig = {
         bundle: "game",
         cache: false,
     },
+    /**休息一会*/
+    RestWnd: {
+        name: "RestWnd",
+        path: "prefab/ui/poup/RestWnd",
+        bundle: "game",
+        cache: false,
+    },
 } satisfies Record<string, UIInfo>;

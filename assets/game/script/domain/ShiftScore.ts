@@ -41,4 +41,8 @@ export class ShiftScore {
     get shownRemain(): number {
         return Math.max(0, Math.ceil(this.remain));
     }
+
+    get elapsed(): number {
+        return Math.max(0, this.duration - this.remain);
+    }
 }

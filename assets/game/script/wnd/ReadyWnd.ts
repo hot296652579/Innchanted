@@ -24,9 +24,14 @@ export class ReadyWnd extends BaseWindow {
         this.node.setScale(0, 0, 1);
         tween(this.node)
             .to(POP_SEC, { scale: new Vec3(1, 1, 1) }, { easing: "backOut" })
-            .delay(SHOW_SEC)
+            .delay(this.popDuration())
             .call(() => this.finishShow())
             .start();
+    }
+
+    protected popDuration(): number {
+        const n = this._openParam?.duration;
+        return typeof n === "number" && n > 0 ? n : SHOW_SEC;
     }
 
     private finishShow(): void {

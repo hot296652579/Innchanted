@@ -33,6 +33,7 @@ export class StartScene extends Component {
         uiMgr.registerWindow(UIConfig.ConfirmWnd.name, UIConfig.ConfirmWnd.path, UIConfig.ConfirmWnd.cache, BundlesEnum.Game);
         uiMgr.registerWindow(UIConfig.ReadyWnd.name, UIConfig.ReadyWnd.path, UIConfig.ReadyWnd.cache, BundlesEnum.Game);
         uiMgr.registerWindow(UIConfig.InviteWnd.name, UIConfig.InviteWnd.path, UIConfig.InviteWnd.cache, BundlesEnum.Game);
+        uiMgr.registerWindow(UIConfig.RestWnd.name, UIConfig.RestWnd.path, UIConfig.RestWnd.cache, BundlesEnum.Game);
 
         const openWnd = BattleContext.pendingStartWindow ?? UIConfig.StartWnd.name;
         BattleContext.pendingStartWindow = null;

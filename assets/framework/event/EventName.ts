@@ -54,6 +54,8 @@ export enum GameEvent {
     LEVEL_GOLD_CHANGED = "LEVEL_GOLD_CHANGED",
     /** 本关时间到 */
     LEVEL_TIME_UP = "LEVEL_TIME_UP",
+    /** 本关通关（招待完毕且金币已入箱） */
+    LEVEL_CLEARED = "LEVEL_CLEARED",
     /** 客人等待超时生气 */
     GUEST_ANGRY = "GUEST_ANGRY",
     /** 客人走到离店点 */
@@ -65,6 +67,8 @@ export enum GameEvent {
     SHIFT_READY = "SHIFT_READY",
     /** 关卡 delay 到，开始招待客人 */
     GUEST_INVITE = "GUEST_INVITE",
+    /** 波次之间休息（秒） */
+    SHIFT_REST = "SHIFT_REST",
 
     /** 突发事件进入预兆倒计时 */
     EVENT_WARN = "EVENT_WARN",
