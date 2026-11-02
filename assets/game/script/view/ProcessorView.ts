@@ -27,7 +27,7 @@ export class ProcessorView {
 
     async load(): Promise<void> {
         const res = ResourceManager.getInstance();
-        this._barPrefab = await res.loadPrefab("prefab/LoadingBar", BundlesEnum.Game);
+        this._barPrefab = await res.loadPrefab("prefab/ui/LoadingBar", BundlesEnum.Game);
         const cooked = ["burgerbaked", "chickenlegbaked", "steakbaked"];
         for (let i = 0; i < cooked.length; i++) {
             const itemId = cooked[i];
@@ -39,7 +39,7 @@ export class ProcessorView {
             await this.loadOutput(res, path, itemId);
         }
         if (!this._barPrefab) {
-            console.warn("[Cook] 未找到 prefab/LoadingBar");
+            console.warn("[Cook] 未找到 prefab/ui/LoadingBar");
         }
     }
 

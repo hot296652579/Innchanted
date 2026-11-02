@@ -58,7 +58,7 @@ export class BarrelView {
 
     async load(): Promise<void> {
         const res = ResourceManager.getInstance();
-        this._barPrefab = await res.loadPrefab("prefab/AcceptLoading", BundlesEnum.Game);
+        this._barPrefab = await res.loadPrefab("prefab/ui/AcceptLoading", BundlesEnum.Game);
         this._white = await res.load("mat/white_material", Material, BundlesEnum.Game);
         const matColors = Object.keys(BARREL_MAT_PATH) as BarrelColor[];
         for (const color of matColors) {
@@ -84,7 +84,7 @@ export class BarrelView {
             }
         }
         if (!this._barPrefab) {
-            console.warn("[Barrel] 未找到 prefab/AcceptLoading");
+            console.warn("[Barrel] 未找到 prefab/ui/AcceptLoading");
         }
     }
 

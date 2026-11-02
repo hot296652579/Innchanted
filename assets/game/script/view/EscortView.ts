@@ -3,7 +3,7 @@ import { BundlesEnum } from "../../../define/BundlesEnum";
 import { ResourceManager } from "../../../framework/resource/ResourceManager";
 import { UILayerRoot, UILayerType } from "../../../framework/ui/UILayer";
 
-const BAR_PATH = "prefab/LoadingBar";
+const BAR_PATH = "prefab/ui/LoadingBar";
 const BAR_Y_OFFSET = 90;
 const MARK_Y_OFFSET = 18;
 const _world = new Vec3();
@@ -18,7 +18,7 @@ export class EscortView {
     private readonly _marks = new Map<string, Node>();
     private readonly _markPrefabs = new Map<string, Prefab>();
 
-    constructor(private readonly camera: Camera | null) {}
+    constructor(private readonly camera: Camera | null) { }
 
     async load(): Promise<void> {
         this._barPrefab = await ResourceManager.getInstance().loadPrefab(BAR_PATH, BundlesEnum.Game);
