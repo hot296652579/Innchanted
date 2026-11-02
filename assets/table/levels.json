@@ -24,7 +24,7 @@
       { "target": "guest", "text": "等待客人入座后，把饮料端上桌", "wait": "serve" },
       { "target": "guest", "text": "点击餐桌，拾取客人留下的金币", "wait": "coin" },
       { "target": "TreasuerBox", "text": "把金币存进宝箱", "wait": "bank" },
-      { "target": "", "text": "客人会一批批到来哦，好好招待你的客人吧~", "wait": "tip", "duration": 4 }
+      { "target": "", "text": "记得要把客人留下的金币及时存入宝箱哦~", "wait": "tip", "duration": 4 }
     ]
   },
   {
@@ -44,7 +44,11 @@
     ],
     "guestOrders": {
       "regularguest": ["magicdrink_brown", "magicdrink_green", "magicdrink_red"]
-    }
+    },
+    "guide": [
+      { "target": "gourmetguest", "text": "", "wait": "seat" },
+      { "target": "guest", "text": "这是美食家客人，会点多道菜，每一道都要上对才行哦~", "wait": "tip", "duration": 3 }
+    ]
   },
   {
     "id": 3,

@@ -4,6 +4,7 @@ import { GameEvent } from "../../../framework/event/EventName";
 import { isCoin } from "../domain/ItemStack";
 import { StationRegistry } from "../sim/StationRegistry";
 import { GuideView } from "../view/GuideView";
+import { resolveGuestType } from "./GuestCatalog";
 import { ClickHit } from "./ClickPicker";
 import { GuestLoop } from "./GuestLoop";
 import { GuideStepDef, GuideWait } from "./LevelCatalog";
@@ -28,10 +29,15 @@ export class GuideDirector {
         return this._index >= 0 && this._index < this._steps.length;
     }
 
-    /** 前三步冻住客人；上菜及之后放客人走动。 */
+    /** 等客人入座时不冻局；真正出引导文案时才停倒计时。 */
+    get pausing(): boolean {
+        return this.active && this.step()?.wait !== "seat";
+    }
+
+    /** 等入座、上菜、拾金币、存箱时客人照常动；接原浆/灌桶/提示时冻住。 */
     get allowsGuests(): boolean {
         const wait = this.step()?.wait;
-        return !!wait && wait !== "pulp" && wait !== "fill" && wait !== "drink";
+        return wait === "seat" || wait === "serve" || wait === "coin" || wait === "bank";
     }
 
     async load(): Promise<void> {
@@ -63,6 +69,9 @@ export class GuideDirector {
         const step = this.step();
         if (!step || step.wait === "tip") {
             return false;
+        }
+        if (step.wait === "seat") {
+            return true;
         }
         if (hit.target.kind !== "place") {
             return false;
@@ -126,6 +135,12 @@ export class GuideDirector {
         this._index = index;
         this._tipLeft = 0;
         const step = this._steps[index];
+        if (step.wait === "seat") {
+            this._tableId = null;
+            this._view.hide();
+            console.log(`[Guide] 第 ${index + 1} 步 等待`, step.target, "入座");
+            return;
+        }
         this._view.showText(step.text);
         if (step.wait === "serve") {
             this._tableId = null;
@@ -146,13 +161,16 @@ export class GuideDirector {
             console.log(`[Guide] 第 ${index + 1} 步`, "coin", this._tableId);
             return;
         }
-        this._tableId = null;
         if (step.wait === "tip") {
-            this._view.pointAt(null);
+            this._tableId = keepTable;
+            const guestNode = keepTable ? this._guests?.guestNodeAt(keepTable) ?? null : null;
+            const tableNode = keepTable ? this._registry?.get(keepTable)?.node ?? null : null;
+            this._view.pointAt(guestNode ?? tableNode);
             this._tipLeft = step.duration && step.duration > 0 ? step.duration : TIP_SEC;
             console.log(`[Guide] 第 ${index + 1} 步`, "tip");
             return;
         }
+        this._tableId = null;
         const binding = this._registry?.get(step.target) ?? null;
         this._view.pointAt(binding?.node ?? null);
         console.log(`[Guide] 第 ${index + 1} 步`, step.target, step.wait);
@@ -166,8 +184,23 @@ export class GuideDirector {
         this.showStep(this._index + 1);
     }
 
-    private onOrderShown(): void {
-        if (this.step()?.wait === "serve") {
+    private onOrderShown(guestId: string): void {
+        const step = this.step();
+        if (!step) {
+            return;
+        }
+        if (step.wait === "seat") {
+            if (step.target && resolveGuestType(guestId) !== step.target) {
+                return;
+            }
+            const follow = this._guests?.seatedFollowById(guestId);
+            if (follow) {
+                this._tableId = follow.tableId;
+            }
+            this.showStep(this._index + 1);
+            return;
+        }
+        if (step.wait === "serve") {
             this.tryPointGuest();
         }
     }

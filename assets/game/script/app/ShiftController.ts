@@ -195,14 +195,14 @@ export class ShiftController {
         this._pathfinder?.update(dt);
         this._fsm?.update(dt);
         this._barrels?.tick(dt);
-        const guiding = this._guide?.active ?? false;
-        const guestsOn = !guiding || (this._guide?.allowsGuests ?? false);
+        const pausing = this._guide?.pausing ?? false;
+        const guestsOn = !pausing || (this._guide?.allowsGuests ?? false);
         if (guestsOn) {
             this._guests?.update(dt);
             this.tickInvite(dt);
         }
         this._fx?.tick(dt);
-        if (guiding) {
+        if (pausing) {
             return;
         }
         this._processors?.tick(dt);

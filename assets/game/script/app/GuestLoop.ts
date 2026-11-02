@@ -301,6 +301,15 @@ export class GuestLoop {
         return null;
     }
 
+    seatedFollowById(guestId: string): { tableId: string; node: Node } | null {
+        const runtime = this.findById(guestId);
+        const table = runtime?.layout.table;
+        if (!runtime || !table || !runtime.guest.seated) {
+            return null;
+        }
+        return { tableId: table.station.id, node: table.node };
+    }
+
     /** 这张桌客人节点，给上菜特效跟在客人身边。 */
     guestNodeAt(tableId: string): Node | null {
         for (let i = 0; i < this._runtimes.length; i++) {
