@@ -3,20 +3,17 @@ export enum AudioEnum {
     Click = "sound/click",
     BG = "bgm_home",//主界面循环
     BGM_EXPLORE = "bgm_explore",//选卡选择界面
-    MUSIC_LEVEL_CLEAR = "audio/music_level_clear",//关卡刷新
-    MUSIC_LEVEL_FAILED = "audio/music_level_fail",//关卡失败
     MUSIC_REWARD = "audio/music_reward",//通关通关
-    SFX_DIG_GRASS_01 = "audio/sfx_dig_grass_01",//挖草
 
-    SFX_STONE_HIT_01 = "audio/sfx_stone_hit_01",//石头撞击
-    SFX_STONE_HIT_02 = "audio/sfx_stone_hit_02",//石头撞击
-    SFX_STONE_HIT_03 = "audio/sfx_stone_hit_03",//石头撞击
+    PLAYER_ATTACK = "audio/player_attack",//玩家攻击
+    OPEN_DOOR = "audio/open_door",//开门
+    WATER_BABBLING_LOOP = "audio/water_babbling_loop",//水流声 
+    PLACE_ITEM_PLATFORM = "audio/place_item_platform",//放置物品台音效
+    DRINK_SLURP = "audio/drink_slurp",
+    SERVED_DISH = "audio/served_dish",//上菜
+    SERVERD_ERROR = "audio/serverd_error",//上菜错误
+    BAKED_MEAT = "audio/baked_meat",//烤肉
+    OPEN_POUP = "audio/open_poup",//打开背包
 
-    SFX_PATH_CONNECT_START = "audio/sfx_path_connect_start",//路径连接开始
-    SFX_PATH_CONNECT_STEP = "audio/sfx_path_connect_step",//路径连接步骤
-    SFX_PATH_CONNECT_END = "audio/sfx_path_connect_end",//路径连接结束
-
-    SFX_MAZI_STEP_01 = "audio/sfx_mazi_step_01",//人物走路
-    SFX_MAZI_ARRI = "audio/sfx_mazi_arrive",//到达
-    SFX_PATH_REVEAL = "audio/sfx_path_reveal",//路径揭示
+    POWER_UP = "audio/power_up",//能量提升
 }

@@ -1,4 +1,7 @@
 import { _decorator, Component, tween, Tween, Vec3 } from "cc";
+import { AudioEnum } from "db://assets/define/AudioEnum";
+import { BundlesEnum } from "db://assets/define/BundlesEnum";
+import AudioPlayer from "db://assets/framework/resource/AudioPlayer";
 import { EventManager } from "../../../framework/event/EventManager";
 import { GameEvent } from "../../../framework/event/EventName";
 const { ccclass, property } = _decorator;
@@ -33,6 +36,7 @@ export class Door extends Component {
         tween(this.node)
             .to(OPEN_SEC, { eulerAngles: to }, { easing: "quadOut" })
             .start();
+        AudioPlayer.getInstance().playEffect(BundlesEnum.Game, AudioEnum.OPEN_DOOR);
     }
 
     close(): void {
