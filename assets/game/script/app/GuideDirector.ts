@@ -220,11 +220,15 @@ export class GuideDirector {
         }
         if (step.wait === "tip") {
             this._tableId = keepTable;
-            const stationNode = step.target ? this._registry?.get(step.target)?.node ?? null : null;
-            const enemyNode = this._enemy?.isValid ? this._enemy : null;
-            const guestNode = keepTable ? this._guests?.guestNodeAt(keepTable) ?? null : null;
-            const tableNode = keepTable ? this._registry?.get(keepTable)?.node ?? null : null;
-            this._view.pointAt(stationNode ?? enemyNode ?? guestNode ?? tableNode);
+            if (step.target) {
+                const stationNode = this._registry?.get(step.target)?.node ?? null;
+                const enemyNode = this._enemy?.isValid ? this._enemy : null;
+                const guestNode = keepTable ? this._guests?.guestNodeAt(keepTable) ?? null : null;
+                const tableNode = keepTable ? this._registry?.get(keepTable)?.node ?? null : null;
+                this._view.pointAt(stationNode ?? enemyNode ?? guestNode ?? tableNode);
+            } else {
+                this._view.pointAt(null);
+            }
             this._tipLeft = step.duration && step.duration > 0 ? step.duration : TIP_SEC;
             this._clickLock = 0.35;
             console.log(`[Guide] 第 ${index + 1} 步`, "tip", step.target);

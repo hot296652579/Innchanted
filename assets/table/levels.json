@@ -87,23 +87,24 @@
     "map": 4,
     "duration": 180,
     "stars": [28, 52, 85],
-    "eventIds": ["thief", "whirlwind"],
+    "eventIds": ["thief"],
     "delay": 15,
     "guestInterval": 1,
     "restTimes": [30, 60],
     "restDuration": 10,
     "guests": [
-      ["regularguest", "regularguest2", "gourmetguest"],
-      ["regularguest1", "regularguest2", "gourmetguest"],
-      ["regularguest", "regularguest1", "gourmetguest"]
+      ["regularguest", "regularguest2"],
+      ["regularguest1", "regularguest2"],
+      ["regularguest", "regularguest1"]
     ],
     "guestOrders": {
-      "regularguest": ["magicdrink_brown", "magicdrink_green", "magicdrink_red", "steakbaked"],
-      "gourmetguest": [
-        ["magicdrink_brown", "magicdrink_green", "magicdrink_red"],
-        ["steakbaked"]
-      ]
-    }
+      "regularguest": ["combsteakgreen", "combsteakbrown"]
+    },
+    "guide": [
+      { "target": "", "text": "", "wait": "seat" },
+      { "target": "", "text": "他需要的是魔法牛排哦，你知道怎么做么？嘻嘻，我来教你~", "wait": "tip", "duration": 3 },
+      { "target": "", "text": "将魔法饮料倒入烘培好的牛排，就可以制作出魔力餐点.", "wait": "tip", "duration": 8 }
+    ]
   },
   {
     "id": 5,

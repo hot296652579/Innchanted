@@ -17,4 +17,5 @@ export enum AudioEnum {
     COIN_JINGLE_SMALL = "audio/coin_jingle_small",//小硬币声音
 
     POWER_UP = "audio/power_up",//能量提升
+    COMBINE_ITEM = "audio/combine_item",//合成物品
 }

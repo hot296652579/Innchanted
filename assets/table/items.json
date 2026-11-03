@@ -14,6 +14,8 @@
   { "id": "magicdrink_red", "stack": 1, "displayName": "红色魔法饮料", "prefab": "prefab/items/MagicDrink_Red" },
   { "id": "combburgerbrown", "stack": 3, "displayName": "棕色魔法汉堡", "gold": 12, "prefab": "prefab/items/CombBurgerBrown" },
   { "id": "combburgergreen", "stack": 3, "displayName": "绿色魔法汉堡", "gold": 12, "prefab": "prefab/items/CombBurgerGreen" },
+  { "id": "combsteakbrown", "stack": 3, "displayName": "棕色魔法牛排", "gold": 12, "prefab": "prefab/items/CombSteakBrown" },
+  { "id": "combsteakgreen", "stack": 3, "displayName": "绿色魔法牛排", "gold": 12, "prefab": "prefab/items/CombSteakGreem" },
   { "id": "medicinebottle_yellow", "stack": 1, "displayName": "黄色药剂", "use": "drink", "effects": ["thaw"], "prefab": "prefab/items/MedicineBottle_Yellow" },
   { "id": "medicinebottle_olivegreen", "stack": 1, "displayName": "橄榄绿药剂", "use": "drink", "prefab": "prefab/items/MedicineBottle_OliveGreen" },
   { "id": "medicinebottle_red", "stack": 1, "displayName": "红色药剂", "prefab": "prefab/items/MedicineBottle_Red" }

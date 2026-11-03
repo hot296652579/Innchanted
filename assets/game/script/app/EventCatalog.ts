@@ -44,7 +44,7 @@ const FALLBACK: EventDef[] = [
         prefab: "prefab/enemys/Skeleton",
         flySpeed: 0.9,
         hoverTime: 1,
-        warnText: "骷髅小偷冲向宝箱！",
+        warnText: "",
         failText: "骷髅偷走了金币！",
     },
     {
@@ -58,8 +58,8 @@ const FALLBACK: EventDef[] = [
         prefab: "prefab/enemys/Bat",
         flySpeed: 6,
         hoverTime: 2,
-        warnText: "小偷来袭！20秒后会偷走成品！",
-        failText: "蝙蝠偷走了成品！",
+        warnText: "",
+        failText: "",
     },
     {
         id: "fuelthief",
@@ -119,7 +119,7 @@ const FALLBACK: EventDef[] = [
         stationTypes: ["cook", "place", "itemstand"],
         unlockItemId: "medicinebottle_red",
         prefab: "effect/whirlwind/whirlwindLight01",
-        warnText: "旋风来了！",
+        warnText: "",
         failText: "操作台被旋风卷起了，用药水才能解开！",
     },
     {

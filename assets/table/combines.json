@@ -20,6 +20,26 @@
     "prefab": "prefab/items/CombBurgerGreen"
   },
   {
+    "id": "comb_steak_brown",
+    "inputs": [
+      { "itemId": "magicdrink_brown", "count": 1, "from": "hand" },
+      { "itemId": "steakbaked", "count": 1, "from": "station" }
+    ],
+    "output": { "itemId": "combsteakbrown", "count": 1, "to": "station" },
+    "stationTypes": ["place", "table", "cook"],
+    "prefab": "prefab/items/CombSteakBrown"
+  },
+  {
+    "id": "comb_steak_green",
+    "inputs": [
+      { "itemId": "magicdrink_green", "count": 1, "from": "hand" },
+      { "itemId": "steakbaked", "count": 1, "from": "station" }
+    ],
+    "output": { "itemId": "combsteakgreen", "count": 1, "to": "station" },
+    "stationTypes": ["place", "table", "cook"],
+    "prefab": "prefab/items/CombSteakGreem"
+  },
+  {
     "id": "fuse_yellow",
     "inputs": [
       { "itemId": "magicdrink_green", "count": 1 },

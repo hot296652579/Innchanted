@@ -11,7 +11,7 @@ export class CurseIncident implements IIncident {
     private _remain = 0;
     private _phase: "warning" | "done" = "done";
 
-    constructor(readonly def: EventDef) {}
+    constructor(readonly def: EventDef) { }
 
     get done(): boolean {
         return this._phase === "done";

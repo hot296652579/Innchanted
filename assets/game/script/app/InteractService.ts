@@ -152,6 +152,7 @@ export class InteractService {
                 if (!this.combine(binding)) {
                     return;
                 }
+                playSfx(AudioEnum.COMBINE_ITEM);
                 break;
             case "UnlockWind":
                 if (!this.unlockWind(binding)) {
