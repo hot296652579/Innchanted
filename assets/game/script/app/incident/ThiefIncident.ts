@@ -171,13 +171,13 @@ export class ThiefIncident implements IIncident {
         const events = EventManager.getInstance();
         events.emit(GameEvent.EVENT_FAIL, this.def.id, this._targets.length);
         if (this._targets.length === 0) {
-            events.emit(GameEvent.SHOW_TIPS, "没有成品可偷");
+            // events.emit(GameEvent.SHOW_TIPS, "没有成品可偷");
             console.log("[Event] 超时无成品，再等", this.def.duration, "s");
             this.restartWarn();
             return;
         }
         if (this.def.failText) {
-            events.emit(GameEvent.SHOW_TIPS, this.def.failText);
+            // events.emit(GameEvent.SHOW_TIPS, this.def.failText);
         }
         console.log("[Event] 开始偷", this.def.id, this._targets.length, "份");
         this._index = 0;
@@ -215,7 +215,7 @@ export class ThiefIncident implements IIncident {
         const events = EventManager.getInstance();
         events.emit(GameEvent.EVENT_WARN, this.def.id, this.def.duration);
         if (this.def.warnText) {
-            events.emit(GameEvent.SHOW_TIPS, this.def.warnText);
+            // events.emit(GameEvent.SHOW_TIPS, this.def.warnText);
         }
         console.log("[Event] 预兆", this.def.id, this.def.duration, "s");
     }

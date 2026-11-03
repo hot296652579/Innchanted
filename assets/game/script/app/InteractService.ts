@@ -66,7 +66,7 @@ export class InteractService {
             events.emit(GameEvent.GROUND_ICE_THAW, ice.freezeTime ?? 1);
             console.log("[Player] 喝药解冻", itemId);
         }
-        events.emit(GameEvent.SHOW_TIPS, `喝了${def?.displayName ?? "药剂"}`);
+        // events.emit(GameEvent.SHOW_TIPS, `喝了${def?.displayName ?? "药剂"}`);
         console.log("[Player] 喝药", itemId);
         return true;
     }
@@ -98,7 +98,7 @@ export class InteractService {
         }
         const events = EventManager.getInstance();
         if (this.guests.asleepAt(binding.station.id)) {
-            events.emit(GameEvent.SHOW_TIPS, "客人睡着了");
+            // events.emit(GameEvent.SHOW_TIPS, "客人睡着了");
             return true;
         }
         events.emit(
@@ -250,7 +250,7 @@ export class InteractService {
             binding.station.slot = result;
             this.holds.spawnOnStation(binding.station.id, prefab, made);
         }
-        EventManager.getInstance().emit(GameEvent.SHOW_TIPS, "合成完成");
+        // EventManager.getInstance().emit(GameEvent.SHOW_TIPS, "合成完成");
         console.log("[Combine]", recipe.id, "→", result.itemId, "x", result.count, toHand ? "手上" : "台上");
         return true;
     }
@@ -359,7 +359,7 @@ export class InteractService {
             this.playOrderServed(binding);
             playSfx(AudioEnum.SERVED_DISH);
             if (result === ServeResult.Done) {
-                EventManager.getInstance().emit(GameEvent.SHOW_TIPS, "客人吃完离开了");
+                // EventManager.getInstance().emit(GameEvent.SHOW_TIPS, "客人吃完离开了");
             }
             return true;
         }
@@ -370,7 +370,7 @@ export class InteractService {
         }
         const slot = binding.station.slot;
         if (slot && this.guests.hasSeated(binding.station.id) && !this.guests.wantedAt(binding.station.id, slot.itemId)) {
-            EventManager.getInstance().emit(GameEvent.SHOW_TIPS, "这不是客人要的");
+            // EventManager.getInstance().emit(GameEvent.SHOW_TIPS, "这不是客人要的");
         }
         return false;
     }

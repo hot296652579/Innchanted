@@ -103,7 +103,7 @@
     "guide": [
       { "target": "", "text": "", "wait": "seat" },
       { "target": "", "text": "他需要的是魔法牛排哦，你知道怎么做么？嘻嘻，我来教你~", "wait": "tip", "duration": 3 },
-      { "target": "", "text": "将魔法饮料倒入烘培好的牛排，就可以制作出魔力餐点.", "wait": "tip", "duration": 8 }
+      { "target": "", "text": "将魔法饮料倒入烘培好的牛排，就可以制作出魔力餐点.", "wait": "tip", "duration": 5 }
     ]
   },
   {

@@ -25,8 +25,8 @@ import { CombineCatalog } from "./Combine";
 import { CommandService } from "./CommandService";
 import { allEventDefs } from "./EventCatalog";
 import { EventDirector } from "./EventDirector";
-import { GuideDirector } from "./GuideDirector";
 import { GuestLoop } from "./GuestLoop";
+import { GuideDirector } from "./GuideDirector";
 import { InteractService } from "./InteractService";
 import { findLevel, guestWaves, settleStars } from "./LevelCatalog";
 import { ProcessorSystem } from "./ProcessorSystem";
@@ -519,7 +519,7 @@ export class ShiftController {
         this._playerView?.playAttack();
         if (this._events?.strike(root)) {
             if (!this._guide?.lockingEnemy) {
-                EventManager.getInstance().emit(GameEvent.SHOW_TIPS, "击退了小偷");
+                // EventManager.getInstance().emit(GameEvent.SHOW_TIPS, "击退了小偷");
             }
         }
     }

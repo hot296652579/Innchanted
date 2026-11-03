@@ -12,8 +12,8 @@
     "prefab": "prefab/enemys/Skeleton",
     "flySpeed": 0.9,
     "hoverTime": 1,
-    "warnText": "骷髅小偷冲向宝箱！",
-    "failText": "骷髅偷走了金币！"
+    "warnText": "",
+    "failText": ""
   },
   {
     "id": "thief",
@@ -26,8 +26,8 @@
     "prefab": "prefab/enemys/Bat",
     "flySpeed": 6,
     "hoverTime": 2,
-    "warnText": "小偷来袭！20秒后会偷走成品！",
-    "failText": "蝙蝠偷走了成品！"
+    "warnText": "",
+    "failText": ""
   },
   {
     "id": "fuelthief",
@@ -41,8 +41,8 @@
     "prefab": "prefab/enemys/FuelThief",
     "flySpeed": 1.4,
     "hoverTime": 2,
-    "warnText": "有人来偷魔法饮料了！",
-    "failText": "小偷偷走了魔法饮料！"
+    "warnText": "",
+    "failText": ""
   },
   {
     "id": "threaten",
@@ -54,8 +54,8 @@
     "spawnName": "ThreatenPoint",
     "prefab": "prefab/enemys/Threaten",
     "flySpeed": 2.5,
-    "warnText": "恐吓怪来了！",
-    "failText": "客人被吓跑了！"
+    "warnText": "",
+    "failText": ""
   },
   {
     "id": "raider",
@@ -74,8 +74,8 @@
     "introTalk": "给我狠狠的砸！",
     "introTalkSec": 1,
     "flySpeed": 2,
-    "warnText": "有怪物来砸店了！",
-    "failText": "操作台被砸坏了！"
+    "warnText": "",
+    "failText": ""
   },
   {
     "id": "whirlwind",
@@ -87,8 +87,8 @@
     "stationTypes": ["cook", "place", "itemstand"],
     "unlockItemId": "medicinebottle_olivegreen",
     "prefab": "effect/whirlwind/whirlwindLight01",
-    "warnText": "旋风来了！",
-    "failText": "操作台被旋风卷起了，用药水才能解开！"
+    "warnText": "",
+    "failText": ""
   },
   {
     "id": "lock",
@@ -111,7 +111,7 @@
     "actorName": "Dragon",
     "prefab": "prefab/enemys/Dragon",
     "flySpeed": 5,
-    "warnText": "冰龙来袭！",
-    "failText": "地面被冻结了！"
+    "warnText": "",
+    "failText": ""
   }
 ]
