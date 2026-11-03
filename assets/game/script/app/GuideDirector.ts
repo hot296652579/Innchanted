@@ -22,6 +22,8 @@ export class GuideDirector {
     private _guests: GuestLoop | null = null;
     private _enemy: Node | null = null;
     private _hovering = false;
+    private _queued = -1;
+    private _clickLock = 0;
 
     constructor(camera: Camera | null) {
         this._view = new GuideView(camera);
@@ -112,6 +114,9 @@ export class GuideDirector {
 
     /** 温馨提示：点任意处结束该步。 */
     consumeClick(): boolean {
+        if (this._clickLock > 0 || this._queued >= 0) {
+            return true;
+        }
         if (this.step()?.wait !== "tip") {
             return false;
         }
@@ -122,6 +127,14 @@ export class GuideDirector {
     update(dt: number): void {
         if (!this.active) {
             return;
+        }
+        if (this._clickLock > 0) {
+            this._clickLock -= dt;
+        }
+        if (this._queued >= 0) {
+            const index = this._queued;
+            this._queued = -1;
+            this.showStep(index);
         }
         this._view.update(dt);
         const step = this.step();
@@ -147,6 +160,8 @@ export class GuideDirector {
         this._guests = null;
         this._enemy = null;
         this._hovering = false;
+        this._queued = -1;
+        this._clickLock = 0;
     }
 
     private step(): GuideStepDef | null {
@@ -200,6 +215,7 @@ export class GuideDirector {
             const tableNode = keepTable ? this._registry?.get(keepTable)?.node ?? null : null;
             this._view.pointAt(stationNode ?? enemyNode ?? guestNode ?? tableNode);
             this._tipLeft = step.duration && step.duration > 0 ? step.duration : TIP_SEC;
+            this._clickLock = 0.35;
             console.log(`[Guide] 第 ${index + 1} 步`, "tip", step.target);
             return;
         }
@@ -290,9 +306,11 @@ export class GuideDirector {
     }
 
     private onThiefScare(): void {
-        if (this.step()?.wait === "chase") {
-            this.showStep(this._index + 1);
+        if (this.step()?.wait !== "chase") {
+            return;
         }
+        this._queued = this._index + 1;
+        this._clickLock = 0.35;
     }
 
     private tryPointGuest(): void {
@@ -314,6 +332,8 @@ export class GuideDirector {
         this._tipLeft = 0;
         this._enemy = null;
         this._hovering = false;
+        this._queued = -1;
+        this._clickLock = 0;
     }
 
     private unbind(): void {

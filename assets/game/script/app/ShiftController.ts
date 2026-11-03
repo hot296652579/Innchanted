@@ -512,7 +512,9 @@ export class ShiftController {
         this._playerView?.setLookTarget(center);
         this._playerView?.playAttack();
         if (this._events?.strike(root)) {
-            EventManager.getInstance().emit(GameEvent.SHOW_TIPS, "击退了小偷");
+            if (!this._guide?.lockingEnemy) {
+                EventManager.getInstance().emit(GameEvent.SHOW_TIPS, "击退了小偷");
+            }
         }
     }
 

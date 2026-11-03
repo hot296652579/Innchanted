@@ -67,7 +67,7 @@
     "guests": [
       ["regularguest", "regularguest2", "regularguest"],
       ["regularguest1", "regularguest2", "regularguest"],
-      ["gourmetguest", "regularguest1", "regularguest2"]
+      ["regularguest", "regularguest1", "regularguest2"]
     ],
     "guestOrders": {
       "regularguest": ["steakbaked"]
@@ -79,7 +79,7 @@
       { "target": "guest", "text": "将烹饪好的烤肉上给客人吧", "wait": "tip", "duration": 3 },
       { "target": "thief", "text": "", "wait": "thief" },
       { "target": "Bat", "text": "注意，这是一个爱偷吃的蝙蝠，别让他把美食偷跑了", "wait": "chase" },
-      { "target": "Bat", "text": "干的漂亮，下次记得驱赶它别让它偷走我们的美食", "wait": "tip", "duration": 3 }
+      { "target": "Bat", "text": "干的漂亮，下次记得驱赶它别让它偷走我们的美食哦~", "wait": "tip", "duration": 3 }
     ]
   },
   {
