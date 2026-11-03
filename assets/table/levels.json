@@ -43,7 +43,11 @@
       ["regularguest", "gourmetguest"]
     ],
     "guestOrders": {
-      "regularguest": ["magicdrink_brown", "magicdrink_green", "magicdrink_red"]
+      "regularguest": ["magicdrink_brown", "magicdrink_green", "magicdrink_red"],
+      "gourmetguest": [
+        ["magicdrink_brown", "magicdrink_green", "magicdrink_red"],
+        ["magicdrink_brown", "magicdrink_green", "magicdrink_red"]
+      ]
     },
     "guide": [
       { "target": "gourmetguest", "text": "", "wait": "seat" },
