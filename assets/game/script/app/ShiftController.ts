@@ -203,6 +203,12 @@ export class ShiftController {
         }
         this._fx?.tick(dt);
         if (pausing) {
+            if (this._guide?.allowsEvents) {
+                this._events?.update(dt);
+            }
+            if (this._huntId) {
+                this.tickHunt(dt);
+            }
             return;
         }
         this._processors?.tick(dt);
@@ -295,7 +301,9 @@ export class ShiftController {
                 return;
             }
             if (!this._guide.allowsClick(hit)) {
-                EventManager.getInstance().emit(GameEvent.SHOW_TIPS, "请点击箭头指示的位置");
+                if (!this._guide.waitingHover) {
+                    EventManager.getInstance().emit(GameEvent.SHOW_TIPS, "请点击箭头指示的位置");
+                }
                 return;
             }
         }
@@ -317,12 +325,18 @@ export class ShiftController {
             this._playerView?.clearLookTarget();
         }
         if (hit.target.kind === "enemy") {
-            if (this.handsBusy()) {
+            const chasing = !!this._guide?.lockingEnemy;
+            if (this.handsBusy() && !chasing) {
                 EventManager.getInstance().emit(GameEvent.SHOW_TIPS, "先把手里的东西放下再打");
                 return;
             }
             this._barrels?.cancel();
             const enemyId = hit.target.enemyId;
+            const root = this.findEnemyNode(enemyId);
+            if (root && this.nearEnemy(root)) {
+                this.onArriveEnemy(enemyId);
+                return;
+            }
             this._huntId = enemyId;
             this._huntRetarget = 0;
             const dest = this.enemyStand(enemyId) ?? hit.dest;
@@ -438,7 +452,7 @@ export class ShiftController {
         if (!this._huntId || !this._commands) {
             return;
         }
-        if (this.handsBusy()) {
+        if (this.handsBusy() && !this._guide?.lockingEnemy) {
             this._huntId = null;
             return;
         }
@@ -489,7 +503,7 @@ export class ShiftController {
             }
             return;
         }
-        if (this.handsBusy()) {
+        if (this.handsBusy() && !this._guide?.lockingEnemy) {
             this._huntId = null;
             EventManager.getInstance().emit(GameEvent.SHOW_TIPS, "先把手里的东西放下再打");
             return;
@@ -563,6 +577,16 @@ export class ShiftController {
                 Enemy.ensure(node);
             }
         }
+    }
+
+    private nearEnemy(root: Node): boolean {
+        const player = this._playerView?.node;
+        if (!player) {
+            return false;
+        }
+        const dx = player.worldPosition.x - root.worldPosition.x;
+        const dz = player.worldPosition.z - root.worldPosition.z;
+        return dx * dx + dz * dz <= 4;
     }
 
     private findEnemyNode(enemyId: string): Node | null {

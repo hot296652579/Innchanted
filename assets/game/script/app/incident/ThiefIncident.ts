@@ -73,6 +73,7 @@ export class ThiefIncident implements IIncident {
         this._view.discardHeld();
         this._view.flyHome(this.def.flySpeed ?? 6);
         this._phase = "toHome";
+        EventManager.getInstance().emit(GameEvent.EVENT_THIEF_SCARE, this.def.id);
         console.log("[Event] 击退", this.def.id);
         return true;
     }
@@ -86,6 +87,7 @@ export class ThiefIncident implements IIncident {
         this._hoverStationId = null;
         this._view.flyHome(this.def.flySpeed ?? 6);
         this._phase = "toHome";
+        EventManager.getInstance().emit(GameEvent.EVENT_THIEF_SCARE, this.def.id);
         console.log("[Event] 被驱赶", this.def.id, stationId);
         return true;
     }
@@ -189,6 +191,7 @@ export class ThiefIncident implements IIncident {
         }
         this._remain = 1;
         this._phase = "attention";
+        EventManager.getInstance().emit(GameEvent.EVENT_THIEF_APPEAR, follow);
         console.log("[Event] 蝙蝠注意", this.def.id);
     }
 
@@ -232,6 +235,7 @@ export class ThiefIncident implements IIncident {
         this._hoverStationId = binding?.station.id ?? null;
         this._hoverLeft = this.def.hoverTime ?? 2;
         this._phase = "hover";
+        EventManager.getInstance().emit(GameEvent.EVENT_THIEF_HOVER, this._view.node ?? this._actor);
         console.log("[Event] 停留", this._hoverStationId, this._hoverLeft, "s");
     }
 

@@ -78,6 +78,12 @@ export enum GameEvent {
     EVENT_FAIL = "EVENT_FAIL",
     /** 突发事件整段结束（含动画） */
     EVENT_RESOLVED = "EVENT_RESOLVED",
+    /** 蝙蝠开始偷成品（节点） */
+    EVENT_THIEF_APPEAR = "EVENT_THIEF_APPEAR",
+    /** 蝙蝠停在食物上（节点） */
+    EVENT_THIEF_HOVER = "EVENT_THIEF_HOVER",
+    /** 蝙蝠被驱赶 */
+    EVENT_THIEF_SCARE = "EVENT_THIEF_SCARE",
     /** 地面结冰（秒，默认 1） */
     GROUND_ICE_FREEZE = "GROUND_ICE_FREEZE",
     /** 地面解冻（秒，默认 1） */

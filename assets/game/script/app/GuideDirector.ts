@@ -1,4 +1,4 @@
-import { Camera } from "cc";
+import { Camera, Node } from "cc";
 import { EventManager } from "../../../framework/event/EventManager";
 import { GameEvent } from "../../../framework/event/EventName";
 import { isCoin } from "../domain/ItemStack";
@@ -20,6 +20,8 @@ export class GuideDirector {
     private _tipLeft = 0;
     private _registry: StationRegistry | null = null;
     private _guests: GuestLoop | null = null;
+    private _enemy: Node | null = null;
+    private _hovering = false;
 
     constructor(camera: Camera | null) {
         this._view = new GuideView(camera);
@@ -29,15 +31,35 @@ export class GuideDirector {
         return this._index >= 0 && this._index < this._steps.length;
     }
 
-    /** 等客人入座时不冻局；真正出引导文案时才停倒计时。 */
+    /** 等客人入座 / 等蝙蝠出现时不冻局；真正出引导文案时才停倒计时。 */
     get pausing(): boolean {
-        return this.active && this.step()?.wait !== "seat";
+        const wait = this.step()?.wait;
+        return this.active && wait !== "seat" && wait !== "thief";
     }
 
-    /** 等入座、上菜、拾金币、存箱时客人照常动；接原浆/灌桶/提示时冻住。 */
+    /** 等入座、上菜、拾金币、存箱、等蝙蝠时客人照常动。 */
     get allowsGuests(): boolean {
         const wait = this.step()?.wait;
-        return wait === "seat" || wait === "serve" || wait === "coin" || wait === "bank";
+        return wait === "seat" || wait === "serve" || wait === "coin" || wait === "bank" || wait === "thief";
+    }
+
+    /** 蝙蝠飞向食物、被赶走飞回时事件继续走；停在食物上后冻住。 */
+    get allowsEvents(): boolean {
+        const wait = this.step()?.wait;
+        if (wait === "chase") {
+            return !this._hovering;
+        }
+        return wait === "tip" && !!this._enemy?.isValid;
+    }
+
+    /** 蝙蝠还在飞，点击先吞掉不提示。 */
+    get waitingHover(): boolean {
+        return this.step()?.wait === "chase" && !this._hovering;
+    }
+
+    /** 已停在食物上，点击蝙蝠立刻驱赶。 */
+    get lockingEnemy(): boolean {
+        return this.step()?.wait === "chase" && this._hovering;
     }
 
     async load(): Promise<void> {
@@ -58,6 +80,9 @@ export class GuideDirector {
         events.on(GameEvent.GUEST_SERVED, this.onServed, this);
         events.on(GameEvent.STATION_SLOT_CHANGED, this.onSlotChanged, this);
         events.on(GameEvent.SHELL_BANKED, this.onBanked, this);
+        events.on(GameEvent.EVENT_THIEF_APPEAR, this.onThiefAppear, this);
+        events.on(GameEvent.EVENT_THIEF_HOVER, this.onThiefHover, this);
+        events.on(GameEvent.EVENT_THIEF_SCARE, this.onThiefScare, this);
         this.showStep(0);
         console.log(`[Guide] 开始 ${this._steps.length} 步`);
     }
@@ -70,8 +95,11 @@ export class GuideDirector {
         if (!step || step.wait === "tip") {
             return false;
         }
-        if (step.wait === "seat") {
+        if (step.wait === "seat" || step.wait === "thief") {
             return true;
+        }
+        if (step.wait === "chase") {
+            return this._hovering && hit.target.kind === "enemy" && !!this._enemy && hit.target.enemyId === this._enemy.uuid;
         }
         if (hit.target.kind !== "place") {
             return false;
@@ -117,6 +145,8 @@ export class GuideDirector {
         this._tipLeft = 0;
         this._registry = null;
         this._guests = null;
+        this._enemy = null;
+        this._hovering = false;
     }
 
     private step(): GuideStepDef | null {
@@ -135,10 +165,11 @@ export class GuideDirector {
         this._index = index;
         this._tipLeft = 0;
         const step = this._steps[index];
-        if (step.wait === "seat") {
+        this._hovering = false;
+        if (step.wait === "seat" || step.wait === "thief") {
             this._tableId = null;
             this._view.hide();
-            console.log(`[Guide] 第 ${index + 1} 步 等待`, step.target, "入座");
+            console.log(`[Guide] 第 ${index + 1} 步 等待`, step.wait, step.target);
             return;
         }
         this._view.showText(step.text);
@@ -163,11 +194,19 @@ export class GuideDirector {
         }
         if (step.wait === "tip") {
             this._tableId = keepTable;
+            const stationNode = step.target ? this._registry?.get(step.target)?.node ?? null : null;
+            const enemyNode = this._enemy?.isValid ? this._enemy : null;
             const guestNode = keepTable ? this._guests?.guestNodeAt(keepTable) ?? null : null;
             const tableNode = keepTable ? this._registry?.get(keepTable)?.node ?? null : null;
-            this._view.pointAt(guestNode ?? tableNode);
+            this._view.pointAt(stationNode ?? enemyNode ?? guestNode ?? tableNode);
             this._tipLeft = step.duration && step.duration > 0 ? step.duration : TIP_SEC;
-            console.log(`[Guide] 第 ${index + 1} 步`, "tip");
+            console.log(`[Guide] 第 ${index + 1} 步`, "tip", step.target);
+            return;
+        }
+        if (step.wait === "chase") {
+            this._tableId = null;
+            this._view.pointAt(this._enemy);
+            console.log(`[Guide] 第 ${index + 1} 步`, "chase");
             return;
         }
         this._tableId = null;
@@ -229,6 +268,33 @@ export class GuideDirector {
         }
     }
 
+    private onThiefAppear(node: Node): void {
+        if (node?.isValid) {
+            this._enemy = node;
+        }
+        if (this.step()?.wait === "thief") {
+            this.showStep(this._index + 1);
+        }
+    }
+
+    private onThiefHover(node: Node): void {
+        if (node?.isValid) {
+            this._enemy = node;
+        }
+        if (this.step()?.wait !== "chase") {
+            return;
+        }
+        this._hovering = true;
+        this._view.pointAt(this._enemy);
+        console.log("[Guide] 点击蝙蝠驱赶");
+    }
+
+    private onThiefScare(): void {
+        if (this.step()?.wait === "chase") {
+            this.showStep(this._index + 1);
+        }
+    }
+
     private tryPointGuest(): void {
         const seated = this._guests?.seatedFollow() ?? null;
         if (!seated) {
@@ -246,6 +312,8 @@ export class GuideDirector {
         this._index = this._steps.length;
         this._tableId = null;
         this._tipLeft = 0;
+        this._enemy = null;
+        this._hovering = false;
     }
 
     private unbind(): void {
@@ -255,5 +323,8 @@ export class GuideDirector {
         events.off(GameEvent.GUEST_SERVED, this.onServed, this);
         events.off(GameEvent.STATION_SLOT_CHANGED, this.onSlotChanged, this);
         events.off(GameEvent.SHELL_BANKED, this.onBanked, this);
+        events.off(GameEvent.EVENT_THIEF_APPEAR, this.onThiefAppear, this);
+        events.off(GameEvent.EVENT_THIEF_HOVER, this.onThiefHover, this);
+        events.off(GameEvent.EVENT_THIEF_SCARE, this.onThiefScare, this);
     }
 }

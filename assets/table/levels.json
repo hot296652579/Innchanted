@@ -39,8 +39,8 @@
     "restDuration": 10,
     "guests": [
       ["regularguest", "regularguest2", "gourmetguest"],
-      ["regularguest", "regularguest1", "regularguest2"],
-      ["regularguest", "gourmetguest"]
+      ["regularguest", "regularguest1", "gourmetguest"],
+      ["regularguest2", "regularguest", "gourmetguest"]
     ],
     "guestOrders": {
       "regularguest": ["magicdrink_brown", "magicdrink_green", "magicdrink_red"],
@@ -65,13 +65,22 @@
     "restTimes": [30, 60],
     "restDuration": 10,
     "guests": [
-      ["regularguest", "regularguest2", "regularguest", "gourmetguest"],
+      ["regularguest", "regularguest2", "regularguest"],
       ["regularguest1", "regularguest2", "regularguest"],
       ["gourmetguest", "regularguest1", "regularguest2"]
     ],
     "guestOrders": {
       "regularguest": ["steakbaked"]
-    }
+    },
+    "guide": [
+      { "target": "ItemStand", "text": "满满的一堆肉，无限供应哦", "wait": "tip", "duration": 3 },
+      { "target": "Stove", "text": "可以烘培出美味食物，供应给客人", "wait": "tip", "duration": 3 },
+      { "target": "", "text": "", "wait": "seat" },
+      { "target": "guest", "text": "将烹饪好的烤肉上给客人吧", "wait": "tip", "duration": 3 },
+      { "target": "thief", "text": "", "wait": "thief" },
+      { "target": "Bat", "text": "注意，这是一个爱偷吃的蝙蝠，别让他把美食偷跑了", "wait": "chase" },
+      { "target": "Bat", "text": "干的漂亮，下次记得驱赶它别让它偷走我们的美食", "wait": "tip", "duration": 3 }
+    ]
   },
   {
     "id": 4,
