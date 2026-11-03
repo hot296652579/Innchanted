@@ -13,6 +13,8 @@ export default class AudioPlayer extends BaseSingleton {
 
     private _musicSource: AudioSource | null = null;
     private _effectSource: AudioSource | null = null;
+    private _loopSources = new Map<string, AudioSource>();
+    private _loopTokens = new Map<string, number>();
     private _effectLoading = new Map<string, Promise<AudioClip | null>>();
 
     private _masterVolume = 1;
@@ -42,6 +44,7 @@ export default class AudioPlayer extends BaseSingleton {
 
     public destroy(): void {
         this.stopMusic();
+        this.stopAllLoopEffects();
         this._musicSource = null;
         this._effectSource = null;
         this._effectLoading.clear();
@@ -77,6 +80,7 @@ export default class AudioPlayer extends BaseSingleton {
         if (value < 0.0) value = 0.0;
         else if (value > 1.0) value = 1.0;
         this._effectVolume = value;
+        this.applyLoopEffectVolume();
     }
 
     public setMusicOn(on: boolean): void {
@@ -96,6 +100,9 @@ export default class AudioPlayer extends BaseSingleton {
     public setEffectOn(on: boolean): void {
         this._effectOn = on;
         storage.setItem(KEY_SOUND_ON, on);
+        if (!on) {
+            this.stopAllLoopEffects();
+        }
     }
 
     /**
@@ -153,6 +160,37 @@ export default class AudioPlayer extends BaseSingleton {
         } catch (err) {
             console.warn("播放音效失败:", err);
         }
+    }
+
+    /** 循环音效，需配对 stopLoopEffect。 */
+    public async playLoopEffect(bundleName: string, path: string): Promise<void> {
+        const key = `${bundleName}/${path}`;
+        const token = (this._loopTokens.get(key) ?? 0) + 1;
+        this._loopTokens.set(key, token);
+        this.stopLoopSource(key);
+        if (!this._effectOn) {
+            return;
+        }
+        try {
+            const clip = await this.loadEffectClip(bundleName, path);
+            if (!clip || this._loopTokens.get(key) !== token) {
+                return;
+            }
+            const source = new AudioSource();
+            source.clip = clip;
+            source.loop = true;
+            source.volume = this._masterVolume * this._effectVolume;
+            source.play();
+            this._loopSources.set(key, source);
+        } catch (err) {
+            console.warn("播放循环音效失败:", err);
+        }
+    }
+
+    public stopLoopEffect(bundleName: string, path: string): void {
+        const key = `${bundleName}/${path}`;
+        this._loopTokens.set(key, (this._loopTokens.get(key) ?? 0) + 1);
+        this.stopLoopSource(key);
     }
 
     /** 停止音乐 */
@@ -213,5 +251,28 @@ export default class AudioPlayer extends BaseSingleton {
         if (this._musicSource) {
             this._musicSource.volume = this._musicOn ? this._masterVolume * this._musicVolume : 0;
         }
+        this.applyLoopEffectVolume();
+    }
+
+    private applyLoopEffectVolume(): void {
+        const volume = this._effectOn ? this._masterVolume * this._effectVolume : 0;
+        this._loopSources.forEach((source) => {
+            source.volume = volume;
+        });
+    }
+
+    private stopLoopSource(key: string): void {
+        const source = this._loopSources.get(key);
+        if (!source) {
+            return;
+        }
+        source.stop();
+        this._loopSources.delete(key);
+    }
+
+    private stopAllLoopEffects(): void {
+        this._loopSources.forEach((_, key) => this._loopTokens.set(key, (this._loopTokens.get(key) ?? 0) + 1));
+        this._loopSources.forEach((source) => source.stop());
+        this._loopSources.clear();
     }
 }

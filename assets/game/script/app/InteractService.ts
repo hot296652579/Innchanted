@@ -1,5 +1,8 @@
+import { AudioEnum } from "../../../define/AudioEnum";
+import { BundlesEnum } from "../../../define/BundlesEnum";
 import { EventManager } from "../../../framework/event/EventManager";
 import { GameEvent } from "../../../framework/event/EventName";
+import AudioPlayer from "../../../framework/resource/AudioPlayer";
 import { Actor } from "../domain/Actor";
 import { colorFromItemId, isPulp } from "../domain/Barrel";
 import { ITEM_STACK_CAP, isCoin, ItemStack } from "../domain/ItemStack";
@@ -114,6 +117,7 @@ export class InteractService {
                 if (!this.take(binding)) {
                     return;
                 }
+                playSfx(AudioEnum.OPEN_POUP);
                 break;
             case "Place":// 灶炉：开烘培；其他台：空手台才能放
                 if (this.occupied(binding) && station.type !== StationType.Cook) {
@@ -125,11 +129,13 @@ export class InteractService {
                         return;
                     }
                     this.holds.place(station.id, 1);
+                    playSfx(AudioEnum.BAKED_MEAT);
                     break;
                 }
                 this.dropHand(binding);
                 if (station.type === StationType.Place) {
                     this.fx.burst(binding.node, "place", 0.5, binding.holdPoint);
+                    playSfx(AudioEnum.PLACE_ITEM_PLATFORM);
                 }
                 if (station.type === StationType.Table || station.type === StationType.RoundTable) {
                     this.tryServe(binding);
@@ -316,6 +322,7 @@ export class InteractService {
         const events = EventManager.getInstance();
         events.emit(GameEvent.SHELL_BANKED, count);
         events.emit(GameEvent.SHOW_TIPS, `金币已存入宝箱 x${count}`);
+        playSfx(AudioEnum.COIN_JINGLE_SMALL);
         return true;
     }
 
@@ -349,6 +356,7 @@ export class InteractService {
         const result = this.guests.tryServe(binding);
         if (result === ServeResult.Done || result === ServeResult.Next) {
             this.playOrderServed(binding);
+            playSfx(AudioEnum.SERVED_DISH);
             if (result === ServeResult.Done) {
                 EventManager.getInstance().emit(GameEvent.SHOW_TIPS, "客人吃完离开了");
             }
@@ -356,6 +364,7 @@ export class InteractService {
         }
         if (result === ServeResult.Wake) {
             this.playerView.playThrow();
+            playSfx(AudioEnum.POWER_UP);
             return true;
         }
         const slot = binding.station.slot;
@@ -426,4 +435,8 @@ function refuseTip(station: Station, hand?: ItemStack | null): string {
         return "台上已经有东西了";
     }
     return "不能和台上的交换";
+}
+
+function playSfx(path: AudioEnum): void {
+    void AudioPlayer.getInstance().playEffect(BundlesEnum.Game, path);
 }

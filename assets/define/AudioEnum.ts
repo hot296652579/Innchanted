@@ -14,6 +14,7 @@ export enum AudioEnum {
     SERVERD_ERROR = "audio/serverd_error",//上菜错误
     BAKED_MEAT = "audio/baked_meat",//烤肉
     OPEN_POUP = "audio/open_poup",//打开背包
+    COIN_JINGLE_SMALL = "audio/coin_jingle_small",//小硬币声音
 
     POWER_UP = "audio/power_up",//能量提升
 }

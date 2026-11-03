@@ -1,4 +1,7 @@
-import { _decorator, Animation, AnimationClip, Component, SkeletalAnimation, Vec3, v3 } from "cc";
+import { _decorator, Animation, AnimationClip, Component, SkeletalAnimation, v3, Vec3 } from "cc";
+import { AudioEnum } from "db://assets/define/AudioEnum";
+import { BundlesEnum } from "db://assets/define/BundlesEnum";
+import AudioPlayer from "db://assets/framework/resource/AudioPlayer";
 import { IPathfinder } from "../sim/IPathfinder";
 
 const { ccclass } = _decorator;
@@ -38,6 +41,7 @@ export class PlayerView extends Component {
     }
 
     playAttack(): void {
+        AudioPlayer.getInstance().playEffect(BundlesEnum.Game, AudioEnum.PLAYER_ATTACK);
         this.playAction(CLIP_ATTACK);
     }
 
@@ -46,6 +50,7 @@ export class PlayerView extends Component {
     }
 
     playDrink(): void {
+        AudioPlayer.getInstance().playLoopEffect(BundlesEnum.Game, AudioEnum.DRINK_SLURP);
         const clips = this._anim?.clips?.map((clip) => clip?.name) ?? [];
         console.log("[Drink] playDrink", "anim", this._anim?.node?.name ?? "无", "clips", clips, "names", this._clipNames);
         const duration = this.playNamed(["shoot(2h)bow", "bow", "shoot"]);

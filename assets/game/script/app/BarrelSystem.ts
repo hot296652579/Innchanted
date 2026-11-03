@@ -1,6 +1,9 @@
 import { Camera, Node } from "cc";
+import { AudioEnum } from "../../../define/AudioEnum";
+import { BundlesEnum } from "../../../define/BundlesEnum";
 import { EventManager } from "../../../framework/event/EventManager";
 import { GameEvent } from "../../../framework/event/EventName";
+import AudioPlayer from "../../../framework/resource/AudioPlayer";
 import { Actor } from "../domain/Actor";
 import { BarrelAcceptKind, BarrelColor, colorFromItemId, drinkItemId, isPulp, pulpItemId } from "../domain/Barrel";
 import { ItemStack } from "../domain/ItemStack";
@@ -54,6 +57,11 @@ export class BarrelSystem {
         if (action === "AcceptPulp") {
             this._view.startPulpPulse(binding);
         }
+        if (action === "AcceptPulp" || action === "AcceptFill") {
+            this.playPulpSound();
+        } else {
+            this.stopPulpSound();
+        }
         console.log("[Barrel] 开始", action, binding.station.id, tank.acceptColor);
         return true;
     }
@@ -80,6 +88,7 @@ export class BarrelSystem {
         if (!active) {
             return;
         }
+        this.stopPulpSound();
         active.station.barrel?.cancelAccept();
         this._view.hide(active);
         this._active = null;
@@ -98,6 +107,9 @@ export class BarrelSystem {
         }
         this._view.hide(active);
         this._active = null;
+        if (done.kind === "pulp" || done.kind === "fill") {
+            this.stopPulpSound();
+        }
         this.finish(active, done.kind, done.color);
     }
 
@@ -163,12 +175,21 @@ export class BarrelSystem {
         EventManager.getInstance().emit(GameEvent.BARREL_DONE, binding.station.id, kind);
     }
 
+    private playPulpSound(): void {
+        void AudioPlayer.getInstance().playLoopEffect(BundlesEnum.Game, AudioEnum.WATER_BABBLING_LOOP);
+    }
+
+    private stopPulpSound(): void {
+        AudioPlayer.getInstance().stopLoopEffect(BundlesEnum.Game, AudioEnum.WATER_BABBLING_LOOP);
+    }
+
     private givePulp(color: BarrelColor): void {
         if (this.actor.hand && !this.actor.hand.empty) {
             return;
         }
         this.actor.hand = new ItemStack(pulpItemId(color), 1);
         this._view.putPulp(color);
+        void AudioPlayer.getInstance().playEffect(BundlesEnum.Game, AudioEnum.OPEN_POUP);
         console.log("[Barrel] 接到原浆", color);
     }
 
@@ -199,6 +220,7 @@ export class BarrelSystem {
         }
         this.actor.hand = new ItemStack(drinkItemId(drawn), 1);
         this._view.putDrink(drawn);
+        void AudioPlayer.getInstance().playEffect(BundlesEnum.Game, AudioEnum.OPEN_POUP);
         this._view.syncVolumes(binding);
         console.log("[Barrel] 接到饮料", drawn, "剩余", tank.charges);
         if (drawn !== color) {
