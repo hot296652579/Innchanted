@@ -5,7 +5,7 @@ import { GameEvent } from "../../../framework/event/EventName";
 import AudioPlayer from "../../../framework/resource/AudioPlayer";
 import { Actor } from "../domain/Actor";
 import { colorFromItemId, isPulp } from "../domain/Barrel";
-import { ITEM_STACK_CAP, isCoin, ItemStack } from "../domain/ItemStack";
+import { isCoin, ITEM_STACK_CAP, ItemStack } from "../domain/ItemStack";
 import { Station, StationType } from "../domain/Station";
 import { stackFromHoldPoint, StationBinding } from "../sim/StationRegistry";
 import { FxView } from "../view/FxView";
@@ -22,8 +22,8 @@ import {
     stationNeedOf,
 } from "./Combine";
 import { ActionKind, resolveDefaultAction } from "./DefaultAction";
-import { GuestLoop, ServeResult } from "./GuestLoop";
 import { findEventDef } from "./EventCatalog";
+import { GuestLoop, ServeResult } from "./GuestLoop";
 import { findItemDef, isDrinkable } from "./ItemCatalog";
 import { ProcessorSystem } from "./ProcessorSystem";
 
@@ -321,7 +321,7 @@ export class InteractService {
         this.fx.burst(binding.node, "bank", 1, binding.node, 0.5);
         const events = EventManager.getInstance();
         events.emit(GameEvent.SHELL_BANKED, count);
-        events.emit(GameEvent.SHOW_TIPS, `金币已存入宝箱 x${count}`);
+        // events.emit(GameEvent.SHOW_TIPS, `金币已存入宝箱 x${count}`);
         playSfx(AudioEnum.COIN_JINGLE_SMALL);
         return true;
     }

@@ -26,7 +26,7 @@ export class ThiefIncident implements IIncident {
     private _carrying = false;
     private _scared = false;
 
-    constructor(readonly def: EventDef) {}
+    constructor(readonly def: EventDef) { }
 
     get done(): boolean {
         return this._phase === "done";
@@ -156,7 +156,7 @@ export class ThiefIncident implements IIncident {
         this._remain -= dt;
         if (!this._urged && this._remain <= 5) {
             this._urged = true;
-            EventManager.getInstance().emit(GameEvent.SHOW_TIPS, "小偷还剩 5 秒！");
+            // EventManager.getInstance().emit(GameEvent.SHOW_TIPS, "小偷还剩 5 秒！");
         }
         if (this._remain > 0) {
             return;

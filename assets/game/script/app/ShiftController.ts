@@ -71,6 +71,7 @@ export class ShiftController {
     private _restIndex = 0;
     private _resting = false;
     private _restLeft = 0;
+    private _waveBeganAt = 0;
     private _ended = false;
     private _guide: GuideDirector | null = null;
     private _alive = true;
@@ -180,6 +181,7 @@ export class ShiftController {
         this._restIndex = 0;
         this._resting = false;
         this._restLeft = 0;
+        this._waveBeganAt = 0;
         this._guide = new GuideDirector(args.camera);
         await this._guide.load();
         if (this.leftBattle(args)) {
@@ -236,6 +238,7 @@ export class ShiftController {
         this._restIndex = 0;
         this._resting = false;
         this._restLeft = 0;
+        this._waveBeganAt = 0;
         this._ended = false;
         this._playerAgentId = -1;
         this._ice?.clear();
@@ -404,9 +407,10 @@ export class ShiftController {
         if (this._restIndex >= this._restTimes.length || this._restIndex + 1 >= this._waveCount) {
             return;
         }
-        const due = this._score.elapsed >= this._restTimes[this._restIndex];
+        const restAt = this._restTimes[this._restIndex];
+        const due = this._score.elapsed >= restAt;
         const gone = this._guests?.waveGuestsGone() ?? false;
-        if (due && !gone) {
+        if (due && !gone && this._waveBeganAt < restAt) {
             this._guests?.pauseSpawn();
             this._guests?.dropPending();
         }
@@ -434,6 +438,7 @@ export class ShiftController {
         this._restLeft = 0;
         this._events?.setPaused(false);
         this._restIndex += 1;
+        this._waveBeganAt = this._score?.elapsed ?? 0;
         this._guests?.beginWave(this._restIndex, 0);
     }
 
