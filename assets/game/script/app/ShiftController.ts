@@ -5,7 +5,9 @@ import { ConfigManager } from "../../../framework/config/ConfigManager";
 import { EventManager } from "../../../framework/event/EventManager";
 import { GameEvent } from "../../../framework/event/EventName";
 import { Actor } from "../domain/Actor";
+import { isCoin } from "../domain/ItemStack";
 import { ShiftScore } from "../domain/ShiftScore";
+import { StationType } from "../domain/Station";
 import { CommandFsm } from "../fsm/CommandFsm";
 import RecastDetourManager from "../navmesh/recastdetourjs/tool/RecastDetourManager";
 import { GridAgent } from "../sim/GridAgent";
@@ -644,7 +646,7 @@ export class ShiftController {
         return took;
     }
 
-    /** 走到 LeavePoint 的人数 = 配置人数，且入箱金币 = 客人留下的金币。否则等倒计时。 */
+    /** 离店人数 = 配置人数，且桌上和手上都没有金币。每次存金币、客人离店时检查。 */
     private tickWin(): void {
         if (this._ended || !this._score || !this._guests) {
             return;
@@ -652,10 +654,30 @@ export class ShiftController {
         if (this._guests.leftCount < this._guests.guestTotal) {
             return;
         }
-        if (this._score.gold < this._guests.droppedGold) {
+        if (this.hasLooseGold()) {
             return;
         }
         this.settle("通关");
+    }
+
+    /** 玩家手里或桌上还有未存的金币。 */
+    private hasLooseGold(): boolean {
+        const hand = this._actor?.hand;
+        if (hand && !hand.empty && isCoin(hand.itemId)) {
+            return true;
+        }
+        const stations = this._registry.all;
+        for (let i = 0; i < stations.length; i++) {
+            const binding = stations[i];
+            if (binding.station.type === StationType.Chest) {
+                continue;
+            }
+            const slot = binding.station.slot;
+            if (slot && !slot.empty && isCoin(slot.itemId)) {
+                return true;
+            }
+        }
+        return false;
     }
 
     private settle(reason: string): void {

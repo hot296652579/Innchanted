@@ -56,6 +56,7 @@ interface GuestRuntime {
     view: PlayerView | null;
     agent: GridAgent;
     eatLeft: number;
+    leaveWait: number;
     leaveAfterEat: boolean;
     lined: boolean;
     wave: number;
@@ -198,6 +199,11 @@ export class GuestLoop {
 
     dropPending(): void {
         this._pending.length = 0;
+    }
+
+    /** 场上或待出场还有客人。 */
+    hasAlive(): boolean {
+        return this._pending.length > 0 || this._runtimes.length > 0;
     }
 
     beginWave(index: number, delay = 0): void {
@@ -586,7 +592,7 @@ export class GuestLoop {
         const agent = new GridAgent(this.pathfinder, agentId, SEAT_ARRIVE);
         const view = node.getComponent(PlayerView) ?? node.addComponent(PlayerView);
         view.bind(this.pathfinder, agentId, startPos.y - this.pathfinder.getPosition(agentId).y, this._yawOffset, 8);
-        const runtime: GuestRuntime = { layout, guest, fsm, view, agent, eatLeft: 0, leaveAfterEat: false, lined: false, wave: this._waveIndex };
+        const runtime: GuestRuntime = { layout, guest, fsm, view, agent, eatLeft: 0, leaveWait: 0, leaveAfterEat: false, lined: false, wave: this._waveIndex };
         this._runtimes.push(runtime);
         if (isEscortGuest(layout.guestType) && def.markPrefab) {
             void this._escort.ensureMark(def.markPrefab);
@@ -636,6 +642,13 @@ export class GuestLoop {
                 this.finishLeave(runtime);
                 return;
             }
+        }
+        if (runtime.guest.state === GuestState.Leaving) {
+            runtime.leaveWait += dt;
+            if (runtime.leaveWait >= 8) {
+                this.finishLeave(runtime);
+            }
+            return;
         }
         this.applyWait(runtime, runtime.guest.tickWait(dt));
     }
@@ -693,10 +706,12 @@ export class GuestLoop {
     private walkOut(runtime: GuestRuntime): void {
         const { leavePoint, seatPoint, table } = runtime.layout;
         runtime.fsm.leave();
+        runtime.leaveWait = 0;
         this.clearEscort(runtime.guest.id);
         this._faces.hide(runtime.guest.id);
         runtime.eatLeft = 0;
         this.pathfinder.setAgentRadius(runtime.agent.agentId, AGENT.radius);
+        runtime.agent.arriveRadius = 1.6;
         this.setWalking(runtime, true);
         runtime.agent.goto(leavePoint.worldPosition);
         if (table) {
