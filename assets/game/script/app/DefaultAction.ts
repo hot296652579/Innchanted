@@ -68,11 +68,11 @@ function resolveCook(hand: ItemStack | null, station: Station): ActionKind {
     if (state === "cooking") {
         return "MoveOnly";
     }
+    if (held && findCombineRecipe(held, station)) {
+        return "Combine";
+    }
     if (state === "ready") {
-        if (!held) {
-            return "Take";
-        }
-        return findCombineRecipe(held, station) ? "Combine" : "RefuseSwap";
+        return held ? "RefuseSwap" : "Take";
     }
     if (!held) {
         return "MoveOnly";
@@ -171,6 +171,9 @@ function resolveMagicJar(hand: ItemStack | null, station: Station): ActionKind {
 function resolvePlace(hand: ItemStack | null, station: Station): ActionKind {
     const held = nonempty(hand);
     const slot = nonempty(station.slot);
+    if (held && slot && findCombineRecipe(held, station)) {
+        return "Combine";
+    }
     const collect = resolveCollect(hand, station.slot);
     if (collect) {
         return collect;
