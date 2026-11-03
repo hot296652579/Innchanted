@@ -5,14 +5,12 @@ import { ConfigManager } from "../../../framework/config/ConfigManager";
 import { EventManager } from "../../../framework/event/EventManager";
 import { GameEvent } from "../../../framework/event/EventName";
 import { Actor } from "../domain/Actor";
-import { isCoin } from "../domain/ItemStack";
 import { ShiftScore } from "../domain/ShiftScore";
-import { StationType } from "../domain/Station";
 import { CommandFsm } from "../fsm/CommandFsm";
 import RecastDetourManager from "../navmesh/recastdetourjs/tool/RecastDetourManager";
 import { GridAgent } from "../sim/GridAgent";
 import { RecastPathfinder } from "../sim/RecastPathfinder";
-import { findNamedDescendant, itemIdFromNode, StationRegistry } from "../sim/StationRegistry";
+import { findNamedDescendant, StationRegistry } from "../sim/StationRegistry";
 import { Enemy } from "../view/Enemy";
 import { FxView } from "../view/FxView";
 import { GroundIceView } from "../view/GroundIceView";
@@ -202,6 +200,8 @@ export class ShiftController {
             this.tickInvite(dt);
         }
         this._fx?.tick(dt);
+        this.tickRest(dt);
+        this.tickWin();
         if (pausing) {
             if (this._guide?.allowsEvents) {
                 this._events?.update(dt);
@@ -217,8 +217,6 @@ export class ShiftController {
         this._events?.update(dt);
         this.tickHunt(dt);
         this._ice?.update(dt);
-        this.tickRest(dt);
-        this.tickWin();
         this.tickScore(dt);
     }
 
@@ -226,6 +224,7 @@ export class ShiftController {
         this._alive = false;
         const events = EventManager.getInstance();
         events.off(GameEvent.SHELL_BANKED, this.onBanked, this);
+        events.off(GameEvent.GUEST_LEFT, this.onGuestLeft, this);
         events.off(GameEvent.GROUND_ICE_FREEZE, this.onIceFreeze, this);
         events.off(GameEvent.GROUND_ICE_THAW, this.onIceThaw, this);
         this._huntId = null;
@@ -622,12 +621,18 @@ export class ShiftController {
     }
 
     private bindScore(): void {
-        EventManager.getInstance().on(GameEvent.SHELL_BANKED, this.onBanked, this);
+        const events = EventManager.getInstance();
+        events.on(GameEvent.SHELL_BANKED, this.onBanked, this);
+        events.on(GameEvent.GUEST_LEFT, this.onGuestLeft, this);
     }
 
     private onBanked(count: number): void {
         this._score?.bank(count);
         this.emitGold();
+        this.tickWin();
+    }
+
+    private onGuestLeft(): void {
         this.tickWin();
     }
 
@@ -639,14 +644,15 @@ export class ShiftController {
         return took;
     }
 
+    /** 走到 LeavePoint 的人数 = 配置人数，且入箱金币 = 客人留下的金币。否则等倒计时。 */
     private tickWin(): void {
-        if (this._ended || !this._score) {
+        if (this._ended || !this._score || !this._guests) {
             return;
         }
-        if (!(this._guests?.allGone() ?? false)) {
+        if (this._guests.leftCount < this._guests.guestTotal) {
             return;
         }
-        if (this.pickableGold() > 0) {
+        if (this._score.gold < this._guests.droppedGold) {
             return;
         }
         this.settle("通关");
@@ -658,40 +664,13 @@ export class ShiftController {
         }
         this._ended = true;
         this._events?.setPaused(true);
+        this._guide?.clear();
         const gold = this._score.gold;
         const level = findLevel(BattleContext.selectedLevelId);
         const stars = settleStars(level, gold);
         BattleContext.completeLevel(level.id);
         EventManager.getInstance().emit(GameEvent.LEVEL_CLEARED, { gold, stars });
         console.log(`[Shift] ${reason} 入箱 ${gold} 星 ${stars}`);
-    }
-
-    /** 手里、桌上还能捡或还没存箱的金币。宝箱飞入动画不算。 */
-    private pickableGold(): number {
-        let n = 0;
-        const hand = this._actor?.hand;
-        if (hand && !hand.empty && isCoin(hand.itemId)) {
-            n += hand.count;
-        }
-        const stations = this._registry.all;
-        for (let i = 0; i < stations.length; i++) {
-            const binding = stations[i];
-            if (binding.station.type === StationType.Chest) {
-                continue;
-            }
-            const slot = binding.station.slot;
-            if (slot && !slot.empty && isCoin(slot.itemId)) {
-                n += slot.count;
-                continue;
-            }
-            const kids = binding.holdPoint.children;
-            for (let k = 0; k < kids.length; k++) {
-                if (isCoin(itemIdFromNode(kids[k]))) {
-                    n += 1;
-                }
-            }
-        }
-        return n;
     }
 
     private tickScore(dt: number): void {

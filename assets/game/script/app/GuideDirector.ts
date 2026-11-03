@@ -33,16 +33,24 @@ export class GuideDirector {
         return this._index >= 0 && this._index < this._steps.length;
     }
 
-    /** 等客人入座 / 等蝙蝠出现时不冻局；真正出引导文案时才停倒计时。 */
+    /** 接原浆/灌桶/接饮料冻局；等客人入座时不冻；客人坐下后再冻，强制点那一桌。 */
     get pausing(): boolean {
         const wait = this.step()?.wait;
-        return this.active && wait !== "seat" && wait !== "thief";
+        if (!this.active) {
+            return false;
+        }
+        if (wait === "pulp" || wait === "fill" || wait === "drink" || wait === "tip" || wait === "chase") {
+            return true;
+        }
+        return wait === "serve" && !!this._tableId;
     }
 
-    /** 等入座、上菜、拾金币、存箱、等蝙蝠时客人照常动。 */
+    /** 等入座、上菜、拾金币、存箱、等蝙蝠、驱赶蝙蝠时客人照常动。 */
     get allowsGuests(): boolean {
         const wait = this.step()?.wait;
-        return wait === "seat" || wait === "serve" || wait === "coin" || wait === "bank" || wait === "thief";
+        return wait === "seat" || wait === "serve" || wait === "coin" || wait === "bank"
+            || wait === "thief" || wait === "chase"
+            || (wait === "tip" && !!this._enemy?.isValid);
     }
 
     /** 蝙蝠飞向食物、被赶走飞回时事件继续走；停在食物上后冻住。 */
@@ -98,6 +106,9 @@ export class GuideDirector {
             return false;
         }
         if (step.wait === "seat" || step.wait === "thief") {
+            return true;
+        }
+        if (step.wait === "serve" && !this._tableId) {
             return true;
         }
         if (step.wait === "chase") {

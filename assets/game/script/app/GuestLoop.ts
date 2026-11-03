@@ -99,6 +99,9 @@ export class GuestLoop {
     private _spawnGap = SPAWN_GAP;
     private _spawned = 0;
     private _served = 0;
+    private _guestTotal = 0;
+    private _leftCount = 0;
+    private _droppedGold = 0;
     private _coinPrefab: Prefab | null = null;
     private _yawOffset = 0;
     private _player: Node | null = null;
@@ -162,6 +165,10 @@ export class GuestLoop {
         this.hidePlaced(this._guestFolder);
         this.captureQueueDir();
         this._waves = guestWaves(guestIds);
+        this._guestTotal = 0;
+        for (let i = 0; i < this._waves.length; i++) {
+            this._guestTotal += this._waves[i].length;
+        }
         await this.ensurePools(this.flatIds(this._waves));
         this.enqueueWave(0, Math.max(0, guestDelay ?? 0));
         if (this._pending.some((item) => item.waitInLine) && !hall.waitPoint) {
@@ -198,15 +205,19 @@ export class GuestLoop {
         this.enqueueWave(index, delay);
     }
 
-    /** 没有在场/待出场客人，且后面没有未开的波次。 */
-    allGone(): boolean {
-        if (this._spawnPaused || this._waves.length === 0) {
-            return false;
-        }
-        if (this._pending.length > 0 || this._runtimes.length > 0) {
-            return false;
-        }
-        return this._waveIndex >= this._waves.length - 1;
+    /** 配置的客人总数。 */
+    get guestTotal(): number {
+        return this._guestTotal;
+    }
+
+    /** 已经走到 LeavePoint 的人数。 */
+    get leftCount(): number {
+        return this._leftCount;
+    }
+
+    /** 客人留下的金币总数。 */
+    get droppedGold(): number {
+        return this._droppedGold;
     }
 
     /** 每帧：头顶 UI、引座长按、每个客人的走路/等待/吃饭。 */
@@ -718,6 +729,7 @@ export class GuestLoop {
         if (node.isValid) {
             node.destroy();
         }
+        this._leftCount += 1;
         this.emit(GameEvent.GUEST_LEFT, runtime.guest.id);
     }
 
@@ -819,6 +831,9 @@ export class GuestLoop {
         this._spawnWait = 0;
         this._spawned = 0;
         this._served = 0;
+        this._guestTotal = 0;
+        this._leftCount = 0;
+        this._droppedGold = 0;
         this._hold = null;
         this._escortId = null;
         this._levelOrders = null;
@@ -1032,7 +1047,9 @@ export class GuestLoop {
         for (let i = 0; i < orderIds.length; i++) {
             gold += goldOf(orderIds[i]);
         }
-        binding.station.slot = new ItemStack(COIN_ID, Math.max(1, gold));
+        const dropped = Math.max(1, gold);
+        this._droppedGold += dropped;
+        binding.station.slot = new ItemStack(COIN_ID, dropped);
         if (!this._coinPrefab) {
             return;
         }
