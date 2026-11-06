@@ -50,7 +50,9 @@ export class PlayerView extends Component {
     }
 
     playDrink(): void {
-        AudioPlayer.getInstance().playLoopEffect(BundlesEnum.Game, AudioEnum.DRINK_SLURP);
+        const audio = AudioPlayer.getInstance();
+        audio.stopLoopEffect(BundlesEnum.Game, AudioEnum.DRINK_SLURP);
+        void audio.playEffect(BundlesEnum.Game, AudioEnum.DRINK_SLURP);
         const clips = this._anim?.clips?.map((clip) => clip?.name) ?? [];
         console.log("[Drink] playDrink", "anim", this._anim?.node?.name ?? "无", "clips", clips, "names", this._clipNames);
         const duration = this.playNamed(["shoot(2h)bow", "bow", "shoot"]);

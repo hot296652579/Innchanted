@@ -4,7 +4,7 @@ import { EventManager } from "../../../framework/event/EventManager";
 import { GameEvent } from "../../../framework/event/EventName";
 import AudioPlayer from "../../../framework/resource/AudioPlayer";
 import { Actor } from "../domain/Actor";
-import { colorFromItemId, isPulp } from "../domain/Barrel";
+import { colorFromItemId, isMagicDrink, isPulp } from "../domain/Barrel";
 import { isCoin, ITEM_STACK_CAP, ItemStack } from "../domain/ItemStack";
 import { Station, StationType } from "../domain/Station";
 import { stackFromHoldPoint, StationBinding } from "../sim/StationRegistry";
@@ -41,16 +41,19 @@ export class InteractService {
         private readonly winds: WhirlwindView,
     ) { }
 
-    /** 点自身：喝掉手里的药剂。解冻药看 ice 事件的 unlockItemId。 */
+    /** 点自身：喝掉手里的药剂、魔法饮料、原浆。只有药剂会解冻。 */
     useSelf(): boolean {
         const hand = this.actor.hand;
-        const drinkable = !!hand && !hand.empty && isDrinkable(hand.itemId);
-        console.log("[Drink] useSelf", "hand", hand, "drinkable", drinkable, "def", hand ? findItemDef(hand.itemId) : null);
-        if (!drinkable || !hand) {
+        if (!hand || hand.empty) {
             return false;
         }
         const itemId = hand.itemId;
-        const def = findItemDef(itemId);
+        const flavored = isMagicDrink(itemId) || isPulp(itemId);
+        const drinkable = isDrinkable(itemId) || flavored;
+        console.log("[Drink] useSelf", "hand", hand, "drinkable", drinkable, "def", findItemDef(itemId));
+        if (!drinkable) {
+            return false;
+        }
         hand.count -= 1;
         this.holds.removeFromPlayer(1);
         if (hand.empty) {
@@ -61,12 +64,13 @@ export class InteractService {
         this.fx.burst(this.playerView.node, "drink", 1, drinkAt);
         const events = EventManager.getInstance();
         events.emit(GameEvent.ITEM_HELD_CHANGED, this.actor.id, this.actor.hand);
-        const ice = findEventDef("ice");
-        if (ice?.unlockItemId && itemId === ice.unlockItemId) {
-            events.emit(GameEvent.GROUND_ICE_THAW, ice.freezeTime ?? 1);
-            console.log("[Player] 喝药解冻", itemId);
+        if (!flavored) {
+            const ice = findEventDef("ice");
+            if (ice?.unlockItemId && itemId === ice.unlockItemId) {
+                events.emit(GameEvent.GROUND_ICE_THAW, ice.freezeTime ?? 1);
+                console.log("[Player] 喝药解冻", itemId);
+            }
         }
-        // events.emit(GameEvent.SHOW_TIPS, `喝了${def?.displayName ?? "药剂"}`);
         console.log("[Player] 喝药", itemId);
         return true;
     }
