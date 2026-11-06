@@ -44,6 +44,12 @@ export enum GameEvent {
     BARREL_DONE = "BARREL_DONE",
     /** 客人入座并亮出订单 */
     ORDER_SHOWN = "ORDER_SHOWN",
+    /** 引座客走到等待点（guestId） */
+    GUEST_WAIT_READY = "GUEST_WAIT_READY",
+    /** 已长按确认引座（guestId） */
+    GUEST_ESCORT_CONFIRMED = "GUEST_ESCORT_CONFIRMED",
+    /** 引座客被带到圆桌（guestId, tableId） */
+    GUEST_ESCORT_SEATED = "GUEST_ESCORT_SEATED",
     /** 上菜成功 */
     GUEST_SERVED = "GUEST_SERVED",
     /** 桌上出现金币 */

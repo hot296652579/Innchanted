@@ -33,6 +33,8 @@ export class Guest {
     slept = false;
     tableId = "";
     leaveReason: GuestLeaveReason | null = null;
+    /** 引导教学客：不出单、不催单、不超时离席。 */
+    tutorial = false;
 
     constructor(
         public readonly id: string,
@@ -95,7 +97,7 @@ export class Guest {
 
     /** 入座后累计等待。半程催一次，超时离席。会睡觉的客人半程入睡，计时暂停。 */
     tickWait(dt: number): WaitSignal | null {
-        if (!this.seated || this.sleeping) {
+        if (this.tutorial || !this.seated || this.sleeping) {
             return null;
         }
         this.waited += dt;

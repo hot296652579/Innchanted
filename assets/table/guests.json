@@ -65,7 +65,7 @@
       "prefab/guest/soldier/SoldierGuest1",
       "prefab/guest/soldier/SoldierGuest2"
     ],
-    "waitTime": 15,
+    "waitTime": 30,
     "orders": [
       { "orderId": ["chickenlegbaked"] }
     ],
@@ -82,7 +82,7 @@
       "prefab/guest/mage/MageGuest1",
       "prefab/guest/mage/MageGuest2"
     ],
-    "waitTime": 15,
+    "waitTime": 30,
     "orders": [
       { "orderId": ["burgerbaked"] }
     ],

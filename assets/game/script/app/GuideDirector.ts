@@ -21,6 +21,7 @@ export class GuideDirector {
     private _registry: StationRegistry | null = null;
     private _guests: GuestLoop | null = null;
     private _enemy: Node | null = null;
+    private _guestId: string | null = null;
     private _hovering = false;
     private _queued = -1;
     private _clickLock = 0;
@@ -39,17 +40,21 @@ export class GuideDirector {
         if (!this.active) {
             return false;
         }
-        if (wait === "pulp" || wait === "fill" || wait === "drink" || wait === "tip" || wait === "chase") {
+        if (wait === "pulp" || wait === "fill" || wait === "drink" || wait === "tip" || wait === "chase"
+            || wait === "escort" || wait === "roundseat") {
             return true;
         }
         return wait === "serve" && !!this._tableId;
     }
 
-    /** 等入座、上菜、拾金币、存箱、等蝙蝠、驱赶蝙蝠时客人照常动。 */
+    /** 等入座、排队、引座、上菜、拾金币、存箱、等蝙蝠、驱赶蝙蝠时客人照常动。 */
     get allowsGuests(): boolean {
         const wait = this.step()?.wait;
+        if (this._guests?.hasTutorialPending()) {
+            return true;
+        }
         return wait === "seat" || wait === "serve" || wait === "coin" || wait === "bank"
-            || wait === "thief" || wait === "chase"
+            || wait === "thief" || wait === "chase" || wait === "queue" || wait === "escort" || wait === "roundseat"
             || (wait === "tip" && !!this._enemy?.isValid);
     }
 
@@ -84,6 +89,12 @@ export class GuideDirector {
         if (this._steps.length === 0) {
             return;
         }
+        for (let i = 0; i < this._steps.length; i++) {
+            const step = this._steps[i];
+            if (step.wait === "queue" && step.target) {
+                guests.reserveTutorial(step.target);
+            }
+        }
         const events = EventManager.getInstance();
         events.on(GameEvent.BARREL_DONE, this.onBarrelDone, this);
         events.on(GameEvent.ORDER_SHOWN, this.onOrderShown, this);
@@ -93,6 +104,9 @@ export class GuideDirector {
         events.on(GameEvent.EVENT_THIEF_APPEAR, this.onThiefAppear, this);
         events.on(GameEvent.EVENT_THIEF_HOVER, this.onThiefHover, this);
         events.on(GameEvent.EVENT_THIEF_SCARE, this.onThiefScare, this);
+        events.on(GameEvent.GUEST_WAIT_READY, this.onWaitReady, this);
+        events.on(GameEvent.GUEST_ESCORT_CONFIRMED, this.onEscortConfirmed, this);
+        events.on(GameEvent.GUEST_ESCORT_SEATED, this.onEscortSeated, this);
         this.showStep(0);
         console.log(`[Guide] 开始 ${this._steps.length} 步`);
     }
@@ -105,8 +119,21 @@ export class GuideDirector {
         if (!step || step.wait === "tip") {
             return false;
         }
-        if (step.wait === "seat" || step.wait === "thief") {
+        if (step.wait === "seat" || step.wait === "thief" || step.wait === "queue") {
             return true;
+        }
+        if (step.wait === "escort") {
+            if (hit.target.kind === "guest") {
+                return this.matchesGuest(hit.target.guestId);
+            }
+            if (hit.target.kind === "self") {
+                const waiting = this._guests?.waitingEscort(step.target);
+                return !!waiting && (this._guests?.nearForHold(waiting.guestId) ?? false);
+            }
+            return false;
+        }
+        if (step.wait === "roundseat") {
+            return hit.target.kind === "place" && hit.target.stationId === step.target;
         }
         if (step.wait === "serve" && !this._tableId) {
             return true;
@@ -149,6 +176,9 @@ export class GuideDirector {
         }
         this._view.update(dt);
         const step = this.step();
+        if (step?.wait === "queue") {
+            this.tryAdvanceQueue();
+        }
         if (step?.wait === "serve" && !this._tableId) {
             this.tryPointGuest();
         }
@@ -170,6 +200,7 @@ export class GuideDirector {
         this._registry = null;
         this._guests = null;
         this._enemy = null;
+        this._guestId = null;
         this._hovering = false;
         this._queued = -1;
         this._clickLock = 0;
@@ -192,13 +223,17 @@ export class GuideDirector {
         this._tipLeft = 0;
         const step = this._steps[index];
         this._hovering = false;
-        if (step.wait === "seat" || step.wait === "thief") {
+        if (step.wait === "seat" || step.wait === "thief" || step.wait === "queue") {
             this._tableId = null;
             this._view.hide();
             console.log(`[Guide] 第 ${index + 1} 步 等待`, step.wait, step.target);
             return;
         }
-        this._view.showText(step.text);
+        if (step.text) {
+            this._view.showText(step.text);
+        } else {
+            this._view.hideText();
+        }
         if (step.wait === "serve") {
             this._tableId = null;
             this.tryPointGuest();
@@ -223,9 +258,10 @@ export class GuideDirector {
             if (step.target) {
                 const stationNode = this._registry?.get(step.target)?.node ?? null;
                 const enemyNode = this._enemy?.isValid ? this._enemy : null;
+                const waitNode = this._guestId ? this._guests?.guestNodeById(this._guestId) ?? null : null;
                 const guestNode = keepTable ? this._guests?.guestNodeAt(keepTable) ?? null : null;
                 const tableNode = keepTable ? this._registry?.get(keepTable)?.node ?? null : null;
-                this._view.pointAt(stationNode ?? enemyNode ?? guestNode ?? tableNode);
+                this._view.pointAt(stationNode ?? enemyNode ?? waitNode ?? guestNode ?? tableNode);
             } else {
                 this._view.pointAt(null);
             }
@@ -238,6 +274,22 @@ export class GuideDirector {
             this._tableId = null;
             this._view.pointAt(this._enemy);
             console.log(`[Guide] 第 ${index + 1} 步`, "chase");
+            return;
+        }
+        if (step.wait === "escort") {
+            this._tableId = null;
+            const waiting = this._guests?.waitingEscort(step.target);
+            if (waiting) {
+                this._guestId = waiting.guestId;
+            }
+            this._view.pointAt(this.guideGuestNode());
+            console.log(`[Guide] 第 ${index + 1} 步`, "escort", step.target);
+            return;
+        }
+        if (step.wait === "roundseat") {
+            this._tableId = step.target;
+            this._view.pointAt(this._registry?.get(step.target)?.node ?? null);
+            console.log(`[Guide] 第 ${index + 1} 步`, "roundseat", step.target);
             return;
         }
         this._tableId = null;
@@ -338,14 +390,79 @@ export class GuideDirector {
         this._view.pointAt(seated.node);
     }
 
+    private tryAdvanceQueue(): void {
+        const step = this.step();
+        if (step?.wait !== "queue") {
+            return;
+        }
+        const found = this._guests?.waitingEscort(step.target || undefined);
+        if (!found) {
+            return;
+        }
+        this._guestId = found.guestId;
+        this.showStep(this._index + 1);
+    }
+
+    private onWaitReady(guestId: string): void {
+        const step = this.step();
+        if (step?.wait !== "queue") {
+            return;
+        }
+        if (step.target && resolveGuestType(guestId) !== step.target) {
+            return;
+        }
+        this._guestId = guestId;
+        this.showStep(this._index + 1);
+    }
+
+    private onEscortConfirmed(guestId: string): void {
+        if (this.step()?.wait !== "escort" || !this.matchesGuest(guestId)) {
+            return;
+        }
+        this.showStep(this._index + 1);
+    }
+
+    private onEscortSeated(_guestId: string, tableId: string): void {
+        const step = this.step();
+        if (step?.wait !== "roundseat") {
+            return;
+        }
+        if (step.target && tableId !== step.target) {
+            return;
+        }
+        this.showStep(this._index + 1);
+    }
+
+    private matchesGuest(guestId: string): boolean {
+        const step = this.step();
+        if (!step) {
+            return false;
+        }
+        if (this._guestId) {
+            return guestId === this._guestId;
+        }
+        return !step.target || resolveGuestType(guestId) === step.target;
+    }
+
+    private guideGuestNode(): Node | null {
+        if (this._guestId) {
+            return this._guests?.guestNodeById(this._guestId) ?? null;
+        }
+        const step = this.step();
+        return this._guests?.waitingEscort(step?.target || undefined)?.node ?? null;
+    }
+
     private finish(): void {
         console.log("[Guide] 结束");
+        this._guests?.releaseTutorial();
+        this._guests?.resumeSpawn();
         this.unbind();
         this._view.hide();
         this._index = this._steps.length;
         this._tableId = null;
         this._tipLeft = 0;
         this._enemy = null;
+        this._guestId = null;
         this._hovering = false;
         this._queued = -1;
         this._clickLock = 0;
@@ -361,5 +478,8 @@ export class GuideDirector {
         events.off(GameEvent.EVENT_THIEF_APPEAR, this.onThiefAppear, this);
         events.off(GameEvent.EVENT_THIEF_HOVER, this.onThiefHover, this);
         events.off(GameEvent.EVENT_THIEF_SCARE, this.onThiefScare, this);
+        events.off(GameEvent.GUEST_WAIT_READY, this.onWaitReady, this);
+        events.off(GameEvent.GUEST_ESCORT_CONFIRMED, this.onEscortConfirmed, this);
+        events.off(GameEvent.GUEST_ESCORT_SEATED, this.onEscortSeated, this);
     }
 }

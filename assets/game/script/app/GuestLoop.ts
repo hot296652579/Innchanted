@@ -24,7 +24,7 @@ const SPAWN_GAP = 1;
 const SEAT_ARRIVE = 1.0;
 const QUEUE_ARRIVE = 0.35;
 const WAIT_GAP = 1.6;
-const HOLD_RANGE_SQ = 2.2 * 2.2;
+const HOLD_RANGE_SQ = 3.5 * 3.5;
 const CLIP_STAND = 0;
 const CLIP_EAT = 2;
 const EAT_FACE_SEC = 1;
@@ -41,9 +41,9 @@ const PLAYER_TALK = "player";
 const TALK_ASK = "我该坐哪里?";
 const TALK_LEAD = "跟我来~";
 const ROUND_TIPS: Record<RoundSeatVerdict, string> = {
-    match: "入座正确",
-    mismatch: "入座错误",
-    pending: "客人正在入座",
+    match: "",
+    mismatch: "",
+    pending: "",
 };
 const _waitPos = new Vec3();
 const _waitBack = new Vec3();
@@ -60,6 +60,7 @@ interface GuestRuntime {
     leaveAfterEat: boolean;
     lined: boolean;
     wave: number;
+    waitReady: boolean;
 }
 
 export enum ServeResult {
@@ -109,6 +110,9 @@ export class GuestLoop {
     private _hold: Hold | null = null;
     private _escortId: string | null = null;
     private _levelOrders: Record<string, LevelGuestOrderSlots> | null = null;
+    private readonly _tutorialQuota = new Map<string, number>();
+    private _tutorialSpawned = 0;
+    private _holdSpawnForTutorial = false;
 
     constructor(
         private readonly pathfinder: RecastPathfinder,
@@ -186,19 +190,49 @@ export class GuestLoop {
             return false;
         }
         for (let i = 0; i < this._runtimes.length; i++) {
-            if (this._runtimes[i].wave === this._waveIndex) {
+            if (this._runtimes[i].wave === this._waveIndex && !this._runtimes[i].guest.tutorial) {
                 return false;
             }
         }
         return true;
     }
 
+    /** 引导用的第一个士兵/法师：不出单、不超时。 */
+    reserveTutorial(type: string): void {
+        if (!type) {
+            return;
+        }
+        this._tutorialQuota.set(type, (this._tutorialQuota.get(type) ?? 0) + 1);
+    }
+
     pauseSpawn(): void {
         this._spawnPaused = true;
     }
 
+    resumeSpawn(): void {
+        this._spawnPaused = false;
+        this._holdSpawnForTutorial = false;
+    }
+
+    hasTutorialPending(): boolean {
+        return !this.tutorialQuotaEmpty();
+    }
+
+    /** 引导结束：教学客走离店，不计入通关人数。 */
+    releaseTutorial(): void {
+        const list = this._runtimes.slice();
+        for (let i = 0; i < list.length; i++) {
+            if (list[i].guest.tutorial) {
+                this.walkOut(list[i], true);
+            }
+        }
+    }
+
     dropPending(): void {
-        this._pending.length = 0;
+        if (this._pending.length > 0) {
+            this._guestTotal = Math.max(0, this._guestTotal - this._pending.length);
+            this._pending.length = 0;
+        }
     }
 
     /** 场上或待出场还有客人。 */
@@ -211,9 +245,9 @@ export class GuestLoop {
         this.enqueueWave(index, delay);
     }
 
-    /** 配置的客人总数。 */
+    /** 配置的客人总数（不含引导教学客）。 */
     get guestTotal(): number {
-        return this._guestTotal;
+        return Math.max(0, this._guestTotal - this._tutorialSpawned);
     }
 
     /** 已经走到 LeavePoint 的人数。 */
@@ -245,10 +279,43 @@ export class GuestLoop {
         }
     }
 
+    /** 已走到等待点、可被引座的客人。 */
+    waitingEscort(type?: string): { guestId: string; node: Node } | null {
+        for (let i = 0; i < this._queue.length; i++) {
+            const runtime = this._queue[i];
+            if (!runtime.waitReady || !runtime.guest.atWait || runtime.layout.table) {
+                continue;
+            }
+            if (!isEscortGuest(runtime.layout.guestType)) {
+                continue;
+            }
+            if (type && runtime.layout.guestType !== type) {
+                continue;
+            }
+            return { guestId: runtime.guest.id, node: runtime.layout.guestNode };
+        }
+        return null;
+    }
+
+    guestNodeById(guestId: string): Node | null {
+        return this.findById(guestId)?.layout.guestNode ?? null;
+    }
+
     /** 点到的是否是还在排队、可被引座的客人。 */
     canEscortPick(node: Node): boolean {
         const runtime = this.findByNode(node);
         return !!runtime && isEscortGuest(runtime.layout.guestType) && runtime.guest.atWait;
+    }
+
+    /** 已经站在引座客身边，不必再走过去。 */
+    nearForHold(guestId: string): boolean {
+        const runtime = this.findById(guestId);
+        return !!runtime && !this.playerTooFar(runtime.layout.guestNode);
+    }
+
+    /** 已经站在圆桌边，可以立刻长按入座。 */
+    nearForSeat(binding: StationBinding): boolean {
+        return !this.playerTooFar(binding.node);
     }
 
     /** 开始长按确认引座客，进度条跟在客人头上。 */
@@ -522,13 +589,16 @@ export class GuestLoop {
             return;
         }
         this._spawnWait -= dt;
-        if (this._spawnWait <= 0) {
+        while (!this._spawnPaused && this._pending.length > 0 && this._spawnWait <= 0) {
             this.spawnNext();
+            if (!this.tutorialQuotaEmpty()) {
+                this._spawnWait = 0;
+            }
         }
     }
 
     private spawnNext(): void {
-        const item = this._pending.shift();
+        const item = this.takePending();
         const spawn = this._spawnAt;
         const folder = this._guestFolder;
         const leave = this._leavePoint;
@@ -578,11 +648,13 @@ export class GuestLoop {
             return;
         }
         const node = layout.guestNode;
+        const tutorial = this.takeTutorial(def.id);
         const guest = new Guest(node.name, {
             waitTime: def.waitTime,
-            orders: pickGuestOrders(def, this._levelOrders?.[def.id]),
-            sleepItemId: def.sleepItemId,
+            orders: tutorial ? [] : pickGuestOrders(def, this._levelOrders?.[def.id]),
+            sleepItemId: tutorial ? "" : def.sleepItemId,
         });
+        guest.tutorial = tutorial;
         guest.tableId = layout.table?.station.id ?? "";
         const fsm = new GuestFsm(guest);
         this._orders.bind(guest.id, node);
@@ -592,7 +664,7 @@ export class GuestLoop {
         const agent = new GridAgent(this.pathfinder, agentId, SEAT_ARRIVE);
         const view = node.getComponent(PlayerView) ?? node.addComponent(PlayerView);
         view.bind(this.pathfinder, agentId, startPos.y - this.pathfinder.getPosition(agentId).y, this._yawOffset, 8);
-        const runtime: GuestRuntime = { layout, guest, fsm, view, agent, eatLeft: 0, leaveWait: 0, leaveAfterEat: false, lined: false, wave: this._waveIndex };
+        const runtime: GuestRuntime = { layout, guest, fsm, view, agent, eatLeft: 0, leaveWait: 0, leaveAfterEat: false, lined: false, wave: this._waveIndex, waitReady: false };
         this._runtimes.push(runtime);
         if (isEscortGuest(layout.guestType) && def.markPrefab) {
             void this._escort.ensureMark(def.markPrefab);
@@ -632,6 +704,10 @@ export class GuestLoop {
                 runtime.agent.stop();
                 this.faceWaitLine(runtime.layout.guestNode);
                 this.showEscortAsk(runtime);
+                if (isEscortGuest(runtime.layout.guestType) && !runtime.waitReady) {
+                    runtime.waitReady = true;
+                    this.emit(GameEvent.GUEST_WAIT_READY, guest.id);
+                }
                 return;
             }
             if (guest.state === GuestState.Entering) {
@@ -667,8 +743,13 @@ export class GuestLoop {
         this.face(layout.guestNode, layout.table.node.worldPosition);
         this.playClip(layout.guestNode, CLIP_STAND, true);
         fsm.sit();
-        this.showOrder(runtime);
-        this.tryServe(layout.table);
+        if (isEscortGuest(runtime.layout.guestType) && layout.table) {
+            this.emit(GameEvent.GUEST_ESCORT_SEATED, runtime.guest.id, layout.table.station.id);
+        }
+        if (!runtime.guest.tutorial) {
+            this.showOrder(runtime);
+            this.tryServe(layout.table);
+        }
     }
 
     /** 头顶显示当前订单；一次性提示客会在 hintTime 后收起订单、持续显示问号。 */
@@ -703,9 +784,13 @@ export class GuestLoop {
     }
 
     /** 去 LeavePoint：清表情/圆桌占用，普通桌空出来后让排队的普通人入座。 */
-    private walkOut(runtime: GuestRuntime): void {
+    private walkOut(runtime: GuestRuntime, force = false): void {
         const { leavePoint, seatPoint, table } = runtime.layout;
-        runtime.fsm.leave();
+        if (force) {
+            runtime.fsm.dismiss();
+        } else {
+            runtime.fsm.leave();
+        }
         runtime.leaveWait = 0;
         this.clearEscort(runtime.guest.id);
         this._faces.hide(runtime.guest.id);
@@ -744,7 +829,9 @@ export class GuestLoop {
         if (node.isValid) {
             node.destroy();
         }
-        this._leftCount += 1;
+        if (!runtime.guest.tutorial) {
+            this._leftCount += 1;
+        }
         this.emit(GameEvent.GUEST_LEFT, runtime.guest.id);
     }
 
@@ -774,7 +861,7 @@ export class GuestLoop {
             this._escortId = runtime.guest.id;
             this._faces.hideTalk(runtime.guest.id);
             this.showPlayerLead();
-            this.tip("已确认引座，带到空圆桌");
+            this.emit(GameEvent.GUEST_ESCORT_CONFIRMED, runtime.guest.id);
             return;
         }
         if (hold.tableId) {
@@ -852,8 +939,47 @@ export class GuestLoop {
         this._hold = null;
         this._escortId = null;
         this._levelOrders = null;
+        this._tutorialQuota.clear();
+        this._tutorialSpawned = 0;
+        this._holdSpawnForTutorial = false;
         this._faces.hideTalk(PLAYER_TALK);
         this._escort.clear();
+    }
+
+    private takePending(): PendingGuest | undefined {
+        if (!this.tutorialQuotaEmpty()) {
+            for (let i = 0; i < this._pending.length; i++) {
+                const type = this._pending[i].guestType;
+                if ((this._tutorialQuota.get(type) ?? 0) > 0) {
+                    return this._pending.splice(i, 1)[0];
+                }
+            }
+        }
+        return this._pending.shift();
+    }
+
+    private takeTutorial(type: string): boolean {
+        const left = this._tutorialQuota.get(type) ?? 0;
+        if (left <= 0) {
+            return false;
+        }
+        this._tutorialQuota.set(type, left - 1);
+        this._tutorialSpawned += 1;
+        if (this.tutorialQuotaEmpty()) {
+            this._spawnPaused = true;
+            this._holdSpawnForTutorial = true;
+        }
+        return true;
+    }
+
+    private tutorialQuotaEmpty(): boolean {
+        let empty = true;
+        this._tutorialQuota.forEach((count) => {
+            if (count > 0) {
+                empty = false;
+            }
+        });
+        return empty;
     }
 
     private applyWait(runtime: GuestRuntime, signal: WaitSignal | null): void {

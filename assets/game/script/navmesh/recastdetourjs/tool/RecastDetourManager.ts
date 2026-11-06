@@ -240,8 +240,12 @@ export default class RecastDetourManager {
      * @param position
      */
     agentGotoByIndex(index: number, position: Vec3) {
-        const out = this.toNavPoint(position);
-        this.crowd!.agentGoto(index, out);
+        try {
+            const out = this.toNavPoint(position);
+            this.crowd!.agentGoto(index, out);
+        } catch (err) {
+            console.warn("[Nav] goto 失败", position, err);
+        }
     }
 
     agentStopByIndex(index: number) {
@@ -278,9 +282,20 @@ export default class RecastDetourManager {
     }
 
     private toNavPoint(position: Vec3) {
-        return this.navigationPlugin.getClosestPoint(
-            position.clone().multiplyScalar(1 / RecastConfig.RATIO)
-        );
+        const scaled = position.clone().multiplyScalar(1 / RecastConfig.RATIO);
+        if (!Number.isFinite(scaled.x) || !Number.isFinite(scaled.y) || !Number.isFinite(scaled.z)) {
+            return position.clone();
+        }
+        try {
+            const closest = this.navigationPlugin.getClosestPoint(scaled);
+            if (!closest || !Number.isFinite(closest.x) || !Number.isFinite(closest.y) || !Number.isFinite(closest.z)) {
+                return position.clone();
+            }
+            return closest;
+        } catch (err) {
+            console.warn("[Nav] snap 失败", scaled, err);
+            return position.clone();
+        }
     }
 
     /**

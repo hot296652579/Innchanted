@@ -137,20 +137,20 @@
   {
     "id": 6,
     "map": 6,
-    "duration": 180,
+    "duration": 360,
     "stars": [38, 70, 110],
-    "eventIds": ["thief", "threaten", "fuelthief", "skeleton"],
+    "eventIds": ["thief"],
     "delay": 15,
     "guestInterval": 1,
-    "restTimes": [30, 60],
+    "restTimes": [120],
     "restDuration": 10,
     "guests": [
-      ["soldierguest", "mageguest", "soldierguest"],
-      ["mageguest", "regularguest1", "regularguest"],
-      ["gourmetguest", "onetimeguest"]
+      ["soldierguest", "soldierguest", "soldierguest", "soldierguest", "mageguest", "mageguest", "regularguest2"],
+      ["soldierguest", "mageguest", "onetimeguest","soldierguest", "mageguest", "gourmetguest"],
+      ["soldierguest", "mageguest", "gourmetguest","soldierguest", "mageguest", "onetimeguest"]
     ],
     "guestOrders": {
-      "regularguest": ["magicdrink_brown", "magicdrink_green", "steakbaked"],
+      "regularguest": ["magicdrink_brown", "magicdrink_green"],
       "soldierguest": ["magicdrink_green", "magicdrink_brown"],
       "mageguest": ["magicdrink_green", "magicdrink_brown"],
       "onetimeguest": ["steakbaked"],
@@ -158,7 +158,18 @@
         ["magicdrink_brown", "magicdrink_green"],
         ["steakbaked"]
       ]
-    }
+    },
+    "guide": [
+      { "target": "soldierguest", "text": "", "wait": "queue" },
+      { "target": "guest", "text": "我是西巴族的战士，听说这里有神奇的药水，喝了让人雷厉风行", "wait": "tip", "duration": 3 },
+      { "target": "guest", "text": "但我只想与我的同伴坐一起，分享消息促进族人的发展", "wait": "tip", "duration": 3 },
+      { "target": "guest", "text": "所以我们该坐哪？ 我们喜欢圆桌，请带我们入座", "wait": "tip", "duration": 3 },
+      { "target": "soldierguest", "text": "点击客人确定客人入座", "wait": "escort" },
+      { "target": "RoundTable2", "text": "", "wait": "roundseat" },
+      { "target": "soldierguest", "text": "", "wait": "queue" },
+      { "target": "soldierguest", "text": "想要获得奖励，就需要让同种族的人坐在一起哦", "wait": "escort" },
+      { "target": "RoundTable1", "text": "", "wait": "roundseat" }
+    ]
   },
   {
     "id": 7,

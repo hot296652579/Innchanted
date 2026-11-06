@@ -21,6 +21,8 @@ import { Enemy } from "../view/Enemy";
 const { ccclass } = _decorator;
 
 const PLAYER_SPHERE_R = 0.7;
+const GUEST_SPHERE_R = 1.8;
+const GUEST_OVERLAP_RANGE = 3.5;
 const KITCHEN_FLOOR = "floor_kitchen";
 const OVERLAY_NAMES = ["icesheet", "navmeshdebug", "debugnav"];
 
@@ -106,6 +108,10 @@ export class ClickPicker extends Component {
             return place;
         }
         if (this.hitPlayer(ray)) {
+            const overlapped = this.pickGuestNearPlayer();
+            if (overlapped) {
+                return overlapped;
+            }
             console.log("[Drink] 点选自身");
             return { target: { kind: "self" }, dest: null, lookAt: null };
         }
@@ -132,7 +138,7 @@ export class ClickPicker extends Component {
             if (!root.activeInHierarchy || !this.canPickGuest(root)) {
                 continue;
             }
-            const dist = this.hitEnemyDist(ray, root);
+            const dist = this.hitEnemyDist(ray, root, GUEST_SPHERE_R);
             if (dist !== null && dist < bestDist) {
                 bestDist = dist;
                 bestRoot = root;
@@ -141,12 +147,43 @@ export class ClickPicker extends Component {
         if (!bestRoot) {
             return null;
         }
+        return this.guestHit(bestRoot);
+    }
+
+    /** 玩家挡在引座客身前时，点到自己也算点客人。 */
+    private pickGuestNearPlayer(): ClickHit | null {
+        if (!this.player || !this.guestRoot || !this.canPickGuest) {
+            return null;
+        }
+        const from = this.player.worldPosition;
+        const rangeSq = GUEST_OVERLAP_RANGE * GUEST_OVERLAP_RANGE;
+        let bestRoot: Node | null = null;
+        let bestDist = rangeSq;
+        const guests = this.guestRoot.children;
+        for (let i = 0; i < guests.length; i++) {
+            const root = guests[i];
+            if (!root.activeInHierarchy || !this.canPickGuest(root)) {
+                continue;
+            }
+            const p = root.worldPosition;
+            const dx = from.x - p.x;
+            const dz = from.z - p.z;
+            const distSq = dx * dx + dz * dz;
+            if (distSq < bestDist) {
+                bestDist = distSq;
+                bestRoot = root;
+            }
+        }
+        return bestRoot ? this.guestHit(bestRoot) : null;
+    }
+
+    private guestHit(root: Node): ClickHit {
         const from = this.player?.worldPosition ?? null;
-        const playerY = from ? from.y : bestRoot.worldPosition.y;
+        const playerY = from ? from.y : root.worldPosition.y;
         return {
-            target: { kind: "guest", guestId: bestRoot.name },
-            dest: standBeside(from, bestRoot.worldPosition, playerY, 1.1),
-            lookAt: bestRoot.worldPosition.clone(),
+            target: { kind: "guest", guestId: root.name },
+            dest: standBeside(from, root.worldPosition, playerY, 1.1),
+            lookAt: root.worldPosition.clone(),
         };
     }
 
@@ -271,7 +308,7 @@ export class ClickPicker extends Component {
     }
 
     /** 蒙皮网格包围盒经常不准，网格没命中时用角色球体兜底。 */
-    private hitEnemyDist(ray: geometry.Ray, root: Node): number | null {
+    private hitEnemyDist(ray: geometry.Ray, root: Node, sphereR = 1.2): number | null {
         const renderers = root.getComponentsInChildren(MeshRenderer);
         let best: number | null = null;
         for (let i = 0; i < renderers.length; i++) {
@@ -289,7 +326,7 @@ export class ClickPicker extends Component {
             }
         }
         const p = root.worldPosition;
-        const sphere = new geometry.Sphere(p.x, p.y + 0.6, p.z, 1.2);
+        const sphere = new geometry.Sphere(p.x, p.y + 0.6, p.z, sphereR);
         const hit = geometry.intersect.raySphere(ray, sphere);
         if (hit && (best === null || hit < best)) {
             best = hit;
@@ -370,15 +407,14 @@ export class ClickPicker extends Component {
 }
 
 function standBeside(from: Vec3 | null, center: Vec3, playerY: number, dist: number): Vec3 {
-    let dx = from ? from.x - center.x : 0;
-    let dz = from ? from.z - center.z : 1;
-    const len = Math.sqrt(dx * dx + dz * dz);
-    if (len < 0.001) {
-        dx = 0;
-        dz = 1;
-    } else {
-        dx /= len;
-        dz /= len;
+    if (!from) {
+        return new Vec3(center.x, playerY, center.z + dist);
     }
-    return new Vec3(center.x + dx * dist, playerY, center.z + dz * dist);
+    const dx = from.x - center.x;
+    const dz = from.z - center.z;
+    const len = Math.sqrt(dx * dx + dz * dz);
+    if (len <= dist) {
+        return new Vec3(from.x, playerY, from.z);
+    }
+    return new Vec3(center.x + (dx / len) * dist, playerY, center.z + (dz / len) * dist);
 }

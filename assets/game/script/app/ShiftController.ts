@@ -300,6 +300,7 @@ export class ShiftController {
         if (!this._commands || !this._actor) {
             return;
         }
+        hit = this.resolveEscortClick(hit);
         if (this._guide?.active) {
             if (this._guide.consumeClick()) {
                 return;
@@ -329,11 +330,6 @@ export class ShiftController {
             this._playerView?.clearLookTarget();
         }
         if (hit.target.kind === "enemy") {
-            const chasing = !!this._guide?.lockingEnemy;
-            if (this.handsBusy() && !chasing) {
-                EventManager.getInstance().emit(GameEvent.SHOW_TIPS, "先把手里的东西放下再打");
-                return;
-            }
             this._barrels?.cancel();
             const enemyId = hit.target.enemyId;
             const root = this.findEnemyNode(enemyId);
@@ -352,10 +348,15 @@ export class ShiftController {
         if (hit.target.kind === "guest") {
             this._barrels?.cancel();
             const guestId = hit.target.guestId;
+            if (this._guests?.nearForHold(guestId)) {
+                this._commands.cancel();
+                this._guests.beginConfirmHold(guestId);
+                return;
+            }
             this._commands.issue(hit.target, hit.dest, () => this._guests?.beginConfirmHold(guestId));
             return;
         }
-        if (hit.target.kind === "place" && !this.handsBusy() && this._events?.scareAt(hit.target.stationId)) {
+        if (hit.target.kind === "place" && this._events?.scareAt(hit.target.stationId)) {
             this._barrels?.cancel();
             this._playerView?.playAttack();
             EventManager.getInstance().emit(GameEvent.SHOW_TIPS, "赶走了小偷");
@@ -365,7 +366,31 @@ export class ShiftController {
             return;
         }
         this._barrels?.cancel();
+        if (hit.target.kind === "place") {
+            const binding = this._registry.get(hit.target.stationId);
+            if (binding && this._guests?.nearForSeat(binding) && this._guests.beginSeatHold(binding)) {
+                this._commands.cancel();
+                return;
+            }
+        }
         this._commands.issue(hit.target, hit.dest, () => this.onArrive(hit));
+    }
+
+    /** 玩家挡在引座客身前时，点到自己改成点客人。 */
+    private resolveEscortClick(hit: ClickHit): ClickHit {
+        if (hit.target.kind !== "self") {
+            return hit;
+        }
+        const waiting = this._guests?.waitingEscort();
+        if (!waiting || !this._guests?.nearForHold(waiting.guestId)) {
+            return hit;
+        }
+        const from = this._playerView?.node.worldPosition ?? null;
+        return {
+            target: { kind: "guest", guestId: waiting.guestId },
+            dest: from ? from.clone() : null,
+            lookAt: waiting.node.worldPosition.clone(),
+        };
     }
 
     private onArrive(hit: ClickHit): void {
@@ -404,13 +429,12 @@ export class ShiftController {
         if (!this._score || this._score.remain <= 0) {
             return;
         }
-        if (this._restIndex >= this._restTimes.length || this._restIndex + 1 >= this._waveCount) {
+        if (this._restIndex + 1 >= this._waveCount) {
             return;
         }
         const restAt = this._restTimes[this._restIndex];
-        const due = this._score.elapsed >= restAt;
         const gone = this._guests?.waveGuestsGone() ?? false;
-        if (due && !gone && this._waveBeganAt < restAt) {
+        if (restAt != null && this._score.elapsed >= restAt && !gone && this._waveBeganAt < restAt) {
             this._guests?.pauseSpawn();
             this._guests?.dropPending();
         }
@@ -458,10 +482,6 @@ export class ShiftController {
         if (!this._huntId || !this._commands) {
             return;
         }
-        if (this.handsBusy() && !this._guide?.lockingEnemy) {
-            this._huntId = null;
-            return;
-        }
         this._huntRetarget -= dt;
         if (this._huntRetarget > 0) {
             return;
@@ -477,7 +497,7 @@ export class ShiftController {
         const dx = player.worldPosition.x - root.worldPosition.x;
         const dz = player.worldPosition.z - root.worldPosition.z;
         if (dx * dx + dz * dz <= 4) {
-            this.onArriveEnemy(enemyId);
+            this.strikeEnemy(enemyId);
             return;
         }
         const dest = this.enemyStand(enemyId);
@@ -492,41 +512,30 @@ export class ShiftController {
     private onArriveEnemy(enemyId: string): void {
         const root = this.findEnemyNode(enemyId);
         const player = this._playerView?.node;
-        if (!root || !player || !this._commands) {
+        if (!root || !player) {
             this._huntId = null;
             return;
         }
-        const from = player.worldPosition;
-        const center = root.worldPosition;
-        const dx = from.x - center.x;
-        const dz = from.z - center.z;
-        const dist = Math.sqrt(dx * dx + dz * dz);
-        if (dist > 2) {
-            const dest = this.enemyStand(enemyId);
-            if (dest) {
-                this._playerView?.setLookTarget(center);
-                this._commands.issue({ kind: "enemy", enemyId }, dest, () => this.onArriveEnemy(enemyId));
-            }
+        const dx = player.worldPosition.x - root.worldPosition.x;
+        const dz = player.worldPosition.z - root.worldPosition.z;
+        if (dx * dx + dz * dz > 4) {
+            this._huntId = enemyId;
+            this._huntRetarget = 0;
             return;
         }
-        if (this.handsBusy() && !this._guide?.lockingEnemy) {
+        this.strikeEnemy(enemyId);
+    }
+
+    private strikeEnemy(enemyId: string): void {
+        const root = this.findEnemyNode(enemyId);
+        if (!root) {
             this._huntId = null;
-            EventManager.getInstance().emit(GameEvent.SHOW_TIPS, "先把手里的东西放下再打");
             return;
         }
         this._huntId = null;
-        this._playerView?.setLookTarget(center);
+        this._playerView?.setLookTarget(root.worldPosition);
         this._playerView?.playAttack();
-        if (this._events?.strike(root)) {
-            if (!this._guide?.lockingEnemy) {
-                // EventManager.getInstance().emit(GameEvent.SHOW_TIPS, "击退了小偷");
-            }
-        }
-    }
-
-    private handsBusy(): boolean {
-        const hand = this._actor?.hand;
-        return !!hand && !hand.empty;
+        this._events?.strike(root);
     }
 
     private async bindIce(planeRoot: Node | null): Promise<void> {
@@ -651,12 +660,18 @@ export class ShiftController {
         return took;
     }
 
-    /** 离店人数 = 配置人数，且桌上和手上都没有金币。每次存金币、客人离店时检查。 */
+    /** 离店人数 = 实际出场人数，且桌上和手上都没有金币。每次存金币、客人离店时检查。 */
     private tickWin(): void {
         if (this._ended || !this._score || !this._guests) {
             return;
         }
-        if (this._guests.leftCount < this._guests.guestTotal) {
+        if (this._resting) {
+            return;
+        }
+        if (this._restIndex + 1 < this._waveCount) {
+            return;
+        }
+        if (this._guests.hasAlive() || this._guests.leftCount < this._guests.guestTotal) {
             return;
         }
         if (this.hasLooseGold()) {

@@ -72,11 +72,15 @@ export class GuideView {
         }
     }
 
-    hide(): void {
-        this.clearArrow();
+    hideText(): void {
         if (this._board?.isValid) {
             this._board.active = false;
         }
+    }
+
+    hide(): void {
+        this.clearArrow();
+        this.hideText();
     }
 
     clear(): void {

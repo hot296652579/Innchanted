@@ -68,6 +68,11 @@ export class GuestFsm {
         }
     }
 
+    /** 引导结束打发走，不看出发状态。 */
+    dismiss(): void {
+        this.guest.state = GuestState.Leaving;
+    }
+
     finish(): void {
         this.guest.state = GuestState.Gone;
     }
