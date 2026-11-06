@@ -109,27 +109,30 @@
   {
     "id": 5,
     "map": 5,
-    "duration": 180,
+    "duration": 240,
     "stars": [32, 60, 95],
-    "eventIds": ["fuelthief", "skeleton"],
+    "eventIds": ["thief"],
     "delay": 15,
     "guestInterval": 1,
     "restTimes": [30, 60],
     "restDuration": 10,
     "guests": [
-      ["onetimeguest", "regularguest", "regularguest1", "regularguest2"],
-      ["gourmetguest", "onetimeguest", "regularguest"],
-      ["regularguest1", "regularguest2", "gourmetguest"]
+      ["onetimeguest", "regularguest", "regularguest1", "regularguest2","regularguest1","gourmetguest"],
+      ["regularguest", "onetimeguest", "regularguest","regularguest1", "regularguest2","gourmetguest"],
+      ["regularguest1", "regularguest2", "gourmetguest","onetimeguest", "regularguest","regularguest"]
     ],
     "guestOrders": {
       "regularguest": ["magicdrink_brown", "magicdrink_green", "magicdrink_red", "steakbaked"],
-      "onetimeguest": ["chickenlegbaked", "burgerbaked"],
+      "onetimeguest": ["magicdrink_brown", "magicdrink_green", "magicdrink_red", "steakbaked"],
       "gourmetguest": [
-        ["magicdrink_brown", "magicdrink_green"],
-        ["chickenlegbaked"],
-        ["burgerbaked"]
+        ["magicdrink_brown", "magicdrink_green","magicdrink_red"],
+        ["steakbaked"]
       ]
-    }
+    },
+    "guide": [
+      { "target": "onetimeguest", "text": "", "wait": "seat" },
+      { "target": "guest", "text": "这是记忆很差的客人，他只会提示你一次，要记住哦", "wait": "tip", "duration": 3 }
+    ]
   },
   {
     "id": 6,
