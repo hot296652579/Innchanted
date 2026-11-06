@@ -109,7 +109,7 @@
   {
     "id": 5,
     "map": 5,
-    "duration": 240,
+    "duration": 260,
     "stars": [32, 60, 95],
     "eventIds": ["thief"],
     "delay": 15,
