@@ -46,6 +46,14 @@ export class LockIncident implements IIncident {
         this._phase = "done";
     }
 
+    retreat(): void {
+        if (this._phase === "done") {
+            return;
+        }
+        this._ctx?.processors.clearLocks();
+        console.log("[Event] 休息清场", this.def.id);
+    }
+
     private applyLock(): void {
         const seconds = this.def.freezeTime ?? 5;
         const n = this._ctx?.processors.lockUnlocked(seconds) ?? 0;

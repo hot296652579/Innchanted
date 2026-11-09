@@ -6,7 +6,7 @@ import { DragonView } from "../../view/DragonView";
 import { EventDef } from "../EventCatalog";
 import { IIncident, IncidentContext } from "./Incident";
 
-type Phase = "toCenter" | "attack" | "toHome" | "done";
+type Phase = "waitSpawn" | "toCenter" | "attack" | "toHome" | "done";
 
 const KITCHEN = new Vec3(0, 3, 0);
 const _ray = new geometry.Ray();
@@ -15,8 +15,10 @@ const _screen = new Vec3();
 
 /** 冰冻事件：沿航线飞到画面正中播 Attack2 结冰，再原路飞回。 */
 export class IceDragonIncident implements IIncident {
+    private _ctx: IncidentContext | null = null;
     private readonly _view = new DragonView();
     private _phase: Phase = "done";
+    private _remain = 0;
     private _attackLeft = 0;
     private _frozen = false;
 
@@ -27,6 +29,7 @@ export class IceDragonIncident implements IIncident {
     }
 
     begin(ctx: IncidentContext): void {
+        this._ctx = ctx;
         const actorName = this.def.actorName ?? "Dragon";
         const actor = findNamedDescendant(ctx.levelRoot, actorName);
         if (!actor) {
@@ -35,19 +38,23 @@ export class IceDragonIncident implements IIncident {
             return;
         }
         this._view.bind(actor);
-        const dest = this.screenCenter(ctx.camera);
-        this._view.flyTo(dest, this.def.flySpeed ?? 5);
-        this._phase = "toCenter";
         const events = EventManager.getInstance();
         events.emit(GameEvent.EVENT_WARN, this.def.id, 0);
         if (this.def.warnText) {
             events.emit(GameEvent.SHOW_TIPS, this.def.warnText);
         }
-        console.log("[Event] 冰龙飞向画面正中", this.def.id);
+        this.startFly();
     }
 
     tick(dt: number): void {
         if (this._phase === "done") {
+            return;
+        }
+        if (this._phase === "waitSpawn") {
+            this._remain -= dt;
+            if (this._remain <= 0) {
+                this.startFly();
+            }
             return;
         }
         this._view.tick(dt);
@@ -72,7 +79,36 @@ export class IceDragonIncident implements IIncident {
 
     cancel(): void {
         this._view.snapHome();
+        this._ctx?.clearIce?.();
         this._phase = "done";
+    }
+
+    retreat(): void {
+        if (this._phase === "done") {
+            return;
+        }
+        this._view.snapHome();
+        this._ctx?.clearIce?.();
+        if (this._frozen) {
+            this._phase = "done";
+            console.log("[Event] 休息清场", this.def.id);
+            return;
+        }
+        this._remain = 0;
+        this._phase = "waitSpawn";
+        console.log("[Event] 休息清场", this.def.id);
+    }
+
+    private startFly(): void {
+        const ctx = this._ctx;
+        if (!ctx) {
+            this._phase = "done";
+            return;
+        }
+        const dest = this.screenCenter(ctx.camera);
+        this._view.flyTo(dest, this.def.flySpeed ?? 5);
+        this._phase = "toCenter";
+        console.log("[Event] 冰龙飞向画面正中", this.def.id);
     }
 
     private startAttack(): void {

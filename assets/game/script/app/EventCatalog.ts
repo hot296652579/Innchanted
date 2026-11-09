@@ -120,7 +120,7 @@ const FALLBACK: EventDef[] = [
         unlockItemId: "medicinebottle_red",
         prefab: "effect/whirlwind/whirlwindLight01",
         warnText: "",
-        failText: "操作台被旋风卷起了，用药水才能解开！",
+        failText: "",
     },
     {
         id: "lock",

@@ -152,6 +152,25 @@ export class ThiefIncident implements IIncident {
         this._phase = "done";
     }
 
+    retreat(): void {
+        if (this._phase === "done") {
+            return;
+        }
+        this.hideFace();
+        this._view.discardHeld();
+        this._view.snapHome();
+        this._view.playIdle();
+        this._hoverStationId = null;
+        this._scared = false;
+        this._carrying = false;
+        this._urged = false;
+        this._index = 0;
+        this._targets = [];
+        this._remain = 0;
+        this._phase = "warning";
+        console.log("[Event] 休息清场", this.def.id);
+    }
+
     private tickWarn(dt: number): void {
         this._remain -= dt;
         if (!this._urged && this._remain <= 5) {

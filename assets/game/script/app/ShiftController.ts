@@ -164,6 +164,8 @@ export class ShiftController {
             hideTalk: (id) => this._guests?.hideTalk(id),
             windStations: (types, count, unlockItemId, prefab) =>
                 this._winds?.seal(this._registry, types, count, unlockItemId, prefab) ?? Promise.resolve(0),
+            clearWinds: () => this._winds?.clear(),
+            clearIce: () => this.clearIce(),
             burstFx: (host, key, duration, worldFrom, liftY) =>
                 this._fx?.burst(host, key, duration, worldFrom, liftY),
             camera: args.camera,
@@ -449,6 +451,9 @@ export class ShiftController {
         this._guests?.pauseSpawn();
         this._guests?.dropPending();
         this._events?.setPaused(true);
+        this._processors?.clearLocks();
+        this._winds?.clear();
+        this.clearIce();
         this._restLeft = this._restDuration;
         EventManager.getInstance().emit(GameEvent.SHIFT_REST, this._restLeft);
         console.log(`[Shift] 休息 ${this._restLeft}s 后第 ${this._restIndex + 2} 波`);
@@ -553,6 +558,11 @@ export class ShiftController {
 
     private onIceThaw(duration?: number): void {
         this._ice?.thaw(typeof duration === "number" ? duration : 1);
+        this.applyWalkScale(1);
+    }
+
+    private clearIce(): void {
+        this._ice?.reset();
         this.applyWalkScale(1);
     }
 

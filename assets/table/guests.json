@@ -20,9 +20,9 @@
       "prefab/guest/SleepGuest1",
       "prefab/guest/SleepGuest2"
     ],
-    "waitTime": 20,
+    "waitTime":25,
     "orders": [
-      { "orderId": ["chickenlegbaked"] }
+      { "orderId": ["steakbaked"] }
     ],
     "sleepItemId": "medicinebottle_olivegreen",
     "sleepPrefab": "prefab/expression/Sleep"
@@ -65,7 +65,7 @@
       "prefab/guest/soldier/SoldierGuest1",
       "prefab/guest/soldier/SoldierGuest2"
     ],
-    "waitTime": 30,
+    "waitTime": 35,
     "orders": [
       { "orderId": ["chickenlegbaked"] }
     ],
@@ -82,7 +82,7 @@
       "prefab/guest/mage/MageGuest1",
       "prefab/guest/mage/MageGuest2"
     ],
-    "waitTime": 30,
+    "waitTime": 35,
     "orders": [
       { "orderId": ["burgerbaked"] }
     ],

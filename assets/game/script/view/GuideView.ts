@@ -13,12 +13,13 @@ const _world = new Vec3();
 const _local = new Vec3();
 
 /** 引导底板挂屏幕下方；箭头挂 SCENE_UI，跟着 3D 目标头顶。 */
+type GuideArrow = { node: Node; follow: Node };
+
 export class GuideView {
     private _boardPrefab: Prefab | null = null;
     private _arrowPrefab: Prefab | null = null;
     private _board: Node | null = null;
-    private _arrow: Node | null = null;
-    private _follow: Node | null = null;
+    private readonly _arrows: GuideArrow[] = [];
     private _bob = 0;
 
     constructor(private readonly camera: Camera | null) {}
@@ -48,28 +49,32 @@ export class GuideView {
     }
 
     pointAt(follow: Node | null): void {
-        this.clearArrow();
-        this._follow = follow;
-        if (!follow?.isValid || !this._arrowPrefab) {
-            return;
-        }
+        this.pointAtMany(follow ? [follow] : []);
+    }
+
+    pointAtMany(follows: Node[]): void {
+        this.clearArrows();
         const parent = UILayerRoot.getRootByLayer(UILayerType.SCENE_UI);
-        if (!parent) {
+        if (!this._arrowPrefab || !parent) {
             return;
         }
-        const arrow = instantiate(this._arrowPrefab);
-        arrow.name = "GuideArrow";
-        parent.addChild(arrow);
-        this._arrow = arrow;
         this._bob = 0;
-        this.placeArrow();
+        for (let i = 0; i < follows.length; i++) {
+            const follow = follows[i];
+            if (!follow?.isValid) {
+                continue;
+            }
+            const arrow = instantiate(this._arrowPrefab);
+            arrow.name = follows.length > 1 ? `GuideArrow_${i}` : "GuideArrow";
+            parent.addChild(arrow);
+            this._arrows.push({ node: arrow, follow });
+        }
+        this.placeArrows();
     }
 
     update(dt: number): void {
         this._bob += dt;
-        if (this._arrow?.isValid && this._follow?.isValid) {
-            this.placeArrow();
-        }
+        this.placeArrows();
     }
 
     hideText(): void {
@@ -79,12 +84,12 @@ export class GuideView {
     }
 
     hide(): void {
-        this.clearArrow();
+        this.clearArrows();
         this.hideText();
     }
 
     clear(): void {
-        this.clearArrow();
+        this.clearArrows();
         if (this._board?.isValid) {
             this._board.destroy();
         }
@@ -120,27 +125,35 @@ export class GuideView {
         return board;
     }
 
-    private placeArrow(): void {
-        const arrow = this._arrow;
-        const follow = this._follow;
+    private placeArrows(): void {
         const cam = this.camera;
         const sceneUI = UILayerRoot.getRootByLayer(UILayerType.SCENE_UI);
-        if (!arrow?.isValid || !follow?.isValid || !cam || !sceneUI) {
+        if (!cam || !sceneUI) {
             return;
         }
-        const world = follow.worldPosition;
-        _world.set(world.x, world.y, world.z);
-        cam.convertToUINode(_world, sceneUI, _local);
         const bob = Math.sin(this._bob / BOB_SEC * Math.PI) * BOB;
-        arrow.setPosition(_local.x, _local.y + ARROW_Y + bob, 0);
+        for (let i = this._arrows.length - 1; i >= 0; i--) {
+            const item = this._arrows[i];
+            if (!item.node.isValid || !item.follow.isValid) {
+                if (item.node.isValid) {
+                    item.node.destroy();
+                }
+                this._arrows.splice(i, 1);
+                continue;
+            }
+            const world = item.follow.worldPosition;
+            _world.set(world.x, world.y, world.z);
+            cam.convertToUINode(_world, sceneUI, _local);
+            item.node.setPosition(_local.x, _local.y + ARROW_Y + bob, 0);
+        }
     }
 
-    private clearArrow(): void {
-        const arrow = this._arrow;
-        this._arrow = null;
-        this._follow = null;
-        if (arrow?.isValid) {
-            arrow.destroy();
+    private clearArrows(): void {
+        for (let i = 0; i < this._arrows.length; i++) {
+            if (this._arrows[i].node.isValid) {
+                this._arrows[i].node.destroy();
+            }
         }
+        this._arrows.length = 0;
     }
 }

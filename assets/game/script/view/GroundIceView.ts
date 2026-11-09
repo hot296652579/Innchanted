@@ -90,6 +90,11 @@ export class GroundIceView {
         this.play(0, duration);
     }
 
+    reset(): void {
+        this._playing = false;
+        this.apply(0);
+    }
+
     update(dt: number): void {
         if (!this._playing) {
             return;

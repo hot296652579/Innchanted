@@ -165,6 +165,16 @@ export class ThreatenIncident implements IIncident {
         this._phase = "done";
     }
 
+    retreat(): void {
+        if (this._phase === "done") {
+            return;
+        }
+        this.despawn();
+        this._remain = 0;
+        this._phase = "waitSpawn";
+        console.log("[Event] 休息清场", this.def.id);
+    }
+
     private startSpawn(): void {
         const spawn = this._spawn;
         const ctx = this._ctx;

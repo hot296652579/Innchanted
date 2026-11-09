@@ -174,30 +174,39 @@
   {
     "id": 7,
     "map": 7,
-    "duration": 190,
-    "stars": [45, 80, 125],
-    "eventIds": ["threaten", "whirlwind", "fuelthief", "thief", "skeleton"],
+    "duration": 360,
+    "stars": [125],
+    "eventIds": ["whirlwind", "fuelthief", "thief", "skeleton"],
     "delay": 15,
     "guestInterval": 1,
-    "restTimes": [30, 60],
+    "restTimes": [140],
     "restDuration": 10,
     "guests": [
-      ["soldierguest", "soldierguest", "regularguest1", "regularguest2"],
-      ["mageguest", "mageguest", "sleepguest", "onetimeguest"],
-      ["gourmetguest", "regularguest", "regularguest"]
+      ["sleepguest","soldierguest", "soldierguest", "regularguest1", "regularguest2","mageguest","mageguest"],
+      ["regularguest1", "regularguest2", "sleepguest", "onetimeguest", "regularguest", "regularguest2"],
+      ["mageguest","mageguest","gourmetguest", "regularguest", "regularguest1","regularguest2"]
     ],
     "guestOrders": {
-      "regularguest": ["magicdrink_brown", "magicdrink_green", "magicdrink_red", "steakbaked", "burgerbaked"],
+      "regularguest": ["magicdrink_brown", "magicdrink_green", "magicdrink_red", "steakbaked"],
       "soldierguest": ["steakbaked"],
-      "mageguest": ["burgerbaked", "steakbaked"],
-      "sleepguest": ["steakbaked"],
-      "onetimeguest": ["burgerbaked", "steakbaked"],
+      "mageguest": ["magicdrink_brown", "magicdrink_green", "magicdrink_red", "steakbaked"],
+      "sleepguest": ["magicdrink_brown", "magicdrink_green", "magicdrink_red", "steakbaked"],
+      "onetimeguest": [ "steakbaked"],
       "gourmetguest": [
         ["magicdrink_brown", "magicdrink_green", "magicdrink_red"],
-        ["steakbaked"],
-        ["burgerbaked"]
+        ["steakbaked"]
       ]
-    }
+    },
+    "guide": [
+      { "target": "MagicJar", "text": "这是一个魔法罐，倒入魔法饮料可以得到神奇的药水哦~", "wait": "tip", "duration": 3 },
+      { "target": "OriginalBarrel0,OriginalBarrel1", "text": "棕色魔法饮料+绿色魔法饮料，可以得到橄榄绿药水！", "wait": "tip", "duration": 3 },
+      { "target": "MagicJar", "text": "它可以当作醒酒药，也可以当作解除旋风的药水哦！", "wait": "tip", "duration": 3 },
+      { "target": "", "text": "小心有偷油贼和偷金币贼，记得驱赶他们保护好我们的油和金币哦", "wait": "tip", "duration": 3 },
+      { "target": "sleepguest", "text": "", "wait": "seat" },
+      { "target": "guest", "text": "这是一位爱打瞌睡的客人，记得给他上解酒药哦", "wait": "tip", "duration": 2 },
+      { "target": "whirlwind", "text": "", "wait": "wind" },
+      { "target": "whirlwind", "text": "旋风只有药水解除后，才会消失哦~", "wait": "tip", "duration": 3 }
+    ]
   },
   {
     "id": 8,

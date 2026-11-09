@@ -26,6 +26,8 @@ export type IncidentContext = {
     showTalk?: (id: string, follow: Node, text: string) => void;
     hideTalk?: (id: string) => void;
     windStations?: (types: string[], count: number, unlockItemId: string, prefab?: string) => Promise<number>;
+    clearWinds?: () => void;
+    clearIce?: () => void;
     burstFx?: (host: Node, key: string, duration: number, worldFrom?: Node | null, liftY?: number) => void;
     camera?: Camera;
 };
@@ -43,6 +45,8 @@ export interface IIncident {
     ownsNode?(hit: Node): Node | null;
     /** 玩家走到跟前攻击。成功返回 true。 */
     strike?(): boolean;
+    /** 休息清场：拆掉场上的人，事件挂起，休息后再刷。 */
+    retreat?(): void;
 }
 
 export function showDeathMark(ctx: IncidentContext | null, actor: Node | null, id: string): void {

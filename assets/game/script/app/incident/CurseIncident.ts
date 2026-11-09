@@ -46,4 +46,11 @@ export class CurseIncident implements IIncident {
     cancel(): void {
         this._phase = "done";
     }
+
+    retreat(): void {
+        if (this._phase === "done") {
+            return;
+        }
+        console.log("[Event] 休息清场", this.def.id);
+    }
 }

@@ -83,14 +83,19 @@ export class EventDirector {
     }
 
     setPaused(paused: boolean): void {
+        if (paused && !this._paused) {
+            for (let i = 0; i < this._running.length; i++) {
+                this._running[i].retreat?.();
+            }
+        }
         this._paused = paused;
     }
 
     update(dt: number): void {
-        this._elapsed += dt;
         if (this._paused) {
             return;
         }
+        this._elapsed += dt;
         for (let i = this._running.length - 1; i >= 0; i--) {
             const incident = this._running[i];
             incident.tick(dt);

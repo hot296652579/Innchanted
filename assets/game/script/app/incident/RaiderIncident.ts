@@ -160,6 +160,20 @@ export class RaiderIncident implements IIncident {
         this._units.length = 0;
     }
 
+    retreat(): void {
+        if (this._phase === "done" || this._phase === "boot") {
+            return;
+        }
+        this.clearIntro();
+        for (let i = this._units.length - 1; i >= 0; i--) {
+            this.removeUnit(this._units[i], false);
+        }
+        this._units.length = 0;
+        this._phase = "run";
+        this._spawnWait = 0;
+        console.log("[Event] 休息清场", this.def.id);
+    }
+
     private async boot(): Promise<void> {
         const res = ResourceManager.getInstance();
         const paths = this.def.prefabs?.length ? this.def.prefabs : (this.def.prefab ? [this.def.prefab] : DEFAULT_PREFABS);

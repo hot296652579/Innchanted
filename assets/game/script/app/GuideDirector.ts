@@ -25,6 +25,10 @@ export class GuideDirector {
     private _hovering = false;
     private _queued = -1;
     private _clickLock = 0;
+    private _windSeen = false;
+    private _windTipShown = false;
+    private _resumeIndex = -1;
+    private _seatedType: string | null = null;
 
     constructor(camera: Camera | null) {
         this._view = new GuideView(camera);
@@ -55,6 +59,7 @@ export class GuideDirector {
         }
         return wait === "seat" || wait === "serve" || wait === "coin" || wait === "bank"
             || wait === "thief" || wait === "chase" || wait === "queue" || wait === "escort" || wait === "roundseat"
+            || wait === "wind"
             || (wait === "tip" && !!this._enemy?.isValid);
     }
 
@@ -64,7 +69,7 @@ export class GuideDirector {
         if (wait === "chase") {
             return !this._hovering;
         }
-        return wait === "tip" && !!this._enemy?.isValid;
+        return wait === "wind" || (wait === "tip" && !!this._enemy?.isValid);
     }
 
     /** 蝙蝠还在飞，点击先吞掉不提示。 */
@@ -107,6 +112,7 @@ export class GuideDirector {
         events.on(GameEvent.GUEST_WAIT_READY, this.onWaitReady, this);
         events.on(GameEvent.GUEST_ESCORT_CONFIRMED, this.onEscortConfirmed, this);
         events.on(GameEvent.GUEST_ESCORT_SEATED, this.onEscortSeated, this);
+        events.on(GameEvent.EVENT_FAIL, this.onEventFail, this);
         this.showStep(0);
         console.log(`[Guide] 开始 ${this._steps.length} 步`);
     }
@@ -119,7 +125,7 @@ export class GuideDirector {
         if (!step || step.wait === "tip") {
             return false;
         }
-        if (step.wait === "seat" || step.wait === "thief" || step.wait === "queue") {
+        if (step.wait === "seat" || step.wait === "thief" || step.wait === "queue" || step.wait === "wind") {
             return true;
         }
         if (step.wait === "escort") {
@@ -158,7 +164,7 @@ export class GuideDirector {
         if (this.step()?.wait !== "tip") {
             return false;
         }
-        this.showStep(this._index + 1);
+        this.goNext();
         return true;
     }
 
@@ -185,7 +191,7 @@ export class GuideDirector {
         if (step?.wait === "tip" && this._tipLeft > 0) {
             this._tipLeft -= dt;
             if (this._tipLeft <= 0) {
-                this.showStep(this._index + 1);
+                this.goNext();
             }
         }
     }
@@ -204,6 +210,10 @@ export class GuideDirector {
         this._hovering = false;
         this._queued = -1;
         this._clickLock = 0;
+        this._windSeen = false;
+        this._windTipShown = false;
+        this._resumeIndex = -1;
+        this._seatedType = null;
     }
 
     private step(): GuideStepDef | null {
@@ -223,10 +233,20 @@ export class GuideDirector {
         this._tipLeft = 0;
         const step = this._steps[index];
         this._hovering = false;
-        if (step.wait === "seat" || step.wait === "thief" || step.wait === "queue") {
+        if (step.wait === "seat" || step.wait === "thief" || step.wait === "queue" || step.wait === "wind") {
             this._tableId = null;
             this._view.hide();
             console.log(`[Guide] 第 ${index + 1} 步 等待`, step.wait, step.target);
+            if (step.wait === "seat" && this._seatedType === (step.target || this._seatedType)) {
+                const follow = this._guests?.seatedFollow();
+                if (follow) {
+                    this._tableId = follow.tableId;
+                }
+                this._queued = index + 1;
+            }
+            if (step.wait === "wind" && this._windSeen) {
+                this._queued = this._windTipShown ? index + 2 : index + 1;
+            }
             return;
         }
         if (step.text) {
@@ -254,14 +274,29 @@ export class GuideDirector {
             return;
         }
         if (step.wait === "tip") {
+            if (this.isWindTip(step) && this._windTipShown) {
+                this.showStep(index + 1);
+                return;
+            }
             this._tableId = keepTable;
-            if (step.target) {
-                const stationNode = this._registry?.get(step.target)?.node ?? null;
+            if (this.isWindTip(step)) {
+                this._windTipShown = true;
+                this._view.pointAt(this.windedNode());
+                this._tipLeft = step.duration && step.duration > 0 ? step.duration : TIP_SEC;
+                this._clickLock = 0.35;
+                console.log(`[Guide] 第 ${index + 1} 步`, "tip", step.target);
+                return;
+            }
+            const stations = this.stationNodes(step.target);
+            if (stations.length > 1) {
+                this._view.pointAtMany(stations);
+            } else if (step.target) {
+                const stationNode = stations[0] ?? this._registry?.get(step.target)?.node ?? null;
                 const enemyNode = this._enemy?.isValid ? this._enemy : null;
                 const waitNode = this._guestId ? this._guests?.guestNodeById(this._guestId) ?? null : null;
                 const guestNode = keepTable ? this._guests?.guestNodeAt(keepTable) ?? null : null;
                 const tableNode = keepTable ? this._registry?.get(keepTable)?.node ?? null : null;
-                this._view.pointAt(stationNode ?? enemyNode ?? waitNode ?? guestNode ?? tableNode);
+                this._view.pointAt(stationNode ?? enemyNode ?? waitNode ?? guestNode ?? tableNode ?? this.windedNode());
             } else {
                 this._view.pointAt(null);
             }
@@ -307,12 +342,19 @@ export class GuideDirector {
     }
 
     private onOrderShown(guestId: string): void {
+        const type = resolveGuestType(guestId);
+        if (!this._seatedType) {
+            this._seatedType = type;
+        }
+        if (type === "sleepguest") {
+            this._seatedType = type;
+        }
         const step = this.step();
         if (!step) {
             return;
         }
         if (step.wait === "seat") {
-            if (step.target && resolveGuestType(guestId) !== step.target) {
+            if (step.target && type !== step.target) {
                 return;
             }
             const follow = this._guests?.seatedFollowById(guestId);
@@ -422,6 +464,72 @@ export class GuideDirector {
         this.showStep(this._index + 1);
     }
 
+    private onEventFail(id: string): void {
+        if (id !== "whirlwind") {
+            return;
+        }
+        this._windSeen = true;
+        this.interruptWindTip();
+    }
+
+    private interruptWindTip(): void {
+        if (this._windTipShown || !this.active) {
+            return;
+        }
+        const tipIndex = this.findWindTipIndex();
+        if (tipIndex < 0 || this._index === tipIndex) {
+            return;
+        }
+        this._resumeIndex = this._index;
+        this._queued = tipIndex;
+        console.log("[Guide] 旋风触发，插入引导");
+    }
+
+    private findWindTipIndex(): number {
+        for (let i = 0; i < this._steps.length; i++) {
+            if (this.isWindTip(this._steps[i])) {
+                return i;
+            }
+        }
+        return -1;
+    }
+
+    private isWindTip(step: GuideStepDef | null): boolean {
+        return !!step && step.wait === "tip" && step.target.split(",")[0].trim() === "whirlwind";
+    }
+
+    private goNext(): void {
+        if (this.isWindTip(this.step()) && this._resumeIndex >= 0) {
+            const resume = this._resumeIndex;
+            this._resumeIndex = -1;
+            this.showStep(resume);
+            return;
+        }
+        this.showStep(this._index + 1);
+    }
+
+    private stationNodes(target: string): Node[] {
+        const names = target.split(",").map((name) => name.trim()).filter((name) => !!name);
+        const nodes: Node[] = [];
+        for (let i = 0; i < names.length; i++) {
+            const node = this._registry?.get(names[i])?.node;
+            if (node?.isValid) {
+                nodes.push(node);
+            }
+        }
+        return nodes;
+    }
+
+    private windedNode(): Node | null {
+        const all = this._registry?.all ?? [];
+        for (let i = 0; i < all.length; i++) {
+            if (all[i].station.winded) {
+                return all[i].node;
+            }
+        }
+        return null;
+    }
+
     private onEscortSeated(_guestId: string, tableId: string): void {
         const step = this.step();
         if (step?.wait !== "roundseat") {
@@ -466,6 +574,10 @@ export class GuideDirector {
         this._hovering = false;
         this._queued = -1;
         this._clickLock = 0;
+        this._windSeen = false;
+        this._windTipShown = false;
+        this._resumeIndex = -1;
+        this._seatedType = null;
     }
 
     private unbind(): void {
@@ -481,5 +593,6 @@ export class GuideDirector {
         events.off(GameEvent.GUEST_WAIT_READY, this.onWaitReady, this);
         events.off(GameEvent.GUEST_ESCORT_CONFIRMED, this.onEscortConfirmed, this);
         events.off(GameEvent.GUEST_ESCORT_SEATED, this.onEscortSeated, this);
+        events.off(GameEvent.EVENT_FAIL, this.onEventFail, this);
     }
 }
