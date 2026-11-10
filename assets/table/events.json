@@ -37,7 +37,7 @@
     "category": "raid",
     "name": "燃料偷窃事件",
     "delay": 10,
-    "duration": 18,
+    "duration": 20,
     "stealCount": 1,
     "actorName": "FuelThief",
     "spawnName": "FuelSwapnPoint",

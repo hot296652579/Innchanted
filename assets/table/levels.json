@@ -146,8 +146,8 @@
     "restDuration": 10,
     "guests": [
       ["soldierguest", "soldierguest", "soldierguest", "soldierguest", "mageguest", "mageguest", "regularguest2"],
-      ["soldierguest", "mageguest", "onetimeguest","soldierguest", "mageguest", "gourmetguest"],
-      ["soldierguest", "mageguest", "gourmetguest","soldierguest", "mageguest", "onetimeguest"]
+      ["soldierguest", "mageguest","soldierguest", "mageguest", "gourmetguest"],
+      ["soldierguest", "mageguest", "soldierguest", "mageguest", "onetimeguest"]
     ],
     "guestOrders": {
       "regularguest": ["magicdrink_brown", "magicdrink_green"],

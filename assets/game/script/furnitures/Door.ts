@@ -7,7 +7,7 @@ import { GameEvent } from "../../../framework/event/EventName";
 const { ccclass, property } = _decorator;
 
 const OPEN_SEC = 1;
-const LEAF_NAME = "door_A";
+const LEAF_PREFIX = "door_";
 
 @ccclass("Door")
 export class Door extends Component {
@@ -19,7 +19,7 @@ export class Door extends Component {
     private _opened = false;
 
     onEnable(): void {
-        this._leaf = this.node.getChildByName(LEAF_NAME);
+        this._leaf = this.findLeaf();
         if (this._leaf) {
             this._closed.set(this._leaf.eulerAngles);
         }
@@ -55,5 +55,15 @@ export class Door extends Component {
         tween(this._leaf)
             .to(OPEN_SEC, { eulerAngles: this._closed.clone() }, { easing: "quadIn" })
             .start();
+    }
+
+    private findLeaf(): Node | null {
+        const kids = this.node.children;
+        for (let i = 0; i < kids.length; i++) {
+            if (kids[i].name.startsWith(LEAF_PREFIX)) {
+                return kids[i];
+            }
+        }
+        return null;
     }
 }
