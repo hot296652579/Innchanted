@@ -277,6 +277,14 @@ export default class RecastDetourManager {
         return this.crowd!.addAgent(pos, agentParams);
     }
 
+    removeAgent(index: number): void {
+        try {
+            this.crowd?.removeAgent(index);
+        } catch (err) {
+            console.warn("[Nav] removeAgent", index, err);
+        }
+    }
+
     snapToNav(position: Vec3): Vec3 {
         return this.toNavPoint(position);
     }

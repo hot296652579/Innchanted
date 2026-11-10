@@ -39,6 +39,7 @@ function createIncident(def: EventDef): IIncident | null {
 
 /** 班次突发事件时间轴。每条按自己的 delay 开跑，互不挡；duration 由各 Incident 自己用。 */
 export class EventDirector {
+    private _schedule: EventDef[] = [];
     private _pending: EventDef[] = [];
     private _elapsed = 0;
     private _paused = false;
@@ -74,19 +75,18 @@ export class EventDirector {
     }
 
     start(ctx: IncidentContext, eventIds?: string[]): void {
-        this._pending = eventsOf(eventIds);
-        this._elapsed = 0;
+        this.sweep();
+        this._schedule = eventsOf(eventIds);
         this._paused = false;
-        this._running.length = 0;
         this._ctx = ctx;
+        this.rewind();
         console.log("[Event] 时间轴", this._pending.map((def) => def.id).join(", ") || "无");
     }
 
     setPaused(paused: boolean): void {
         if (paused && !this._paused) {
-            for (let i = 0; i < this._running.length; i++) {
-                this._running[i].retreat?.();
-            }
+            this.sweep();
+            this.rewind();
         }
         this._paused = paused;
     }
@@ -131,13 +131,23 @@ export class EventDirector {
     }
 
     clear(): void {
+        this.sweep();
+        this._schedule = [];
+        this._pending.length = 0;
+        this._paused = false;
+        this._ctx = null;
+    }
+
+    private sweep(): void {
         for (let i = 0; i < this._running.length; i++) {
             this._running[i].cancel();
         }
         this._running.length = 0;
-        this._pending.length = 0;
-        this._paused = false;
-        this._ctx = null;
+    }
+
+    private rewind(): void {
+        this._pending = this._schedule.slice();
+        this._elapsed = 0;
     }
 
     private hasKind(kind: string): boolean {

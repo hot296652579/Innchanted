@@ -14,7 +14,7 @@ export const BARREL_MAT_PATH: Record<BarrelColor, string> = {
     [BarrelColor.Yellow]: "mat/yellow_material",
 };
 
-export const BARREL_MAX_CHARGES = 3;
+export const BARREL_MAX_CHARGES = 4;
 export const BARREL_ACCEPT_SEC = 1;
 
 export type BarrelAcceptKind = "pulp" | "fill" | "drink";

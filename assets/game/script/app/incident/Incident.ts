@@ -16,6 +16,7 @@ export type IncidentContext = {
     pathfinder?: IPathfinder;
     yawOffset?: number;
     stealGold?: (count: number) => number;
+    chestGold?: () => number;
     stealFuel?: (count: number) => number;
     occupiedSeat?: () => OccupiedSeat | null;
     occupiedSeats?: () => OccupiedSeat[];

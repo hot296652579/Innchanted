@@ -12,7 +12,7 @@ import { IIncident, IncidentContext, showDeathMark } from "./Incident";
 
 type Phase = "spawning" | "toBox" | "steal" | "toHome" | "rest" | "dying" | "waitSpawn" | "done";
 
-/** 骷髅小偷：duration 为偷取间隔。回家或被击杀后等 interval 再偷；击杀则重新生成。 */
+/** 骷髅小偷：duration 为偷取间隔。宝箱有金币才出发；击杀后重新生成。 */
 export class SkeletonThiefIncident implements IIncident {
     private _ctx: IncidentContext | null = null;
     private readonly _view = new SkeletonThiefView();
@@ -133,7 +133,7 @@ export class SkeletonThiefIncident implements IIncident {
         if (this._phase === "rest") {
             this._remain -= dt;
             if (this._remain <= 0) {
-                this.runToBox();
+                this.tryRaid();
             }
         }
     }
@@ -184,6 +184,10 @@ export class SkeletonThiefIncident implements IIncident {
             return;
         }
         const actor = instantiate(prefab);
+        if (this._phase !== "spawning" || !ctx.pathfinder) {
+            actor.destroy();
+            return;
+        }
         actor.name = this.def.actorName ?? "Skeleton";
         ctx.levelRoot.addChild(actor);
         actor.setWorldPosition(spawn.worldPosition);
@@ -192,14 +196,19 @@ export class SkeletonThiefIncident implements IIncident {
         Enemy.ensure(actor);
         this._actor = actor;
         this._view.bind(actor, ctx.pathfinder, ctx.yawOffset ?? 0, this.def.flySpeed ?? 0.9);
-        this.runToBox();
+        this.tryRaid();
         console.log("[Event] 骷髅在出生点生成", spawn.name);
     }
 
-    private runToBox(): void {
+    private tryRaid(): void {
         const box = this._box;
         if (!box) {
             this._phase = "done";
+            return;
+        }
+        if (!this.hasGold()) {
+            this.waitAtHome();
+            console.log("[Event] 宝箱没有金币，再等", this.interval(), "s");
             return;
         }
         this._view.setLookTarget(box.worldPosition);
@@ -208,7 +217,21 @@ export class SkeletonThiefIncident implements IIncident {
         console.log("[Event] 骷髅冲宝箱", this.def.id);
     }
 
+    private waitAtHome(): void {
+        this._remain = this.interval();
+        this._phase = "rest";
+    }
+
+    private hasGold(): boolean {
+        return (this._ctx?.chestGold?.() ?? 0) > 0;
+    }
+
     private startSteal(): void {
+        if (!this.hasGold()) {
+            this._view.goHome();
+            this._phase = "toHome";
+            return;
+        }
         this._view.stop();
         if (this._box) {
             this._view.setLookTarget(this._box.worldPosition);

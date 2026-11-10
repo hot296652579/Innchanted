@@ -176,6 +176,10 @@ export class FuelThiefIncident implements IIncident {
             return;
         }
         const actor = instantiate(prefab);
+        if (this._phase !== "spawning" || !ctx.pathfinder) {
+            actor.destroy();
+            return;
+        }
         actor.name = this.def.actorName ?? "FuelThief";
         ctx.levelRoot.addChild(actor);
         actor.setWorldPosition(spawn.worldPosition);

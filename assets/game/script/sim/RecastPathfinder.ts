@@ -11,6 +11,10 @@ export class RecastPathfinder implements IPathfinder {
         return this.recast.addAgents(worldPos, params);
     }
 
+    removeAgent(agentId: number): void {
+        this.recast.removeAgent(agentId);
+    }
+
     goto(agentId: number, worldPos: Vec3): void {
         const dest = worldPos.clone();
         dest.y = this.getPosition(agentId).y;

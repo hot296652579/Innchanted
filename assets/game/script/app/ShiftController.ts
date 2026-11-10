@@ -153,6 +153,7 @@ export class ShiftController {
             pathfinder: this._pathfinder!,
             yawOffset: args.yawOffset,
             stealGold: (count) => this.onStolen(count),
+            chestGold: () => this._score?.gold ?? 0,
             stealFuel: (count) => this._barrels?.stealCharges(count) ?? 0,
             occupiedSeat: () => this._guests?.occupiedSeat() ?? null,
             occupiedSeats: () => this._guests?.occupiedSeats() ?? [],

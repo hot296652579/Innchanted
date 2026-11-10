@@ -22,6 +22,11 @@ export class GridAgent {
         this.pathfinder.stop(this.agentId);
     }
 
+    release(): void {
+        this.stop();
+        this.pathfinder.removeAgent?.(this.agentId);
+    }
+
     arrived(): boolean {
         if (!this.dest) {
             return true;

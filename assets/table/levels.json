@@ -182,8 +182,8 @@
     "restTimes": [140],
     "restDuration": 10,
     "guests": [
-      ["sleepguest","soldierguest", "soldierguest", "regularguest1", "regularguest2","mageguest","mageguest"],
-      ["regularguest1", "regularguest2", "sleepguest", "onetimeguest", "regularguest", "regularguest2"],
+      ["sleepguest","soldierguest", "soldierguest", "regularguest1","mageguest","mageguest"],
+      ["regularguest1", "regularguest2", "sleepguest","regularguest", "regularguest2"],
       ["mageguest","mageguest","gourmetguest", "regularguest", "regularguest1","regularguest2"]
     ],
     "guestOrders": {

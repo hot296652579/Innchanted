@@ -110,7 +110,8 @@ export class SkeletonThiefView {
     }
 
     hide(): void {
-        this._agent?.stop();
+        this._agent?.release();
+        this._agent = null;
         if (this._node) {
             this._node.active = false;
         }
