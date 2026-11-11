@@ -3,9 +3,13 @@ import { BattleContext } from "../../define/BattleContext";
 import { BundlesEnum } from "../../define/BundlesEnum";
 import { ConfigManager } from "../../framework/config/ConfigManager";
 import { ResourceManager } from "../../framework/resource/ResourceManager";
-import { findLevel, mapOf } from "../../game/script/app/LevelCatalog";
 
 const { ccclass } = _decorator;
+
+type LevelRow = {
+    id: number;
+    map?: number;
+};
 
 @ccclass("BattleMapRoot")
 export class BattleMapRoot extends Component {
@@ -19,7 +23,7 @@ export class BattleMapRoot extends Component {
         this.clearLevel();
 
         await ConfigManager.getInstance().loadTable("levels", BundlesEnum.Table);
-        const mapId = mapOf(findLevel(levelId));
+        const mapId = this.mapOf(levelId);
         const path = `prefab/Level${mapId}`;
         const prefab = await ResourceManager.getInstance().loadPrefab(path, BundlesEnum.Game);
         if (!prefab) {
@@ -44,5 +48,14 @@ export class BattleMapRoot extends Component {
 
     public get levelNode(): Node | null {
         return this._levelNode;
+    }
+
+    private mapOf(levelId: number): number {
+        const row = ConfigManager.getInstance().getRowById<LevelRow>("levels", levelId);
+        const n = row?.map ?? row?.id ?? levelId;
+        if (Number.isFinite(n) && n >= 1) {
+            return Math.floor(n);
+        }
+        return 1;
     }
 }
