@@ -67,10 +67,10 @@ export class SelectWnd extends BaseWindow {
         this._entering = true;
         BattleContext.selectedLevelId = levelId;
         void AudioPlayer.getInstance().playEffect(BundlesEnum.Audio, AudioEnum.Click);
-        await this.onBattle();
+        await this.onBattle(levelId);
     }
 
-    private async onBattle(): Promise<void> {
+    private async onBattle(levelId: number): Promise<void> {
         await UIManager.getInstance().closeWindow(UIConfig.SelectWnd.name);
         const uiMgr = UIManager.getInstance();
         uiMgr.registerWindow(
@@ -79,7 +79,8 @@ export class SelectWnd extends BaseWindow {
             UIConfig.LoadingWnd.cache,
         );
         await uiMgr.openWindow(UIConfig.LoadingWnd.name, {
-            bundles: [BundlesEnum.Game, BundlesEnum.Table],
+            bundles: [BundlesEnum.Table],
+            levelId,
             nextScene: "scene/Battle",
         });
     }

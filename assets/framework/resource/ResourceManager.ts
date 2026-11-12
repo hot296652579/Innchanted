@@ -52,17 +52,16 @@ export class ResourceManager extends BaseSingleton {
     }
 
     /**
-     * 大分包不要全量 preloadDir("")。game 里 KayKit 同时有 fbx/gltf/obj，
-     * 进度按文件个数走，单个 FBX 还要拆 mesh，会出现很久才跳 1%。
-     * 进战斗只 load 关卡 prefab、结算 UI、音效，模型按 prefab 依赖拉取。
+     * 这些分包只打开配置，不 loadDir。
+     * game 里有 10 张关卡、全部客人和约 87MB 音频；整目录载入会把网格、贴图和解码后的音频同时留在内存里，微信小游戏会报内存不足。
+     * 关卡预设、界面、音效都按用到的路径单独 load。
      */
-    private static readonly BUNDLE_LOAD_DIRS: Record<string, string[]> = {
-        game: ['prefab', 'ui', 'audio'],
-    };
+    private static readonly OPEN_ONLY_BUNDLES = new Set<string>(['game']);
 
     /**
      * 加载 Bundle 并加载其中资源，onProgress 范围为 0~1。
      * 已加载过的 Bundle 会立刻回调 1 并返回缓存。
+     * game 只打开分包，不预载目录。
      */
     public async preloadBundle(
         bundleName: string,
@@ -81,12 +80,14 @@ export class ResourceManager extends BaseSingleton {
             report(1);
             return null;
         }
-        report(0.1);
+        if (ResourceManager.OPEN_ONLY_BUNDLES.has(bundleName)) {
+            this._preloadedBundles.add(bundleName);
+            report(1);
+            return bundle;
+        }
 
-        const dirs = ResourceManager.BUNDLE_LOAD_DIRS[bundleName];
-        const ok = dirs
-            ? await this.loadBundleDirs(bundle, dirs, (p) => report(0.1 + 0.9 * p))
-            : await this.loadBundleDir(bundle, '', (p) => report(0.1 + 0.9 * p));
+        report(0.1);
+        const ok = await this.loadBundleDir(bundle, '', (p) => report(0.1 + 0.9 * p));
         if (!ok) {
             console.error('preload bundle fail:', bundleName);
         }
@@ -113,27 +114,6 @@ export class ResourceManager extends BaseSingleton {
                 resolve(true);
             });
         });
-    }
-
-    private async loadBundleDirs(
-        bundle: AssetManager.Bundle,
-        dirs: string[],
-        onProgress: (progress: number) => void
-    ): Promise<boolean> {
-        if (dirs.length === 0) {
-            onProgress(1);
-            return true;
-        }
-        let ok = true;
-        for (let i = 0; i < dirs.length; i++) {
-            const dirOk = await this.loadBundleDir(bundle, dirs[i], (inner) => {
-                onProgress((i + inner) / dirs.length);
-            });
-            if (!dirOk) {
-                ok = false;
-            }
-        }
-        return ok;
     }
 
     /** 按顺序加载多个 Bundle，总进度 0~1 按 Bundle 数量均分 */
@@ -209,6 +189,52 @@ export class ResourceManager extends BaseSingleton {
     }
     //#endregion
 
+    /** 带进度的加载。已在缓存里则直接返回。进度按依赖资源个数计算。 */
+    public loadWithProgress<T extends Asset>(
+        path: string,
+        assetType: AssetType,
+        bundleName?: string,
+        onProgress?: (progress: number) => void,
+    ): Promise<T | null> {
+        const report = (p: number) => onProgress?.(Math.min(1, Math.max(0, p)));
+        const key = bundleName ? `${bundleName}/${path}` : path;
+        const cached = this._assetCache.get(key);
+        if (cached) {
+            cached.refCount++;
+            report(1);
+            return Promise.resolve(cached.asset as T);
+        }
+
+        return (async () => {
+            const bundle = bundleName ? await this.loadBundle(bundleName) : resources;
+            if (!bundle) {
+                report(1);
+                return null;
+            }
+            return new Promise<T | null>((resolve) => {
+                bundle.load(path, assetType, (finished: number, total: number) => {
+                    report(total > 0 ? finished / total : 0);
+                }, (err, asset: T) => {
+                    if (err || !asset) {
+                        console.error(err);
+                        report(1);
+                        resolve(null);
+                        return;
+                    }
+                    this._assetCache.set(key, {
+                        asset,
+                        bundle,
+                        path,
+                        type: assetType,
+                        refCount: 1,
+                    });
+                    report(1);
+                    resolve(asset);
+                });
+            });
+        })();
+    }
+
     // 快捷加载常用资源
     public loadPrefab(path: string, bundle?: string): Promise<Prefab | null> {
         return this.load(path, Prefab, bundle);
@@ -227,6 +253,17 @@ export class ResourceManager extends BaseSingleton {
     }
 
     //#region 资源释放
+    /** 释放这条资源及其不再被引用的依赖，不管管理器里记了几次引用。 */
+    public releaseAsset(path: string, bundleName?: string): void {
+        const key = bundleName ? `${bundleName}/${path}` : path;
+        const cache = this._assetCache.get(key);
+        if (!cache) {
+            return;
+        }
+        cache.bundle.release(cache.path, cache.type);
+        this._assetCache.delete(key);
+    }
+
     public release(path: string, bundleName?: string): void {
 
         const key = bundleName ? `${bundleName}/${path}` : path;

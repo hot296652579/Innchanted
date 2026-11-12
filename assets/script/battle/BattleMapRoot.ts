@@ -3,16 +3,14 @@ import { BattleContext } from "../../define/BattleContext";
 import { BundlesEnum } from "../../define/BundlesEnum";
 import { ConfigManager } from "../../framework/config/ConfigManager";
 import { ResourceManager } from "../../framework/resource/ResourceManager";
+import { levelPrefabPath } from "./levelPrefab";
 
 const { ccclass } = _decorator;
 
-type LevelRow = {
-    id: number;
-    map?: number;
-};
-
 @ccclass("BattleMapRoot")
 export class BattleMapRoot extends Component {
+    private static _heldPrefabPath: string | null = null;
+
     private _levelNode: Node | null = null;
 
     protected async start(): Promise<void> {
@@ -23,8 +21,8 @@ export class BattleMapRoot extends Component {
         this.clearLevel();
 
         await ConfigManager.getInstance().loadTable("levels", BundlesEnum.Table);
-        const mapId = this.mapOf(levelId);
-        const path = `prefab/Level${mapId}`;
+        const path = levelPrefabPath(levelId);
+        this.releaseOtherLevel(path);
         const prefab = await ResourceManager.getInstance().loadPrefab(path, BundlesEnum.Game);
         if (!prefab) {
             console.error(`[BattleMapRoot] 关卡预设加载失败: ${BundlesEnum.Game}/${path}`);
@@ -35,7 +33,17 @@ export class BattleMapRoot extends Component {
         node.setParent(this.node);
         node.setPosition(0, 0, 0);
         this._levelNode = node;
+        BattleMapRoot._heldPrefabPath = path;
         return node;
+    }
+
+    private releaseOtherLevel(path: string): void {
+        const held = BattleMapRoot._heldPrefabPath;
+        if (!held || held === path) {
+            return;
+        }
+        ResourceManager.getInstance().releaseAsset(held, BundlesEnum.Game);
+        BattleMapRoot._heldPrefabPath = null;
     }
 
     public clearLevel(): void {
@@ -48,14 +56,5 @@ export class BattleMapRoot extends Component {
 
     public get levelNode(): Node | null {
         return this._levelNode;
-    }
-
-    private mapOf(levelId: number): number {
-        const row = ConfigManager.getInstance().getRowById<LevelRow>("levels", levelId);
-        const n = row?.map ?? row?.id ?? levelId;
-        if (Number.isFinite(n) && n >= 1) {
-            return Math.floor(n);
-        }
-        return 1;
     }
 }

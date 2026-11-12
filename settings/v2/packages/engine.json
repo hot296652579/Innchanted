@@ -33,13 +33,13 @@
             "_value": true
           },
           "sorting-2d": {
-            "_value": true
+            "_value": false
           },
           "rich-text": {
-            "_value": true
+            "_value": false
           },
           "mask": {
-            "_value": true
+            "_value": false
           },
           "graphics": {
             "_value": true
@@ -48,7 +48,7 @@
             "_value": false
           },
           "affine-transform": {
-            "_value": true
+            "_value": false
           },
           "ui": {
             "_value": true
@@ -122,10 +122,10 @@
             "_value": true
           },
           "video": {
-            "_value": true
+            "_value": false
           },
           "webview": {
-            "_value": true
+            "_value": false
           },
           "tween": {
             "_value": true
@@ -137,13 +137,13 @@
             "_value": false
           },
           "terrain": {
-            "_value": true
+            "_value": false
           },
           "light-probe": {
-            "_value": true
+            "_value": false
           },
           "tiled-map": {
-            "_value": true
+            "_value": false
           },
           "vendor-google": {
             "_value": false
@@ -168,7 +168,7 @@
             "_value": false
           },
           "marionette": {
-            "_value": true
+            "_value": false
           },
           "procedural-animation": {
             "_value": false
@@ -196,7 +196,6 @@
         "includeModules": [
           "2d",
           "3d",
-          "affine-transform",
           "animation",
           "audio",
           "base",
@@ -204,23 +203,14 @@
           "gfx-webgl",
           "graphics",
           "intersection-2d",
-          "light-probe",
-          "marionette",
-          "mask",
           "particle",
           "primitive",
           "profiler",
-          "rich-text",
           "skeletal-animation",
-          "sorting-2d",
           "spine-3.8",
-          "terrain",
-          "tiled-map",
           "tween",
           "ui",
-          "video",
-          "websocket",
-          "webview"
+          "websocket"
         ],
         "noDeprecatedFeatures": {
           "value": false,
