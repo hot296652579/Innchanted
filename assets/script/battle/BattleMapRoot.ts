@@ -3,6 +3,7 @@ import { BattleContext } from "../../define/BattleContext";
 import { BundlesEnum } from "../../define/BundlesEnum";
 import { ConfigManager } from "../../framework/config/ConfigManager";
 import { ResourceManager } from "../../framework/resource/ResourceManager";
+import { LoadingCover } from "../loading/LoadingCover";
 import { levelPrefabPath } from "./levelPrefab";
 
 const { ccclass } = _decorator;
@@ -14,7 +15,11 @@ export class BattleMapRoot extends Component {
     private _levelNode: Node | null = null;
 
     protected async start(): Promise<void> {
-        await this.loadLevel(BattleContext.selectedLevelId);
+        try {
+            await this.loadLevel(BattleContext.selectedLevelId);
+        } finally {
+            LoadingCover.notifyLevelReady();
+        }
     }
 
     public async loadLevel(levelId: number): Promise<Node | null> {

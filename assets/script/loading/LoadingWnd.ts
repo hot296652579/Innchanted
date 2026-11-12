@@ -3,7 +3,9 @@ import { _decorator, director, Label, Prefab, ProgressBar } from "cc";
 import { BundlesEnum } from "../../define/BundlesEnum";
 import { ConfigManager } from "../../framework/config/ConfigManager";
 import { ResourceManager } from "../../framework/resource/ResourceManager";
+import { BattleMapRoot } from "../battle/BattleMapRoot";
 import { levelPrefabPath } from "../battle/levelPrefab";
+import { LoadingCover } from "./LoadingCover";
 import BaseWindow from "../../framework/ui/BaseWindow";
 import { UILayerType } from "../../framework/ui/UILayer";
 import { UIManager } from "../../framework/ui/UIManager";
@@ -13,9 +15,9 @@ const { ccclass, property } = _decorator;
 export interface LoadingOpenParam {
     /** 需要加载的 bundle 名。game 只会打开分包，不会整目录载入。 */
     bundles?: string[];
-    /** 只加载这一关对应的 Level 预设 */
+    /** 只加载这一关对应的 Level 预设。已在战斗场景时直接换上，不切场景。 */
     levelId?: number;
-    /** 加载完成后切场景 */
+    /** 从大厅进入战斗时才切场景 */
     nextScene?: string;
     /** 加载完成后打开的窗口 */
     nextWindow?: string;
@@ -64,7 +66,9 @@ export class LoadingWnd extends BaseWindow {
 
         this.setProgress(1);
         await this.finish(param);
-        this._loading = false;
+        if (this.isValid) {
+            this._loading = false;
+        }
     }
 
     private async loadLevelPrefab(levelId: number, onProgress: (progress: number) => void): Promise<void> {
@@ -89,8 +93,22 @@ export class LoadingWnd extends BaseWindow {
     }
 
     private async finish(param: LoadingOpenParam): Promise<void> {
+        if (param.levelId != null && param.levelId >= 1 && !param.nextScene) {
+            const map = director.getScene()?.getComponentInChildren(BattleMapRoot) ?? null;
+            if (!map) {
+                console.error("LoadingWnd: 战斗场景里没有 BattleMapRoot");
+            } else {
+                await map.loadLevel(param.levelId);
+            }
+            UIManager.getInstance().closeWindow(this.windowKey || "LoadingWnd");
+            return;
+        }
         if (param.nextScene) {
+            const root = LoadingCover.mount(this.node);
+            const ready = LoadingCover.beginWait();
             director.loadScene(param.nextScene);
+            await ready;
+            LoadingCover.dismiss(root, this.windowKey || "LoadingWnd");
             return;
         }
         const uiMgr = UIManager.getInstance();

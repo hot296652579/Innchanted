@@ -11,8 +11,7 @@
     "restDuration": 10,
     "guests": [
       ["regularguest", "regularguest2"],
-      ["regularguest1", "regularguest"],
-      ["regularguest1", "regularguest2"]
+      ["regularguest1", "regularguest"]
     ],
     "guestOrders": {
       "regularguest": ["magicdrink_brown"]

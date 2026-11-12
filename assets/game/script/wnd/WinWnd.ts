@@ -58,7 +58,6 @@ export class WinWnd extends BaseWindow {
         await uiMgr.openWindow(UIConfig.LoadingWnd.name, {
             bundles: [BundlesEnum.Table],
             levelId: nextId,
-            nextScene: "scene/Battle",
         });
     }
 }

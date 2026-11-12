@@ -118,6 +118,13 @@ export class UIManager extends BaseSingleton {
     }
 
     //#region 关闭窗口
+    /** 丢掉窗口记录，不播关闭动画。节点由调用方销毁。 */
+    public discardWindow(key: string): void {
+        this._openedWindows.delete(key);
+        this._windowCache.delete(key);
+        this.popPopupStack(key);
+    }
+
     /** 根据key关闭窗口 */
     public closeWindow(key: string): void {
         const win = this._openedWindows.get(key) ?? this._windowCache.get(key);
