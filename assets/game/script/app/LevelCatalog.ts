@@ -44,7 +44,7 @@ const FALLBACK: LevelDef[] = [
     {
         id: 1,
         duration: 180,
-        stars: [20, 40, 70],
+        stars: [55, 75, 90],
         eventIds: ["lock", "thief", "whirlwind"],
         restTimes: [30, 60],
         restDuration: 5,
@@ -89,19 +89,70 @@ export function mapOf(level: LevelDef): number {
     return 1;
 }
 
-/** 入箱金币对照星级线。0～3。星级算法待定，结算暂不调用。 */
-export function starOfGold(level: LevelDef, gold: number): number {
-    const stars = level.stars ?? [];
-    let n = 0;
-    for (let i = 0; i < stars.length; i++) {
-        if (gold >= stars[i]) {
-            n = i + 1;
-        }
-    }
-    return n;
+/** 结算时交给星级计算的本关结果。 */
+export type StarReport = {
+    /** 成功上完菜的客人数。 */
+    served: number;
+    /** 本关实际要接待的人数（不含教学客）。 */
+    guestTotal: number;
+    /** 已经过的秒数。 */
+    elapsed: number;
+    /** 是否在时间耗尽前把客人送走。 */
+    cleared: boolean;
+    /** 出现过的突发事件次数。锁炉不计入。 */
+    eventStarted: number;
+    /** 玩家处理掉的次数。 */
+    eventHandled: number;
+    /** 被偷走的金币。 */
+    goldStolen: number;
+    /** 被偷走的燃料份数。 */
+    fuelStolen: number;
+};
+
+const GUEST_POINTS = 50;
+const TIME_POINTS = 25;
+const EVENT_POINTS = 25;
+const PENALTY_CAP = 40;
+
+/**
+ * 满分 100，再对照关卡 stars 门槛得到 0～3 星。
+ * 接待占 50，提前完成占 25，突发事件占 25。
+ * 没配事件时突发分给满。被偷金币每枚扣 2 分，燃料每份扣 8 分，最多扣 40。
+ */
+export function starScore(level: LevelDef, report: StarReport): number {
+    const guests = Math.max(0, report.guestTotal);
+    const served = Math.max(0, Math.min(report.served, guests || report.served));
+    const guestPart = guests > 0 ? GUEST_POINTS * (served / guests) : GUEST_POINTS;
+    const duration = Math.max(1, level.duration);
+    const remain = Math.max(0, duration - Math.max(0, report.elapsed));
+    const timePart = report.cleared ? TIME_POINTS * (remain / duration) : 0;
+    const started = Math.max(0, report.eventStarted);
+    const handled = Math.max(0, report.eventHandled);
+    const eventPart = started > 0 ? EVENT_POINTS * Math.min(1, handled / started) : EVENT_POINTS;
+    const penalty = Math.min(
+        PENALTY_CAP,
+        Math.max(0, report.goldStolen) * 2 + Math.max(0, report.fuelStolen) * 8,
+    );
+    return Math.max(0, Math.min(100, guestPart + timePart + eventPart - penalty));
 }
 
-/** 关卡星级。算法待定，暂时返回 0。 */
-export function settleStars(_level: LevelDef, _gold: number): number {
-    return 0;
+/** 分数对照 stars 门槛。0～3，超过 3 档也只记 3 星。 */
+export function settleStars(level: LevelDef, report: StarReport): number {
+    const score = starScore(level, report);
+    const lines = level.stars ?? [];
+    let stars = 0;
+    const cap = Math.min(3, lines.length);
+    for (let i = 0; i < cap; i++) {
+        if (score + 1e-6 >= lines[i]) {
+            stars = i + 1;
+        }
+    }
+    console.log(
+        `[Star] 分 ${score.toFixed(1)} 星 ${stars}`
+        + ` 客 ${report.served}/${report.guestTotal}`
+        + ` 用时 ${report.elapsed.toFixed(0)}/${level.duration}`
+        + ` 事件 ${report.eventHandled}/${report.eventStarted}`
+        + ` 丢金 ${report.goldStolen} 丢燃料 ${report.fuelStolen}`,
+    );
+    return stars;
 }

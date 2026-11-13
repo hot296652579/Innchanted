@@ -75,6 +75,7 @@ export class FuelThiefIncident implements IIncident {
         showDeathMark(this._ctx, this._actor, this.def.id);
         this._remain = Math.max(0.6, this._view.playDeath() + 0.15);
         this._phase = "dying";
+        EventManager.getInstance().emit(GameEvent.EVENT_HANDLED, this.def.id);
         console.log("[Event] 击杀", this.def.id);
         return true;
     }

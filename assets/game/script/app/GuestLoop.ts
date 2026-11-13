@@ -250,6 +250,11 @@ export class GuestLoop {
         return Math.max(0, this._guestTotal - this._tutorialSpawned);
     }
 
+    /** 成功上完菜的人数。 */
+    get servedCount(): number {
+        return this._served;
+    }
+
     /** 已经走到 LeavePoint 的人数。 */
     get leftCount(): number {
         return this._leftCount;

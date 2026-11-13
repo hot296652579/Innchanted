@@ -28,7 +28,7 @@ import { EventDirector } from "./EventDirector";
 import { GuestLoop } from "./GuestLoop";
 import { GuideDirector } from "./GuideDirector";
 import { InteractService } from "./InteractService";
-import { findLevel, guestWaves, settleStars } from "./LevelCatalog";
+import { findLevel, guestWaves, settleStars, StarReport } from "./LevelCatalog";
 import { ProcessorSystem } from "./ProcessorSystem";
 
 export interface ShiftStartArgs {
@@ -75,10 +75,20 @@ export class ShiftController {
     private _ended = false;
     private _guide: GuideDirector | null = null;
     private _alive = true;
+    private _eventStarted = 0;
+    private _eventHandled = 0;
+    private _goldStolen = 0;
+    private _fuelStolen = 0;
+    private _iceAppeared = false;
 
     async start(args: ShiftStartArgs): Promise<void> {
         this._alive = true;
         this._ended = false;
+        this._eventStarted = 0;
+        this._eventHandled = 0;
+        this._goldStolen = 0;
+        this._fuelStolen = 0;
+        this._iceAppeared = false;
         await ConfigManager.getInstance().loadTable("items", BundlesEnum.Table);
         await ConfigManager.getInstance().loadTable("recipes", BundlesEnum.Table);
         await ConfigManager.getInstance().loadTable("guests", BundlesEnum.Table);
@@ -154,7 +164,11 @@ export class ShiftController {
             yawOffset: args.yawOffset,
             stealGold: (count) => this.onStolen(count),
             chestGold: () => this._score?.gold ?? 0,
-            stealFuel: (count) => this._barrels?.stealCharges(count) ?? 0,
+            stealFuel: (count) => {
+                const took = this._barrels?.stealCharges(count) ?? 0;
+                this._fuelStolen += took;
+                return took;
+            },
             occupiedSeat: () => this._guests?.occupiedSeat() ?? null,
             occupiedSeats: () => this._guests?.occupiedSeats() ?? [],
             scareGuest: (tableId) => this._guests?.scareAway(tableId) ?? false,
@@ -232,6 +246,8 @@ export class ShiftController {
         const events = EventManager.getInstance();
         events.off(GameEvent.SHELL_BANKED, this.onBanked, this);
         events.off(GameEvent.GUEST_LEFT, this.onGuestLeft, this);
+        events.off(GameEvent.EVENT_WARN, this.onEventWarn, this);
+        events.off(GameEvent.EVENT_HANDLED, this.onEventHandled, this);
         events.off(GameEvent.GROUND_ICE_FREEZE, this.onIceFreeze, this);
         events.off(GameEvent.GROUND_ICE_THAW, this.onIceThaw, this);
         this._huntId = null;
@@ -243,6 +259,11 @@ export class ShiftController {
         this._restLeft = 0;
         this._waveBeganAt = 0;
         this._ended = false;
+        this._eventStarted = 0;
+        this._eventHandled = 0;
+        this._goldStolen = 0;
+        this._fuelStolen = 0;
+        this._iceAppeared = false;
         this._playerAgentId = -1;
         this._ice?.clear();
         this._ice = null;
@@ -558,6 +579,9 @@ export class ShiftController {
     }
 
     private onIceThaw(duration?: number): void {
+        if (this._iceAppeared) {
+            this._eventHandled += 1;
+        }
         this._ice?.thaw(typeof duration === "number" ? duration : 1);
         this.applyWalkScale(1);
     }
@@ -651,6 +675,8 @@ export class ShiftController {
         const events = EventManager.getInstance();
         events.on(GameEvent.SHELL_BANKED, this.onBanked, this);
         events.on(GameEvent.GUEST_LEFT, this.onGuestLeft, this);
+        events.on(GameEvent.EVENT_WARN, this.onEventWarn, this);
+        events.on(GameEvent.EVENT_HANDLED, this.onEventHandled, this);
     }
 
     private onBanked(count: number): void {
@@ -665,10 +691,26 @@ export class ShiftController {
 
     private onStolen(count: number): number {
         const took = this._score?.steal(count) ?? 0;
+        this._goldStolen += took;
         if (took > 0) {
             this.emitGold();
         }
         return took;
+    }
+
+    /** 锁炉无解，不计入突发事件出现次数。 */
+    private onEventWarn(id: string): void {
+        if (id === "lock") {
+            return;
+        }
+        if (id === "ice") {
+            this._iceAppeared = true;
+        }
+        this._eventStarted += 1;
+    }
+
+    private onEventHandled(): void {
+        this._eventHandled += 1;
     }
 
     /** 离店人数 = 实际出场人数，且桌上和手上都没有金币。每次存金币、客人离店时检查。 */
@@ -720,9 +762,22 @@ export class ShiftController {
         this._guide?.clear();
         const gold = this._score.gold;
         const level = findLevel(BattleContext.selectedLevelId);
-        const stars = settleStars(level, gold);
-        BattleContext.completeLevel(level.id);
-        EventManager.getInstance().emit(GameEvent.LEVEL_CLEARED, { gold, stars });
+        const report: StarReport = {
+            served: this._guests?.servedCount ?? 0,
+            guestTotal: this._guests?.guestTotal ?? 0,
+            elapsed: this._score.elapsed,
+            cleared: reason === "通关",
+            eventStarted: this._eventStarted,
+            eventHandled: this._eventHandled,
+            goldStolen: this._goldStolen,
+            fuelStolen: this._fuelStolen,
+        };
+        const stars = settleStars(level, report);
+        if (stars >= 1) {
+            BattleContext.completeLevel(level.id);
+        }
+        const usedTime = Math.max(0, Math.round(this._score.elapsed));
+        EventManager.getInstance().emit(GameEvent.LEVEL_CLEARED, { gold, stars, usedTime });
         console.log(`[Shift] ${reason} 入箱 ${gold} 星 ${stars}`);
     }
 

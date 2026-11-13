@@ -27,6 +27,7 @@ export default class BattleUIRoot extends Component {
         uiMgr.registerWindow(UIConfig.InviteWnd.name, UIConfig.InviteWnd.path, UIConfig.InviteWnd.cache, BundlesEnum.Game);
         uiMgr.registerWindow(UIConfig.RestWnd.name, UIConfig.RestWnd.path, UIConfig.RestWnd.cache, BundlesEnum.Game);
         uiMgr.registerWindow(UIConfig.WinWnd.name, UIConfig.WinWnd.path, UIConfig.WinWnd.cache, BundlesEnum.Game);
+        uiMgr.registerWindow(UIConfig.LoseWnd.name, UIConfig.LoseWnd.path, UIConfig.LoseWnd.cache, BundlesEnum.Game);
         uiMgr.openWindow(UIConfig.TopWnd.name);
         const events = EventManager.getInstance();
         events.on(GameEvent.SHOW_TIPS, this.onShowTips, this);
@@ -52,8 +53,9 @@ export default class BattleUIRoot extends Component {
         void UIManager.getInstance().openWindow(UIConfig.RestWnd.name, { duration });
     }
 
-    private onCleared(result: { gold: number; stars: number }): void {
-        void UIManager.getInstance().openWindow(UIConfig.WinWnd.name, result);
+    private onCleared(result: { gold: number; stars: number; usedTime: number }): void {
+        const name = result.stars >= 1 ? UIConfig.WinWnd.name : UIConfig.LoseWnd.name;
+        void UIManager.getInstance().openWindow(name, result);
     }
 
     protected onDestroy(): void {

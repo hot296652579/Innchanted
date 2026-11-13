@@ -1,4 +1,4 @@
-/** 本关倒计时 + 入箱金币。星级只读 stars 门槛，结算时再算。 */
+/** 本关倒计时 + 入箱金币。星级在结算时按接待、用时和事件另算。 */
 export class ShiftScore {
     remain: number;
     gold = 0;

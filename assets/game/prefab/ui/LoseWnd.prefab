@@ -435,7 +435,7 @@
     },
     "_contentSize": {
       "__type__": "cc.Size",
-      "width": 119.99759897659341,
+      "width": 119.99127812557488,
       "height": 37.8
     },
     "_anchorPoint": {
@@ -474,7 +474,7 @@
     "_string": "观看广告",
     "_horizontalAlign": 1,
     "_verticalAlign": 1,
-    "_actualFontSize": 31.27061469265367,
+    "_actualFontSize": 30.56221889055472,
     "_fontSize": 30,
     "_fontFamily": "Arial",
     "_lineHeight": 30,
@@ -594,8 +594,8 @@
     },
     "_contentSize": {
       "__type__": "cc.Size",
-      "width": 52.437225133298504,
-      "height": 57.96
+      "width": 52.44397055743108,
+      "height": 57.96000000000001
     },
     "_anchorPoint": {
       "__type__": "cc.Vec2",
@@ -633,7 +633,7 @@
     "_string": "+2",
     "_horizontalAlign": 1,
     "_verticalAlign": 1,
-    "_actualFontSize": 47.94827586206896,
+    "_actualFontSize": 46.86206896551724,
     "_fontSize": 46,
     "_fontFamily": "Arial",
     "_lineHeight": 46,
@@ -753,7 +753,7 @@
     },
     "_contentSize": {
       "__type__": "cc.Size",
-      "width": 119.99759897659341,
+      "width": 119.99127812557488,
       "height": 37.8
     },
     "_anchorPoint": {
@@ -792,7 +792,7 @@
     "_string": "挖掘次数",
     "_horizontalAlign": 1,
     "_verticalAlign": 1,
-    "_actualFontSize": 31.27061469265367,
+    "_actualFontSize": 30.56221889055472,
     "_fontSize": 30,
     "_fontFamily": "Arial",
     "_lineHeight": 30,
@@ -1483,7 +1483,7 @@
     },
     "_contentSize": {
       "__type__": "cc.Size",
-      "width": 363.9262373127641,
+      "width": 363.9394035872684,
       "height": 35.28
     },
     "_anchorPoint": {
@@ -1522,7 +1522,7 @@
     "_string": "通路还没有打通，再试一次吧",
     "_horizontalAlign": 1,
     "_verticalAlign": 1,
-    "_actualFontSize": 29.18590704647676,
+    "_actualFontSize": 28.524737631184404,
     "_fontSize": 28,
     "_fontFamily": "Arial",
     "_lineHeight": 28,
@@ -1785,8 +1785,8 @@
     },
     "_contentSize": {
       "__type__": "cc.Size",
-      "width": 157.9637189122337,
-      "height": 53.879999999999995
+      "width": 157.9915484946997,
+      "height": 53.88
     },
     "_anchorPoint": {
       "__type__": "cc.Vec2",
@@ -1824,7 +1824,7 @@
     "_string": "再试一次",
     "_horizontalAlign": 1,
     "_verticalAlign": 1,
-    "_actualFontSize": 39.60944527736132,
+    "_actualFontSize": 38.71214392803598,
     "_fontSize": 38,
     "_fontFamily": "Arial",
     "_lineHeight": 38,

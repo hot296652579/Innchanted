@@ -80,6 +80,8 @@ export enum GameEvent {
 
     /** 突发事件进入预兆倒计时 */
     EVENT_WARN = "EVENT_WARN",
+    /** 玩家处理掉一次突发事件（赶走、击退、解冰、解旋风） */
+    EVENT_HANDLED = "EVENT_HANDLED",
     /** 突发事件超时，后果开始结算 */
     EVENT_FAIL = "EVENT_FAIL",
     /** 突发事件整段结束（含动画） */

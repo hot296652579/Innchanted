@@ -74,6 +74,7 @@ export class ThiefIncident implements IIncident {
         this._view.flyHome(this.def.flySpeed ?? 6);
         this._phase = "toHome";
         EventManager.getInstance().emit(GameEvent.EVENT_THIEF_SCARE, this.def.id);
+        EventManager.getInstance().emit(GameEvent.EVENT_HANDLED, this.def.id);
         console.log("[Event] 击退", this.def.id);
         return true;
     }
@@ -88,6 +89,7 @@ export class ThiefIncident implements IIncident {
         this._view.flyHome(this.def.flySpeed ?? 6);
         this._phase = "toHome";
         EventManager.getInstance().emit(GameEvent.EVENT_THIEF_SCARE, this.def.id);
+        EventManager.getInstance().emit(GameEvent.EVENT_HANDLED, this.def.id);
         console.log("[Event] 被驱赶", this.def.id, stationId);
         return true;
     }

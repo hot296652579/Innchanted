@@ -130,6 +130,7 @@ export class RaiderIncident implements IIncident {
         unit.phase = "dying";
         unit.station = null;
         unit.seat = null;
+        EventManager.getInstance().emit(GameEvent.EVENT_HANDLED, this.def.id);
         console.log("[Event] 击杀", this.def.id);
         return true;
     }

@@ -208,7 +208,7 @@ export class InteractService {
         if (hand.empty) {
             this.actor.hand = null;
         }
-        // EventManager.getInstance().emit(GameEvent.SHOW_TIPS, "旋风解开了");
+        EventManager.getInstance().emit(GameEvent.EVENT_HANDLED, "whirlwind");
         console.log("[Wind] 解开", binding.station.id, itemId);
         return true;
     }
