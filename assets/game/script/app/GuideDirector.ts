@@ -27,6 +27,7 @@ export class GuideDirector {
     private _clickLock = 0;
     private _windSeen = false;
     private _windTipShown = false;
+    private _iceTipShown = false;
     private _resumeIndex = -1;
     private _seatedType: string | null = null;
 
@@ -59,7 +60,7 @@ export class GuideDirector {
         }
         return wait === "seat" || wait === "serve" || wait === "coin" || wait === "bank"
             || wait === "thief" || wait === "chase" || wait === "queue" || wait === "escort" || wait === "roundseat"
-            || wait === "wind"
+            || wait === "wind" || wait === "ice"
             || (wait === "tip" && !!this._enemy?.isValid);
     }
 
@@ -69,7 +70,7 @@ export class GuideDirector {
         if (wait === "chase") {
             return !this._hovering;
         }
-        return wait === "wind" || (wait === "tip" && !!this._enemy?.isValid);
+        return wait === "wind" || wait === "ice" || (wait === "tip" && !!this._enemy?.isValid);
     }
 
     /** 蝙蝠还在飞，点击先吞掉不提示。 */
@@ -113,6 +114,7 @@ export class GuideDirector {
         events.on(GameEvent.GUEST_ESCORT_CONFIRMED, this.onEscortConfirmed, this);
         events.on(GameEvent.GUEST_ESCORT_SEATED, this.onEscortSeated, this);
         events.on(GameEvent.EVENT_FAIL, this.onEventFail, this);
+        events.on(GameEvent.GROUND_ICE_FREEZE, this.onIceFreeze, this);
         this.showStep(0);
         console.log(`[Guide] 开始 ${this._steps.length} 步`);
     }
@@ -125,7 +127,7 @@ export class GuideDirector {
         if (!step || step.wait === "tip") {
             return false;
         }
-        if (step.wait === "seat" || step.wait === "thief" || step.wait === "queue" || step.wait === "wind") {
+        if (step.wait === "seat" || step.wait === "thief" || step.wait === "queue" || step.wait === "wind" || step.wait === "ice") {
             return true;
         }
         if (step.wait === "escort") {
@@ -212,6 +214,7 @@ export class GuideDirector {
         this._clickLock = 0;
         this._windSeen = false;
         this._windTipShown = false;
+        this._iceTipShown = false;
         this._resumeIndex = -1;
         this._seatedType = null;
     }
@@ -233,7 +236,7 @@ export class GuideDirector {
         this._tipLeft = 0;
         const step = this._steps[index];
         this._hovering = false;
-        if (step.wait === "seat" || step.wait === "thief" || step.wait === "queue" || step.wait === "wind") {
+        if (step.wait === "seat" || step.wait === "thief" || step.wait === "queue" || step.wait === "wind" || step.wait === "ice") {
             this._tableId = null;
             this._view.hide();
             console.log(`[Guide] 第 ${index + 1} 步 等待`, step.wait, step.target);
@@ -464,6 +467,16 @@ export class GuideDirector {
         this.showStep(this._index + 1);
     }
 
+    /** 冰龙第一次放出冰冻时，插入后面的文本提示。之后再结冰不再提示。 */
+    private onIceFreeze(): void {
+        if (this._iceTipShown || this.step()?.wait !== "ice") {
+            return;
+        }
+        this._iceTipShown = true;
+        this._queued = this._index + 1;
+        console.log("[Guide] 冰冻触发，插入引导");
+    }
+
     private onEventFail(id: string): void {
         if (id !== "whirlwind") {
             return;
@@ -576,6 +589,7 @@ export class GuideDirector {
         this._clickLock = 0;
         this._windSeen = false;
         this._windTipShown = false;
+        this._iceTipShown = false;
         this._resumeIndex = -1;
         this._seatedType = null;
     }
@@ -594,5 +608,6 @@ export class GuideDirector {
         events.off(GameEvent.GUEST_ESCORT_CONFIRMED, this.onEscortConfirmed, this);
         events.off(GameEvent.GUEST_ESCORT_SEATED, this.onEscortSeated, this);
         events.off(GameEvent.EVENT_FAIL, this.onEventFail, this);
+        events.off(GameEvent.GROUND_ICE_FREEZE, this.onIceFreeze, this);
     }
 }

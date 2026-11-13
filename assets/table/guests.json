@@ -7,7 +7,7 @@
       "prefab/guest/RegularGuest1",
       "prefab/guest/RegularGuest2"
     ],
-    "waitTime": 25,
+    "waitTime": 30,
     "orders": [
       { "orderId": ["magicdrink_brown", "magicdrink_green"] }
     ]
@@ -20,7 +20,7 @@
       "prefab/guest/SleepGuest1",
       "prefab/guest/SleepGuest2"
     ],
-    "waitTime":25,
+    "waitTime":30,
     "orders": [
       { "orderId": ["steakbaked"] }
     ],
@@ -35,7 +35,7 @@
       "prefab/guest/OneTimeGuest1",
       "prefab/guest/OneTimeGuest2"
     ],
-    "waitTime": 25,
+    "waitTime": 30,
     "orders": [
       { "orderId": ["chickenlegbaked"] }
     ],

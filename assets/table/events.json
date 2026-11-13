@@ -115,7 +115,7 @@
     "duration": 45,
     "freezeTime": 1,
     "slowScale": 0.4,
-    "unlockItemId": "medicinebottle_yellow",
+    "unlockItemId": "medicinebottle_olivegreen",
     "actorName": "Dragon",
     "prefab": "prefab/enemys/Dragon",
     "flySpeed": 5,

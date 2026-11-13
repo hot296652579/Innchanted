@@ -6,7 +6,7 @@ const { ccclass } = _decorator;
 
 const POP_SEC = 0.25;
 const SHOW_SEC = 1;
-const TOP_INSET = 250;
+const TOP_INSET = 300;
 
 @ccclass("ReadyWnd")
 export class ReadyWnd extends BaseWindow {

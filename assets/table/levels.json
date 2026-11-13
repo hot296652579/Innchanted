@@ -210,84 +210,93 @@
   {
     "id": 8,
     "map": 8,
-    "duration": 200,
-    "stars": [52, 95, 145],
-    "eventIds": ["ice", "lock", "fuelthief", "thief", "whirlwind", "threaten", "skeleton"],
+    "duration": 360,
+    "stars": [125],
+    "eventIds": ["whirlwind", "fuelthief", "thief", "skeleton"],
     "delay": 15,
     "guestInterval": 1,
-    "restTimes": [30, 60],
+    "restTimes": [140],
     "restDuration": 10,
     "guests": [
-      ["regularguest", "regularguest1", "regularguest2", "regularguest"],
-      ["soldierguest", "soldierguest", "sleepguest", "onetimeguest"],
-      ["gourmetguest", "regularguest", "regularguest"]
+      ["sleepguest","soldierguest", "soldierguest", "regularguest1","mageguest","mageguest"],
+      ["regularguest1", "regularguest2", "sleepguest","regularguest", "regularguest2"],
+      ["mageguest","mageguest","gourmetguest", "regularguest", "regularguest1","regularguest2"]
     ],
     "guestOrders": {
-      "regularguest": ["magicdrink_brown", "magicdrink_green", "magicdrink_red", "steakbaked", "burgerbaked"],
-      "soldierguest": ["chickenlegbaked", "steakbaked"],
-      "mageguest": ["burgerbaked", "steakbaked"],
-      "sleepguest": ["chickenlegbaked", "steakbaked"],
-      "onetimeguest": ["chickenlegbaked", "burgerbaked", "steakbaked"],
+      "regularguest": ["magicdrink_brown", "magicdrink_green", "magicdrink_red", "steakbaked","chickenlegbaked"],
+      "soldierguest": ["steakbaked","chickenlegbaked"],
+      "mageguest": ["magicdrink_brown", "magicdrink_green", "magicdrink_red", "steakbaked","chickenlegbaked"],
+      "sleepguest": ["magicdrink_brown", "magicdrink_green", "magicdrink_red", "steakbaked","chickenlegbaked"],
+      "onetimeguest": [ "steakbaked","chickenlegbaked"],
       "gourmetguest": [
         ["magicdrink_brown", "magicdrink_green", "magicdrink_red"],
-        ["chickenlegbaked", "steakbaked"],
-        ["burgerbaked"]
+        ["steakbaked","chickenlegbaked"]
       ]
     }
   },
   {
     "id": 9,
     "map": 9,
-    "duration": 200,
-    "stars": [60, 110, 165],
-    "eventIds": ["threaten", "whirlwind", "lock", "thief", "fuelthief", "skeleton"],
+    "duration": 360,
+    "stars": [125],
+    "eventIds": ["threaten","lock", "fuelthief", "skeleton"],
     "delay": 15,
     "guestInterval": 1,
-    "restTimes": [30, 60],
+    "restTimes": [140],
     "restDuration": 10,
     "guests": [
-      ["regularguest", "regularguest2", "regularguest1", "regularguest", "soldierguest"],
-      ["soldierguest", "mageguest", "sleepguest", "onetimeguest", "gourmetguest"],
-      ["gourmetguest", "regularguest", "regularguest", "mageguest", "mageguest"]
+      ["regularguest", "regularguest2", "regularguest1", "regularguest","soldierguest","soldierguest"],
+      ["regularguest", "regularguest2", "gourmetguest", "regularguest","mageguest","mageguest"],
+      ["onetimeguest", "regularguest2", "sleepguest", "regularguest","mageguest","mageguest"],
+      ["soldierguest", "soldierguest", "sleepguest", "regularguest","gourmetguest","onetimeguest"]
     ],
     "guestOrders": {
-      "regularguest": ["magicdrink_brown", "magicdrink_green", "magicdrink_red", "steakbaked", "burgerbaked"],
+      "regularguest": ["magicdrink_brown", "magicdrink_green", "steakbaked"],
       "soldierguest": ["steakbaked"],
       "mageguest": ["steakbaked"],
       "sleepguest": ["steakbaked"],
       "onetimeguest": ["steakbaked"],
       "gourmetguest": [
-        ["magicdrink_brown", "magicdrink_green", "magicdrink_red"],
+        ["magicdrink_brown", "magicdrink_green"],
         ["steakbaked"]
       ]
-    }
+    },
+    "guide": [
+      { "target": "", "text": "要小心外来的怪物别吓跑客人，赶跑它们！", "wait": "tip", "duration":3 },
+      { "target": "", "text": "哦，对了，精灵鬼上锁的操作台,它是无解的,耐心等下吧，嘻嘻...", "wait": "tip", "duration": 3 }
+    ]
   },
   {
     "id": 10,
     "map": 10,
-    "duration": 210,
-    "stars": [75, 130, 200],
+    "duration": 480,
+    "stars": [125],
     "eventIds": ["raider", "threaten", "whirlwind", "ice", "lock", "fuelthief", "thief", "skeleton"],
     "delay": 10,
     "guestInterval": 1,
-    "restTimes": [30, 60],
+    "restTimes": [140,360],
     "restDuration": 10,
     "guests": [
-      ["regularguest", "regularguest", "soldierguest"],
-      ["mageguest", "sleepguest", "onetimeguest"],
-      ["gourmetguest", "gourmetguest", "soldierguest"]
+      ["regularguest1", "regularguest", "regularguest2", "regularguest","mageguest","mageguest"],
+      ["soldierguest", "soldierguest", "gourmetguest", "regularguest","mageguest","mageguest"],
+      ["onetimeguest", "regularguest2", "sleepguest", "regularguest","gourmetguest","gourmetguest"],
+      ["soldierguest", "soldierguest", "sleepguest", "regularguest","gourmetguest","onetimeguest"],
+      ["soldierguest", "soldierguest","soldierguest", "soldierguest", "mageguest", "mageguest","mageguest", "mageguest"]
     ],
     "guestOrders": {
-      "regularguest": ["magicdrink_brown", "magicdrink_green", "magicdrink_red", "steakbaked", "burgerbaked"],
-      "soldierguest": ["chickenlegbaked", "steakbaked"],
-      "mageguest": ["burgerbaked", "steakbaked"],
-      "sleepguest": ["chickenlegbaked", "steakbaked"],
-      "onetimeguest": ["chickenlegbaked", "burgerbaked", "steakbaked"],
+      "regularguest": ["magicdrink_brown", "magicdrink_green", "steakbaked"],
+      "soldierguest": ["magicdrink_brown", "magicdrink_green", "steakbaked"],
+      "mageguest": ["magicdrink_brown", "magicdrink_green", "steakbaked"],
+      "sleepguest": ["steakbaked"],
+      "onetimeguest": [ "steakbaked"],
       "gourmetguest": [
-        ["magicdrink_brown", "magicdrink_green", "magicdrink_red"],
-        ["chickenlegbaked", "steakbaked"],
-        ["burgerbaked"]
+        ["magicdrink_brown", "magicdrink_green"],
+        ["steakbaked"]
       ]
-    }
+    },
+    "guide": [
+      { "target": "ice", "text": "", "wait": "ice" },
+      { "target": "", "text": "可怕的暴风雪，喝下棕色+绿色合成的魔法药水即可解除(Tips:点击自己即可喝掉手中的药水)", "wait": "tip", "duration": 5 }
+    ]
   }
 ]
