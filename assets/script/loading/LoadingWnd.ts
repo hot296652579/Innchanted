@@ -7,7 +7,7 @@ import { BattleMapRoot } from "../battle/BattleMapRoot";
 import { levelPrefabPath } from "../battle/levelPrefab";
 import { LoadingCover } from "./LoadingCover";
 import BaseWindow from "../../framework/ui/BaseWindow";
-import { UILayerType } from "../../framework/ui/UILayer";
+import { UILayerRoot, UILayerType } from "../../framework/ui/UILayer";
 import { UIManager } from "../../framework/ui/UIManager";
 const { ccclass, property } = _decorator;
 
@@ -45,30 +45,59 @@ export class LoadingWnd extends BaseWindow {
 
     private async runLoad(): Promise<void> {
         this._loading = true;
+        this.bringToFront();
         this.setProgress(0);
+        await this.nextFrame();
 
         const param = (this._openParam ?? {}) as LoadingOpenParam;
         const bundles = param.bundles ?? [];
         const loadLevel = param.levelId != null && param.levelId >= 1;
         const bundleWeight = loadLevel ? 0.15 : 1;
-        const ok = await ResourceManager.getInstance().loadBundles(bundles, (p) => {
-            this.setProgress(p * bundleWeight);
-        });
-        if (!ok) {
-            console.error("LoadingWnd: 资源分包加载失败", bundles);
-        }
-
-        if (loadLevel) {
-            await this.loadLevelPrefab(param.levelId!, (p) => {
-                this.setProgress(bundleWeight + (1 - bundleWeight) * p);
+        try {
+            const ok = await ResourceManager.getInstance().loadBundles(bundles, (p) => {
+                this.setProgress(p * bundleWeight);
             });
-        }
+            if (!ok) {
+                console.error("LoadingWnd: 资源分包加载失败", bundles);
+            }
 
-        this.setProgress(1);
-        await this.finish(param);
-        if (this.isValid) {
-            this._loading = false;
+            if (loadLevel) {
+                await this.loadLevelPrefab(param.levelId!, (p) => {
+                    this.setProgress(bundleWeight + (0.9 - bundleWeight) * p);
+                });
+            }
+
+            await this.finish(param);
+        } catch (err) {
+            console.error("LoadingWnd: 加载失败", err);
+            this.closeNow();
+        } finally {
+            if (this.isValid) {
+                this._loading = false;
+            }
         }
+    }
+
+    /** 盖住弹窗层。加载界面原来在主界面层，胜利弹窗还在时会被挡住。 */
+    private bringToFront(): void {
+        const top = UILayerRoot.getRootByLayer(UILayerType.TIPS_GUIDE);
+        if (top?.isValid && this.node.parent !== top) {
+            this.node.setParent(top);
+        }
+    }
+
+    private nextFrame(): Promise<void> {
+        return new Promise((resolve) => {
+            this.scheduleOnce(() => resolve(), 0);
+        });
+    }
+
+    private closeNow(): void {
+        if (!this.isValid) {
+            return;
+        }
+        UIManager.getInstance().discardWindow(this.windowKey || "LoadingWnd");
+        this.node.destroy();
     }
 
     private async loadLevelPrefab(levelId: number, onProgress: (progress: number) => void): Promise<void> {
@@ -100,7 +129,8 @@ export class LoadingWnd extends BaseWindow {
             } else {
                 await map.loadLevel(param.levelId);
             }
-            UIManager.getInstance().closeWindow(this.windowKey || "LoadingWnd");
+            this.setProgress(1);
+            this.closeNow();
             return;
         }
         if (param.nextScene) {

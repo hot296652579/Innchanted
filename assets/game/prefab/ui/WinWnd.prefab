@@ -423,7 +423,7 @@
     },
     "_contentSize": {
       "__type__": "cc.Size",
-      "width": 299.99399744148354,
+      "width": 300,
       "height": 50.4
     },
     "_anchorPoint": {
@@ -462,7 +462,7 @@
     "_string": "恭喜你，顺利找到出口",
     "_horizontalAlign": 1,
     "_verticalAlign": 1,
-    "_actualFontSize": 31.27061469265367,
+    "_actualFontSize": 30,
     "_fontSize": 30,
     "_fontFamily": "Arial",
     "_lineHeight": 40,
@@ -947,8 +947,8 @@
     },
     "_contentSize": {
       "__type__": "cc.Size",
-      "width": 119.97278918417528,
-      "height": 53.879999999999995
+      "width": 120,
+      "height": 53.88
     },
     "_anchorPoint": {
       "__type__": "cc.Vec2",
@@ -986,7 +986,7 @@
     "_string": "下一关",
     "_horizontalAlign": 1,
     "_verticalAlign": 1,
-    "_actualFontSize": 39.60944527736132,
+    "_actualFontSize": 38,
     "_fontSize": 38,
     "_fontFamily": "Arial",
     "_lineHeight": 38,

@@ -48,8 +48,8 @@ export class WinWnd extends BaseWindow {
             return;
         }
         BattleContext.selectedLevelId = nextId;
-        this.closeWindow();
         const uiMgr = UIManager.getInstance();
+        const node = this.hideNow(uiMgr);
         uiMgr.registerWindow(
             UIConfig.LoadingWnd.name,
             UIConfig.LoadingWnd.path,
@@ -59,5 +59,18 @@ export class WinWnd extends BaseWindow {
             bundles: [BundlesEnum.Table],
             levelId: nextId,
         });
+        if (node?.isValid && !this.isCache) {
+            node.destroy();
+        }
+    }
+
+    /** 胜利界面在弹窗层，关闭动画结束前会一直盖住加载界面。 */
+    private hideNow(uiMgr: UIManager): Node | null {
+        uiMgr.discardWindow(this.windowKey || UIConfig.WinWnd.name);
+        if (!this.node?.isValid) {
+            return null;
+        }
+        this.node.active = false;
+        return this.node;
     }
 }
