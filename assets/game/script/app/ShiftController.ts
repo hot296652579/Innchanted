@@ -78,6 +78,7 @@ export class ShiftController {
     private _alive = true;
     private _eventStarted = 0;
     private _eventHandled = 0;
+    private _handled: Record<string, number> = {};
     private _goldStolen = 0;
     private _fuelStolen = 0;
     private _iceAppeared = false;
@@ -87,6 +88,7 @@ export class ShiftController {
         this._ended = false;
         this._eventStarted = 0;
         this._eventHandled = 0;
+        this._handled = {};
         this._goldStolen = 0;
         this._fuelStolen = 0;
         this._iceAppeared = false;
@@ -262,6 +264,7 @@ export class ShiftController {
         this._ended = false;
         this._eventStarted = 0;
         this._eventHandled = 0;
+        this._handled = {};
         this._goldStolen = 0;
         this._fuelStolen = 0;
         this._iceAppeared = false;
@@ -609,7 +612,7 @@ export class ShiftController {
 
     private onIceThaw(duration?: number): void {
         if (this._iceAppeared) {
-            this._eventHandled += 1;
+            this.noteHandled("ice");
         }
         this._ice?.thaw(typeof duration === "number" ? duration : 1);
         this.applyWalkScale(1);
@@ -738,8 +741,17 @@ export class ShiftController {
         this._eventStarted += 1;
     }
 
-    private onEventHandled(): void {
+    private onEventHandled(id?: string): void {
+        this.noteHandled(typeof id === "string" ? id : "");
+    }
+
+    /** 记一次亲手处理。击退、赶走、用药解除都走这里。 */
+    private noteHandled(id: string): void {
         this._eventHandled += 1;
+        if (!id) {
+            return;
+        }
+        this._handled[id] = (this._handled[id] ?? 0) + 1;
     }
 
     /** 离店人数 = 实际出场人数，且桌上和手上都没有金币。每次存金币、客人离店时检查。 */
@@ -798,6 +810,7 @@ export class ShiftController {
             cleared: reason === "通关",
             eventStarted: this._eventStarted,
             eventHandled: this._eventHandled,
+            handled: this._handled,
             goldStolen: this._goldStolen,
             fuelStolen: this._fuelStolen,
         };

@@ -4,6 +4,11 @@
     "map": 1,
     "duration": 180,
     "stars": [55, 75, 90],
+    "starRules": [
+      { "time": 180 },
+      { "time": 140 },
+      { "time": 100 }
+    ],
     "eventIds": [],
     "delay": 3,
     "guestInterval": 1,
@@ -31,6 +36,11 @@
     "map": 2,
     "duration": 180,
     "stars": [55, 75, 90],
+    "starRules": [
+      { "time": 180 },
+      { "time": 150 },
+      { "time": 110 }
+    ],
     "eventIds": [],
     "delay": 10,
     "guestInterval": 1,
@@ -58,6 +68,11 @@
     "map": 3,
     "duration": 180,
     "stars": [55, 75, 90],
+    "starRules": [
+      { "time": 180 },
+      { "time": 150, "handle": { "thief": 1 } },
+      { "time": 110, "handle": { "thief": 1 } }
+    ],
     "eventIds": ["thief"],
     "delay": 10,
     "guestInterval": 1,
@@ -86,6 +101,11 @@
     "map": 4,
     "duration": 180,
     "stars": [55, 75, 90],
+    "starRules": [
+      { "time": 180 },
+      { "time": 150, "handle": { "thief": 1 } },
+      { "time": 110, "handle": { "thief": 1 } }
+    ],
     "eventIds": ["thief"],
     "delay": 15,
     "guestInterval": 1,
@@ -110,6 +130,11 @@
     "map": 5,
     "duration": 260,
     "stars": [55, 75, 90],
+    "starRules": [
+      { "time": 260 },
+      { "time": 200, "handle": { "thief": 1 } },
+      { "time": 150, "handle": { "thief": 1 } }
+    ],
     "eventIds": ["thief"],
     "delay": 15,
     "guestInterval": 1,
@@ -138,6 +163,11 @@
     "map": 6,
     "duration": 360,
     "stars": [55, 75, 90],
+    "starRules": [
+      { "time": 360 },
+      { "time": 280, "handle": { "thief": 1 } },
+      { "time": 210, "handle": { "thief": 1 } }
+    ],
     "eventIds": ["thief"],
     "delay": 15,
     "guestInterval": 1,
@@ -175,6 +205,11 @@
     "map": 7,
     "duration": 360,
     "stars": [55, 75, 90],
+    "starRules": [
+      { "time": 360 },
+      { "time": 280, "handle": { "whirlwind": 1, "fuelthief": 1, "thief": 1, "skeleton": 1 } },
+      { "time": 220, "handle": { "whirlwind": 1, "fuelthief": 1, "thief": 1, "skeleton": 1 } }
+    ],
     "eventIds": ["whirlwind", "fuelthief", "thief", "skeleton"],
     "delay": 15,
     "guestInterval": 1,
@@ -212,6 +247,11 @@
     "map": 8,
     "duration": 360,
     "stars": [55, 75, 90],
+    "starRules": [
+      { "time": 360 },
+      { "time": 280, "handle": { "whirlwind": 1, "fuelthief": 1, "thief": 1, "skeleton": 1 } },
+      { "time": 220, "handle": { "whirlwind": 1, "fuelthief": 1, "thief": 1, "skeleton": 1 } }
+    ],
     "eventIds": ["whirlwind", "fuelthief", "thief", "skeleton"],
     "delay": 15,
     "guestInterval": 1,
@@ -239,6 +279,11 @@
     "map": 9,
     "duration": 360,
     "stars": [55, 75, 90],
+    "starRules": [
+      { "time": 360 },
+      { "time": 280, "handle": { "threaten": 1, "fuelthief": 1, "skeleton": 1 } },
+      { "time": 220, "handle": { "threaten": 1, "fuelthief": 1, "skeleton": 1 } }
+    ],
     "eventIds": ["threaten","lock", "fuelthief", "skeleton"],
     "delay": 15,
     "guestInterval": 1,
@@ -271,6 +316,11 @@
     "map": 10,
     "duration": 480,
     "stars": [55, 75, 90],
+    "starRules": [
+      { "time": 480 },
+      { "time": 360, "handle": { "raider": 1, "threaten": 1, "whirlwind": 1, "ice": 1, "fuelthief": 1, "thief": 1, "skeleton": 1 } },
+      { "time": 280, "handle": { "raider": 1, "threaten": 1, "whirlwind": 1, "ice": 1, "fuelthief": 1, "thief": 1, "skeleton": 1 } }
+    ],
     "eventIds": ["raider", "threaten", "whirlwind", "ice", "lock", "fuelthief", "thief", "skeleton"],
     "delay": 10,
     "guestInterval": 1,

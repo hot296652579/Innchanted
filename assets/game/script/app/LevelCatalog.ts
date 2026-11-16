@@ -14,10 +14,20 @@ export type GuideStepDef = {
     duration?: number;
 };
 
+/** 某一星的条件。用时不超过 time，并且 handle 里每个事件都达到次数。 */
+export type StarRule = {
+    /** 这一星允许的最长通关用时（秒）。不写则不限时。 */
+    time?: number;
+    /** 事件 id → 至少要亲手处理的次数。击退怪物、解除事件都算。 */
+    handle?: Record<string, number>;
+};
+
 export type LevelDef = {
     id: number;
     duration: number;
     stars: number[];
+    /** 1 星、2 星、3 星的条件，按顺序往上套。 */
+    starRules?: StarRule[];
     eventIds?: string[];
     guests?: string[] | string[][];
     guestOrders?: Record<string, LevelGuestOrderSlots>;
@@ -45,6 +55,11 @@ const FALLBACK: LevelDef[] = [
         id: 1,
         duration: 180,
         stars: [55, 75, 90],
+        starRules: [
+            { time: 180 },
+            { time: 140 },
+            { time: 100 },
+        ],
         eventIds: ["lock", "thief", "whirlwind"],
         restTimes: [30, 60],
         restDuration: 5,
@@ -103,6 +118,8 @@ export type StarReport = {
     eventStarted: number;
     /** 玩家处理掉的次数。 */
     eventHandled: number;
+    /** 按事件 id 记下的处理次数。击退、解除都记在这里。 */
+    handled: Record<string, number>;
     /** 被偷走的金币。 */
     goldStolen: number;
     /** 被偷走的燃料份数。 */
@@ -115,7 +132,7 @@ const EVENT_POINTS = 25;
 const PENALTY_CAP = 40;
 
 /**
- * 满分 100，再对照关卡 stars 门槛得到 0～3 星。
+ * 胜利界面上的总分，满分 100。星级不看这个分数，看 starRules。
  * 接待占 50，提前完成占 25，突发事件占 25。
  * 没配事件时突发分给满。被偷金币每枚扣 2 分，燃料每份扣 8 分，最多扣 40。
  */
@@ -136,39 +153,66 @@ export function starScore(level: LevelDef, report: StarReport): number {
     return Math.max(0, Math.min(100, guestPart + timePart + eventPart - penalty));
 }
 
-/**
- * 三星规定用时（秒）。客人与事件都拿满、没有被偷时，
- * 必须在这个秒数内完成，分数才能达到第三档。
- */
+/** 三星规定用时（秒）。读 starRules 第 3 档的 time。 */
 export function threeStarSeconds(level: LevelDef): number {
-    const duration = Math.max(0, level.duration);
-    const line = level.stars?.[2] ?? 90;
-    const need = line - (GUEST_POINTS + EVENT_POINTS);
-    if (need <= 0) {
-        return Math.floor(duration);
+    const time = level.starRules?.[2]?.time;
+    if (typeof time === "number") {
+        return Math.max(0, Math.floor(time));
     }
-    if (need >= TIME_POINTS) {
-        return 0;
-    }
-    return Math.max(0, Math.floor(duration * (1 - need / TIME_POINTS)));
+    return Math.max(0, Math.floor(level.duration));
 }
 
-/** 分数对照 stars 门槛。0～3，超过 3 档也只记 3 星。 */
+/** 这一档的用时和事件次数是否都达到。 */
+function ruleMet(rule: StarRule, elapsed: number, handled: Record<string, number>): boolean {
+    if (typeof rule.time === "number" && elapsed > rule.time) {
+        return false;
+    }
+    const need = rule.handle;
+    if (!need) {
+        return true;
+    }
+    for (const id in need) {
+        if ((handled[id] ?? 0) < need[id]) {
+            return false;
+        }
+    }
+    return true;
+}
+
+function handledText(handled: Record<string, number>): string {
+    const ids = Object.keys(handled);
+    if (ids.length === 0) {
+        return "无";
+    }
+    const parts: string[] = [];
+    for (let i = 0; i < ids.length; i++) {
+        parts.push(`${ids[i]} ${handled[ids[i]]}`);
+    }
+    return parts.join(" ");
+}
+
+/**
+ * 按 starRules 从 1 星往上套。先要在时限内送走客人，
+ * 再用时和各项处理次数都达到，才升到下一星。最多 3 星。
+ */
 export function settleStars(level: LevelDef, report: StarReport): number {
-    const score = starScore(level, report);
-    const lines = level.stars ?? [];
+    const rules = level.starRules ?? [];
+    const elapsed = Math.floor(Math.max(0, report.elapsed));
+    const handled = report.handled ?? {};
     let stars = 0;
-    const cap = Math.min(3, lines.length);
-    for (let i = 0; i < cap; i++) {
-        if (score + 1e-6 >= lines[i]) {
+    if (report.cleared) {
+        const cap = Math.min(3, rules.length);
+        for (let i = 0; i < cap; i++) {
+            if (!ruleMet(rules[i], elapsed, handled)) {
+                break;
+            }
             stars = i + 1;
         }
     }
     console.log(
-        `[Star] 分 ${score.toFixed(1)} 星 ${stars}`
-        + ` 客 ${report.served}/${report.guestTotal}`
-        + ` 用时 ${report.elapsed.toFixed(0)}/${level.duration}`
-        + ` 事件 ${report.eventHandled}/${report.eventStarted}`
+        `[Star] 星 ${stars} 客 ${report.served}/${report.guestTotal}`
+        + ` 用时 ${elapsed}/${level.duration}`
+        + ` 处理 ${handledText(handled)}`
         + ` 丢金 ${report.goldStolen} 丢燃料 ${report.fuelStolen}`,
     );
     return stars;

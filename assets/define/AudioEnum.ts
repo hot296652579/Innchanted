@@ -4,6 +4,7 @@ export enum AudioEnum {
     BG = "bgm_home",//主界面循环
     BGM_EXPLORE = "bgm_explore",//选卡选择界面
     MUSIC_REWARD = "audio/music_reward",//通关通关
+    MUSIC_LEVEL_FAILED = "audio/music_reward",//通关通关
 
     PLAYER_ATTACK = "audio/player_attack",//玩家攻击
     OPEN_DOOR = "audio/open_door",//开门
