@@ -28,7 +28,7 @@ import { EventDirector } from "./EventDirector";
 import { GuestLoop } from "./GuestLoop";
 import { GuideDirector } from "./GuideDirector";
 import { InteractService } from "./InteractService";
-import { findLevel, guestWaves, settleStars, StarReport } from "./LevelCatalog";
+import { findLevel, guestWaves, settleStars, starScore, StarReport } from "./LevelCatalog";
 import { ProcessorSystem } from "./ProcessorSystem";
 
 export interface ShiftStartArgs {
@@ -772,12 +772,13 @@ export class ShiftController {
             goldStolen: this._goldStolen,
             fuelStolen: this._fuelStolen,
         };
+        const score = Math.round(starScore(level, report));
         const stars = settleStars(level, report);
         if (stars >= 1) {
             BattleContext.completeLevel(level.id);
         }
         const usedTime = Math.max(0, Math.round(this._score.elapsed));
-        EventManager.getInstance().emit(GameEvent.LEVEL_CLEARED, { gold, stars, usedTime });
+        EventManager.getInstance().emit(GameEvent.LEVEL_CLEARED, { gold, stars, usedTime, score });
         console.log(`[Shift] ${reason} 入箱 ${gold} 星 ${stars}`);
     }
 

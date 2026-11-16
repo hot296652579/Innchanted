@@ -53,7 +53,7 @@ export default class BattleUIRoot extends Component {
         void UIManager.getInstance().openWindow(UIConfig.RestWnd.name, { duration });
     }
 
-    private onCleared(result: { gold: number; stars: number; usedTime: number }): void {
+    private onCleared(result: { gold: number; stars: number; usedTime: number; score: number }): void {
         const name = result.stars >= 1 ? UIConfig.WinWnd.name : UIConfig.LoseWnd.name;
         void UIManager.getInstance().openWindow(name, result);
     }

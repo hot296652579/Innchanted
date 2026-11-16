@@ -136,6 +136,23 @@ export function starScore(level: LevelDef, report: StarReport): number {
     return Math.max(0, Math.min(100, guestPart + timePart + eventPart - penalty));
 }
 
+/**
+ * 三星规定用时（秒）。客人与事件都拿满、没有被偷时，
+ * 必须在这个秒数内完成，分数才能达到第三档。
+ */
+export function threeStarSeconds(level: LevelDef): number {
+    const duration = Math.max(0, level.duration);
+    const line = level.stars?.[2] ?? 90;
+    const need = line - (GUEST_POINTS + EVENT_POINTS);
+    if (need <= 0) {
+        return Math.floor(duration);
+    }
+    if (need >= TIME_POINTS) {
+        return 0;
+    }
+    return Math.max(0, Math.floor(duration * (1 - need / TIME_POINTS)));
+}
+
 /** 分数对照 stars 门槛。0～3，超过 3 档也只记 3 星。 */
 export function settleStars(level: LevelDef, report: StarReport): number {
     const score = starScore(level, report);
