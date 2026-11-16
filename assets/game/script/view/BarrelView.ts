@@ -172,24 +172,35 @@ export class BarrelView {
     }
 
     syncVolumes(binding: StationBinding): void {
+        if (!binding.node?.isValid) {
+            return;
+        }
         const tank = binding.station.barrel;
         const filled = tank?.charges ?? 0;
         const color = tank?.color ?? null;
         const tint = color ? this._colorMat.get(color) : null;
         for (let i = 0; i < BARREL_MAX_CHARGES; i++) {
             const node = findNamedDescendant(binding.node, `volume${i}`);
-            if (!node) {
+            if (!node?.isValid) {
                 continue;
             }
             const mat = i < filled && tint ? tint : this._white;
-            if (!mat) {
+            if (!this.usableMat(mat)) {
                 continue;
             }
             const renderers = node.getComponentsInChildren(MeshRenderer);
             for (let r = 0; r < renderers.length; r++) {
-                renderers[r].setSharedMaterial(mat, 0);
+                const renderer = renderers[r];
+                if (!renderer.isValid || !renderer.mesh) {
+                    continue;
+                }
+                renderer.setSharedMaterial(mat, 0);
             }
         }
+    }
+
+    private usableMat(mat: Material | null): mat is Material {
+        return !!mat && mat.isValid && !!mat.passes;
     }
 
     putPulp(color: BarrelColor): void {

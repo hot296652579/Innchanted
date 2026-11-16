@@ -149,15 +149,9 @@ export class ResourceManager extends BaseSingleton {
     ): Promise<T | null> {
 
         const key = bundleName ? `${bundleName}/${path}` : path;
-
-        // 已缓存
-        const cache = this._assetCache.get(key);
-
-        if (cache) {
-
-            cache.refCount++;
-
-            return cache.asset as T;
+        const cached = this.cached<T>(key);
+        if (cached) {
+            return cached;
         }
 
         // 获取Bundle
@@ -198,11 +192,10 @@ export class ResourceManager extends BaseSingleton {
     ): Promise<T | null> {
         const report = (p: number) => onProgress?.(Math.min(1, Math.max(0, p)));
         const key = bundleName ? `${bundleName}/${path}` : path;
-        const cached = this._assetCache.get(key);
+        const cached = this.cached<T>(key);
         if (cached) {
-            cached.refCount++;
             report(1);
-            return Promise.resolve(cached.asset as T);
+            return Promise.resolve(cached);
         }
 
         return (async () => {
@@ -250,6 +243,22 @@ export class ResourceManager extends BaseSingleton {
 
     public loadJson(path: string, bundle?: string): Promise<JsonAsset | null> {
         return this.load(path, JsonAsset, bundle);
+    }
+
+    /** 缓存里的资源若已被强制释放，丢掉再重新加载。 */
+    private cached<T extends Asset>(key: string): T | null {
+        const cache = this._assetCache.get(key);
+        if (!cache) {
+            return null;
+        }
+        const asset = cache.asset;
+        const passes = (asset as { passes?: unknown }).passes;
+        if (!asset.isValid || passes === null) {
+            this._assetCache.delete(key);
+            return null;
+        }
+        cache.refCount++;
+        return asset as T;
     }
 
     //#region 资源释放

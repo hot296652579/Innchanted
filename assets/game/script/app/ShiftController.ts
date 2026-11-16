@@ -12,7 +12,7 @@ import { CommandFsm } from "../fsm/CommandFsm";
 import RecastDetourManager from "../navmesh/recastdetourjs/tool/RecastDetourManager";
 import { GridAgent } from "../sim/GridAgent";
 import { RecastPathfinder } from "../sim/RecastPathfinder";
-import { findNamedDescendant, StationRegistry } from "../sim/StationRegistry";
+import { findNamedDescendant, StationBinding, StationRegistry } from "../sim/StationRegistry";
 import { Enemy } from "../view/Enemy";
 import { FxView } from "../view/FxView";
 import { GroundIceView } from "../view/GroundIceView";
@@ -24,6 +24,7 @@ import { ClickHit, ClickPicker } from "./ClickPicker";
 import { CombineCatalog } from "./Combine";
 import { CommandService } from "./CommandService";
 import { allEventDefs } from "./EventCatalog";
+import { resolveDefaultAction } from "./DefaultAction";
 import { EventDirector } from "./EventDirector";
 import { GuestLoop } from "./GuestLoop";
 import { GuideDirector } from "./GuideDirector";
@@ -337,6 +338,10 @@ export class ShiftController {
             }
         }
         if (hit.target.kind === "self") {
+            if (this.level1Guide()) {
+                EventManager.getInstance().emit(GameEvent.SHOW_TIPS, "请点击箭头指示的位置");
+                return;
+            }
             this._guests?.cancelHold();
             console.log("[Drink] onClick self", "interact", !!this._interact, "hand", this._actor.hand);
             this._huntId = null;
@@ -436,7 +441,31 @@ export class ShiftController {
         if (this._guests?.beginSeatHold(binding)) {
             return;
         }
+        if (this.blockGuidePlace(binding)) {
+            return;
+        }
         this._interact.arrive(binding);
+    }
+
+    /** 第 1 关引导没结束前，不能喝手里的药水，也不能把东西放下。 */
+    private level1Guide(): boolean {
+        return BattleContext.selectedLevelId === 1 && !!this._guide?.active;
+    }
+
+    private blockGuidePlace(binding: StationBinding): boolean {
+        if (!this.level1Guide() || !this._actor) {
+            return false;
+        }
+        const action = resolveDefaultAction(
+            this._actor.hand,
+            binding.station,
+            this._guests?.wantedAt(binding.station.id, this._actor.hand?.itemId),
+        );
+        if (action !== "Place") {
+            return false;
+        }
+        EventManager.getInstance().emit(GameEvent.SHOW_TIPS, "请点击箭头指示的位置");
+        return true;
     }
 
     private tickRest(dt: number): void {

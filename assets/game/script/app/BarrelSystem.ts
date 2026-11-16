@@ -32,7 +32,7 @@ export class BarrelSystem {
         await this._view.load();
         for (let i = 0; i < this.registry.all.length; i++) {
             const binding = this.registry.all[i];
-            if (binding.station.type === StationType.MagicBarrel) {
+            if (binding.station.type === StationType.MagicBarrel && binding.node?.isValid) {
                 this._view.syncVolumes(binding);
             }
         }
