@@ -23,6 +23,7 @@ export class StartScene extends Component {
 
         uiMgr.registerWindow(UIConfig.StartWnd.name, UIConfig.StartWnd.path, UIConfig.StartWnd.cache, BundlesEnum.UI);
         uiMgr.registerWindow(UIConfig.SelectWnd.name, UIConfig.SelectWnd.path, UIConfig.SelectWnd.cache, BundlesEnum.UI);
+        uiMgr.registerWindow(UIConfig.DailyTaskWnd.name, UIConfig.DailyTaskWnd.path, UIConfig.DailyTaskWnd.cache, BundlesEnum.UI);
         uiMgr.registerWindow(UIConfig.LoadingWnd.name, UIConfig.LoadingWnd.path, UIConfig.LoadingWnd.cache);
         uiMgr.registerWindow(UIConfig.SettingWnd.name, UIConfig.SettingWnd.path, UIConfig.SettingWnd.cache, BundlesEnum.UI);
 

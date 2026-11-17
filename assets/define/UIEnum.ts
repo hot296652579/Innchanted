@@ -130,4 +130,11 @@ export const UIConfig = {
         bundle: "game",
         cache: false,
     },
+    /**每日任务*/
+    DailyTaskWnd: {
+        name: "DailyTaskWnd",
+        path: "prefab/dailyTask/DailyTaskWnd",
+        bundle: "ui",
+        cache: false,
+    },
 } satisfies Record<string, UIInfo>;

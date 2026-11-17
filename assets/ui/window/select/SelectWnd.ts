@@ -1,4 +1,4 @@
-import { _decorator, Button, Node } from "cc";
+import { _decorator, Button, Label, Node } from "cc";
 import { AudioEnum } from "db://assets/define/AudioEnum";
 import { BattleContext } from "db://assets/define/BattleContext";
 import { BundlesEnum } from "db://assets/define/BundlesEnum";
@@ -20,6 +20,12 @@ export class SelectWnd extends BaseWindow {
     @property(Button)
     backBtn: Button = null!;
 
+    @property(Label)
+    lbPower: Label = null!;
+
+    @property(Button)
+    dailyTaskBtn: Button = null!;
+
     selectItems: SelectItem[] = [];
 
     private _entering = false;
@@ -27,6 +33,7 @@ export class SelectWnd extends BaseWindow {
     protected onLoad(): void {
         this.collectItems();
         this.backBtn.node.on(Button.EventType.CLICK, this.onBack, this);
+        this.dailyTaskBtn.node.on(Button.EventType.CLICK, this.onDailyTask, this);
     }
 
     protected onOpenRefresh(): void {
@@ -83,6 +90,10 @@ export class SelectWnd extends BaseWindow {
             levelId,
             nextScene: "scene/Battle",
         });
+    }
+
+    private onDailyTask(): void {
+        UIManager.getInstance().openWindow(UIConfig.DailyTaskWnd.name);
     }
 
     private async onBack(): Promise<void> {

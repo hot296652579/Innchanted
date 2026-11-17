@@ -1,7 +1,7 @@
 [
   {
     "__type__": "cc.Prefab",
-    "_name": "DayTask",
+    "_name": "DailyTaskWnd",
     "_objFlags": 0,
     "__editorExtras__": {},
     "_native": "",
@@ -13,7 +13,7 @@
   },
   {
     "__type__": "cc.Node",
-    "_name": "DayTask",
+    "_name": "DailyTaskWnd",
     "_objFlags": 0,
     "__editorExtras__": {},
     "_parent": null,
@@ -41,10 +41,13 @@
       },
       {
         "__id__": 112
+      },
+      {
+        "__id__": 114
       }
     ],
     "_prefab": {
-      "__id__": 114
+      "__id__": 116
     },
     "_lpos": {
       "__type__": "cc.Vec3",
@@ -2687,6 +2690,29 @@
   {
     "__type__": "cc.CompPrefabInfo",
     "fileId": "ecvLVO0dBBp5mSGpykR/gU"
+  },
+  {
+    "__type__": "83cb2Twy55HpYRZCwuvXvUO",
+    "_name": "",
+    "_objFlags": 0,
+    "__editorExtras__": {},
+    "node": {
+      "__id__": 1
+    },
+    "_enabled": true,
+    "__prefab": {
+      "__id__": 115
+    },
+    "windowLayer": 40,
+    "playOpenTween": false,
+    "backBtn": {
+      "__id__": 33
+    },
+    "_id": ""
+  },
+  {
+    "__type__": "cc.CompPrefabInfo",
+    "fileId": "1621T27H5Ih7qu/xQ8RjXE"
   },
   {
     "__type__": "cc.PrefabInfo",
