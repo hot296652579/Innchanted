@@ -6,6 +6,7 @@ import { patchWechatTexture } from '../framework/adapter/patchWechatTexture';
 import { UILayerRoot } from '../framework/ui/UILayer';
 import { UIManager } from '../framework/ui/UIManager';
 import { GameMain } from '../GameMain';
+import { DailyTaskSystem } from '../script/daily/DailyTaskSystem';
 const { ccclass, property } = _decorator;
 
 patchWechatTexture();
@@ -17,6 +18,7 @@ export class StartScene extends Component {
         patchWechatTexture();
         const gameMain = new GameMain();
         await gameMain.initAllFramework();
+        DailyTaskSystem.boot();
 
         UILayerRoot.initRoot(this.node);
         const uiMgr = UIManager.getInstance();

@@ -12,7 +12,7 @@
     "name":"击退捣乱精灵",
     "desc":"处理5次精灵捣乱事件",
     "target":5,
-    "rewardStamina":18,
+    "rewardStamina":12,
     "icon":"task/elf_normal.png"
   },
   {
@@ -83,7 +83,7 @@
     "id":11,
     "name":"存入金币次数",
     "desc":"存入10次",
-    "target":5,
+    "target":10,
     "rewardStamina":10,
     "icon":"task/save_normal.png"
   }

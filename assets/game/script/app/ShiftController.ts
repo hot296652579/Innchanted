@@ -612,7 +612,7 @@ export class ShiftController {
 
     private onIceThaw(duration?: number): void {
         if (this._iceAppeared) {
-            this.noteHandled("ice");
+            EventManager.getInstance().emit(GameEvent.EVENT_HANDLED, "ice");
         }
         this._ice?.thaw(typeof duration === "number" ? duration : 1);
         this.applyWalkScale(1);

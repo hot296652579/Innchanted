@@ -7,6 +7,8 @@ import AudioPlayer from "db://assets/framework/resource/AudioPlayer";
 import { UIManager } from "db://assets/framework/ui/UIManager";
 import BaseWindow from "../../../framework/ui/BaseWindow";
 import { UILayerType } from "../../../framework/ui/UILayer";
+import { PowerSystem } from "../../../script/power/PowerSystem";
+import { UIUtils } from "../../../script/UIUtils";
 import { SelectItem, SelectItemState } from "./SelectItem";
 const { ccclass, property } = _decorator;
 
@@ -29,6 +31,8 @@ export class SelectWnd extends BaseWindow {
     selectItems: SelectItem[] = [];
 
     private _entering = false;
+    private _powerTick = 0;
+    private _shownPower = -1;
 
     protected onLoad(): void {
         this.collectItems();
@@ -38,8 +42,19 @@ export class SelectWnd extends BaseWindow {
 
     protected onOpenRefresh(): void {
         this._entering = false;
+        this._powerTick = 0;
         this.collectItems();
         this.refreshItems();
+        this.refreshPower();
+    }
+
+    protected update(dt: number): void {
+        this._powerTick += dt;
+        if (this._powerTick < 1) {
+            return;
+        }
+        this._powerTick = 0;
+        this.refreshPower();
     }
 
     private collectItems(): void {
@@ -67,10 +82,24 @@ export class SelectWnd extends BaseWindow {
         return "current";
     }
 
+    private refreshPower(): void {
+        const value = PowerSystem.current;
+        if (!this.lbPower || value === this._shownPower) {
+            return;
+        }
+        this._shownPower = value;
+        this.lbPower.string = `${value}`;
+    }
+
     private async onSelectLevel(levelId: number): Promise<void> {
         if (this._entering || !BattleContext.isLevelUnlocked(levelId)) {
             return;
         }
+        if (!PowerSystem.enterLevel()) {
+            void UIUtils.showTips("体力不足");
+            return;
+        }
+        this.refreshPower();
         this._entering = true;
         BattleContext.selectedLevelId = levelId;
         void AudioPlayer.getInstance().playEffect(BundlesEnum.Audio, AudioEnum.Click);

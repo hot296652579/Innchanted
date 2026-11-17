@@ -127,10 +127,11 @@ export class RaiderIncident implements IIncident {
         this.hideFace(unit);
         showDeathMark(this._ctx, unit.actor, `${this.def.id}_${unit.actor?.uuid ?? "x"}`);
         unit.remain = Math.max(0.6, unit.view.playDeath() + 0.15);
+        const guardStation = unit.phase === "toStation" || unit.phase === "hitStation";
         unit.phase = "dying";
         unit.station = null;
         unit.seat = null;
-        EventManager.getInstance().emit(GameEvent.EVENT_HANDLED, this.def.id);
+        EventManager.getInstance().emit(GameEvent.EVENT_HANDLED, this.def.id, guardStation ? "station" : "");
         console.log("[Event] 击杀", this.def.id);
         return true;
     }

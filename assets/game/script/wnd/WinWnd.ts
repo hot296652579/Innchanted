@@ -7,6 +7,7 @@ import AudioPlayer from 'db://assets/framework/resource/AudioPlayer';
 import BaseWindow from 'db://assets/framework/ui/BaseWindow';
 import { UILayerType } from 'db://assets/framework/ui/UILayer';
 import { UIManager } from 'db://assets/framework/ui/UIManager';
+import { PowerSystem } from 'db://assets/script/power/PowerSystem';
 import { findLevel, hasLevel, threeStarSeconds } from '../app/LevelCatalog';
 const { ccclass, property } = _decorator;
 
@@ -124,6 +125,11 @@ export class WinWnd extends BaseWindow {
             BattleContext.pendingStartWindow = UIConfig.SelectWnd.name;
             this.closeWindow();
             director.loadScene("scene/Start");
+            return;
+        }
+        if (!PowerSystem.enterLevel()) {
+            this._entering = false;
+            await UIManager.getInstance().openWindow(UIConfig.TipWnd.name, { msg: "体力不足" });
             return;
         }
         BattleContext.selectedLevelId = nextId;

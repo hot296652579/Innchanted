@@ -255,7 +255,7 @@ export class InteractService {
             binding.station.slot = result;
             this.holds.spawnOnStation(binding.station.id, prefab, made);
         }
-        // EventManager.getInstance().emit(GameEvent.SHOW_TIPS, "合成完成");
+        EventManager.getInstance().emit(GameEvent.ITEM_COMBINED, result.itemId);
         console.log("[Combine]", recipe.id, "→", result.itemId, "x", result.count, toHand ? "手上" : "台上");
         return true;
     }

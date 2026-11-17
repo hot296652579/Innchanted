@@ -70,6 +70,8 @@ export enum GameEvent {
     GUEST_LEFT = "GUEST_LEFT",
     /** 加工台完成 */
     PROCESSOR_READY = "PROCESSOR_READY",
+    /** 合成完成（成品 itemId） */
+    ITEM_COMBINED = "ITEM_COMBINED",
 
     /** 班次开始，弹出准备 */
     SHIFT_READY = "SHIFT_READY",

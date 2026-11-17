@@ -490,8 +490,8 @@
     },
     "_contentSize": {
       "__type__": "cc.Size",
-      "width": 161.96216916160782,
-      "height": 52.400000000000006
+      "width": 162,
+      "height": 52.4
     },
     "_anchorPoint": {
       "__type__": "cc.Vec2",
@@ -529,7 +529,7 @@
     "_string": "每日任务",
     "_horizontalAlign": 1,
     "_verticalAlign": 1,
-    "_actualFontSize": 40.749625187406295,
+    "_actualFontSize": 40,
     "_fontSize": 40,
     "_fontFamily": "Arial",
     "_lineHeight": 40,
@@ -1333,7 +1333,7 @@
     "_lpos": {
       "__type__": "cc.Vec3",
       "x": 0,
-      "y": 220,
+      "y": 240,
       "z": 0
     },
     "_lrot": {
@@ -1431,7 +1431,7 @@
     "_contentSize": {
       "__type__": "cc.Size",
       "width": 500,
-      "height": 450
+      "height": 500
     },
     "_anchorPoint": {
       "__type__": "cc.Vec2",
@@ -1791,8 +1791,8 @@
     },
     "_contentSize": {
       "__type__": "cc.Size",
-      "width": 95.9615685109973,
-      "height": 50.39999999999999
+      "width": 96,
+      "height": 50.4
     },
     "_anchorPoint": {
       "__type__": "cc.Vec2",
@@ -1830,7 +1830,7 @@
     "_string": "任务标题",
     "_horizontalAlign": 0,
     "_verticalAlign": 1,
-    "_actualFontSize": 24.449775112443774,
+    "_actualFontSize": 24,
     "_fontSize": 24,
     "_fontFamily": "Arial",
     "_lineHeight": 40,
@@ -1950,7 +1950,7 @@
     },
     "_contentSize": {
       "__type__": "cc.Size",
-      "width": 127.94953245902606,
+      "width": 128,
       "height": 52.4
     },
     "_anchorPoint": {
@@ -1989,7 +1989,7 @@
     "_string": "任务的具体描述",
     "_horizontalAlign": 0,
     "_verticalAlign": 1,
-    "_actualFontSize": 18.33733133433283,
+    "_actualFontSize": 18,
     "_fontSize": 18,
     "_fontFamily": "Arial",
     "_lineHeight": 40,
@@ -2109,7 +2109,7 @@
     },
     "_contentSize": {
       "__type__": "cc.Size",
-      "width": 38.91736212611813,
+      "width": 38.923828125,
       "height": 50.4
     },
     "_anchorPoint": {
@@ -2148,7 +2148,7 @@
     "_string": "0/0",
     "_horizontalAlign": 2,
     "_verticalAlign": 1,
-    "_actualFontSize": 28.524737631184404,
+    "_actualFontSize": 28,
     "_fontSize": 28,
     "_fontFamily": "Arial",
     "_lineHeight": 40,
@@ -2206,7 +2206,7 @@
   },
   {
     "__type__": "cc.Node",
-    "_name": "lbTask-001",
+    "_name": "lbReward",
     "_objFlags": 0,
     "__editorExtras__": {},
     "_parent": {
@@ -2268,8 +2268,8 @@
     },
     "_contentSize": {
       "__type__": "cc.Size",
-      "width": 123.3138978353224,
-      "height": 50.39999999999999
+      "width": 123.36328125,
+      "height": 50.4
     },
     "_anchorPoint": {
       "__type__": "cc.Vec2",
@@ -2307,7 +2307,7 @@
     "_string": "奖励体力+1",
     "_horizontalAlign": 2,
     "_verticalAlign": 1,
-    "_actualFontSize": 24.449775112443774,
+    "_actualFontSize": 24,
     "_fontSize": 24,
     "_fontFamily": "Arial",
     "_lineHeight": 40,
@@ -2464,7 +2464,7 @@
     "_contentSize": {
       "__type__": "cc.Size",
       "width": 500,
-      "height": 400
+      "height": 500
     },
     "_anchorPoint": {
       "__type__": "cc.Vec2",
@@ -2556,7 +2556,7 @@
     "_contentSize": {
       "__type__": "cc.Size",
       "width": 500,
-      "height": 450
+      "height": 500
     },
     "_anchorPoint": {
       "__type__": "cc.Vec2",
@@ -2642,7 +2642,7 @@
     "_contentSize": {
       "__type__": "cc.Size",
       "width": 750,
-      "height": 1334.0000000000002
+      "height": 1334
     },
     "_anchorPoint": {
       "__type__": "cc.Vec2",
@@ -2707,6 +2707,12 @@
     "playOpenTween": false,
     "backBtn": {
       "__id__": 33
+    },
+    "itemNode": {
+      "__id__": 63
+    },
+    "contentNode": {
+      "__id__": 54
     },
     "_id": ""
   },

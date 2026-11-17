@@ -517,7 +517,7 @@ export class GuestLoop {
             this.playEat(runtime, true);
             this.react(runtime, "happy");
             this._served += 1;
-            this.emit(GameEvent.GUEST_SERVED, guest.id, guest.orderId);
+            this.emit(GameEvent.GUEST_SERVED, guest.id, guest.orderId, guest.tutorial ? "" : runtime.layout.guestType);
             this.emit(GameEvent.SHELL_SPAWNED, binding.station.id);
             return ServeResult.Done;
         }
