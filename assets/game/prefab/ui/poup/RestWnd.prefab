@@ -181,7 +181,7 @@
     },
     "_contentSize": {
       "__type__": "cc.Size",
-      "width": 128,
+      "width": 127.961898792483,
       "height": 50.4
     },
     "_anchorPoint": {
@@ -220,7 +220,7 @@
     "_string": "休息一会",
     "_horizontalAlign": 1,
     "_verticalAlign": 1,
-    "_actualFontSize": 32,
+    "_actualFontSize": 32.599700149925035,
     "_fontSize": 32,
     "_fontFamily": "Arial",
     "_lineHeight": 40,
@@ -291,7 +291,7 @@
     "_contentSize": {
       "__type__": "cc.Size",
       "width": 181,
-      "height": 192
+      "height": 112
     },
     "_anchorPoint": {
       "__type__": "cc.Vec2",
@@ -330,7 +330,7 @@
       "__uuid__": "f7ade5d2-254a-4fa4-bf11-46c5eb857cc0@f9941",
       "__expectedType__": "cc.SpriteFrame"
     },
-    "_type": 0,
+    "_type": 1,
     "_fillType": 0,
     "_sizeMode": 0,
     "_fillCenter": {

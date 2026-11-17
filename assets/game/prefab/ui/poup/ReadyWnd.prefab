@@ -181,8 +181,8 @@
     },
     "_contentSize": {
       "__type__": "cc.Size",
-      "width": 80,
-      "height": 50.4
+      "width": 71.99084261570721,
+      "height": 50.39999999999999
     },
     "_anchorPoint": {
       "__type__": "cc.Vec2",
@@ -220,8 +220,8 @@
     "_string": "准备",
     "_horizontalAlign": 1,
     "_verticalAlign": 1,
-    "_actualFontSize": 40,
-    "_fontSize": 40,
+    "_actualFontSize": 36.67466266866566,
+    "_fontSize": 36,
     "_fontFamily": "Arial",
     "_lineHeight": 40,
     "_overflow": 0,
@@ -291,7 +291,7 @@
     "_contentSize": {
       "__type__": "cc.Size",
       "width": 181,
-      "height": 192
+      "height": 112
     },
     "_anchorPoint": {
       "__type__": "cc.Vec2",
@@ -330,7 +330,7 @@
       "__uuid__": "f7ade5d2-254a-4fa4-bf11-46c5eb857cc0@f9941",
       "__expectedType__": "cc.SpriteFrame"
     },
-    "_type": 0,
+    "_type": 1,
     "_fillType": 0,
     "_sizeMode": 0,
     "_fillCenter": {

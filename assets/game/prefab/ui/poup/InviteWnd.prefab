@@ -141,7 +141,7 @@
     "_lpos": {
       "__type__": "cc.Vec3",
       "x": 0,
-      "y": -20,
+      "y": -17.125,
       "z": 0
     },
     "_lrot": {
@@ -181,8 +181,8 @@
     },
     "_contentSize": {
       "__type__": "cc.Size",
-      "width": 84,
-      "height": 94.39999999999999
+      "width": 147.98168523141442,
+      "height": 54.39999999999999
     },
     "_anchorPoint": {
       "__type__": "cc.Vec2",
@@ -217,11 +217,11 @@
       "b": 255,
       "a": 255
     },
-    "_string": "招待\n客人",
+    "_string": "招待客人",
     "_horizontalAlign": 1,
     "_verticalAlign": 1,
-    "_actualFontSize": 40,
-    "_fontSize": 40,
+    "_actualFontSize": 36.67466266866566,
+    "_fontSize": 36,
     "_fontFamily": "Arial",
     "_lineHeight": 40,
     "_overflow": 0,
@@ -291,7 +291,7 @@
     "_contentSize": {
       "__type__": "cc.Size",
       "width": 181,
-      "height": 242
+      "height": 142
     },
     "_anchorPoint": {
       "__type__": "cc.Vec2",
@@ -330,7 +330,7 @@
       "__uuid__": "eda260d4-24d2-4ea4-9a37-0ff3cad91b63@f9941",
       "__expectedType__": "cc.SpriteFrame"
     },
-    "_type": 0,
+    "_type": 1,
     "_fillType": 0,
     "_sizeMode": 0,
     "_fillCenter": {
