@@ -198,6 +198,10 @@ export default class AudioPlayer extends BaseSingleton {
         this._musicSource?.stop();
     }
 
+    public get musicPlaying(): boolean {
+        return this._musicSource?.playing ?? false;
+    }
+
     /** 暂停音乐 */
     public pauseMusic(): void {
         this._musicSource?.pause();

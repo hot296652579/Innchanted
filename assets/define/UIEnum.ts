@@ -130,6 +130,13 @@ export const UIConfig = {
         bundle: "game",
         cache: false,
     },
+    /** 视频播放 */
+    VideoWnd: {
+        name: "VideoWnd",
+        path: "prefab/ui/VideoWnd",
+        bundle: "game",
+        cache: false,
+    },
     /**每日任务*/
     DailyTaskWnd: {
         name: "DailyTaskWnd",

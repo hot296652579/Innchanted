@@ -1,8 +1,14 @@
 import { _decorator, Component } from "cc";
+import { BattleContext } from "../../../define/BattleContext";
+import { UIConfig } from "../../../define/UIEnum";
+import { UIManager } from "../../../framework/ui/UIManager";
 import { ShiftController } from "../app/ShiftController";
 import { NavBakeStarter } from "../navmesh/NavBakeStarter";
+import { VideoWndParam } from "../wnd/VideoWnd";
 
 const { ccclass } = _decorator;
+
+const INTRO_LEVEL_ID = 1;
 
 /** 场景钩子：等 NavBake 就绪后把一局交给 ShiftController。 */
 @ccclass("PlayerBootstrap")
@@ -15,7 +21,11 @@ export class PlayerBootstrap extends Component {
             console.error("[Player] 未找到 NavBakeStarter");
             return;
         }
+        const intro = BattleContext.selectedLevelId === INTRO_LEVEL_ID
+            ? this.playIntro()
+            : Promise.resolve();
         const recast = await baker.waitReady();
+        await intro;
         if (!this.isValid) {
             return;
         }
@@ -37,6 +47,18 @@ export class PlayerBootstrap extends Component {
             turnSpeed: baker.turnSpeed,
             levelRoot: baker.navBake?.parent ?? baker.node.parent ?? baker.node,
             planeRoot: baker.navBake?.getChildByName("Plane") ?? baker.navBake,
+        });
+    }
+
+    /** 打开视频窗口，播完或跳过后 resolve。 */
+    private playIntro(): Promise<void> {
+        return new Promise((resolve) => {
+            const param: VideoWndParam = { onDone: resolve };
+            void UIManager.getInstance().openWindow(UIConfig.VideoWnd.name, param).then((win) => {
+                if (!win) {
+                    resolve();
+                }
+            });
         });
     }
 

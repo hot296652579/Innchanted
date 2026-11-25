@@ -28,6 +28,7 @@ export default class BattleUIRoot extends Component {
         uiMgr.registerWindow(UIConfig.RestWnd.name, UIConfig.RestWnd.path, UIConfig.RestWnd.cache, BundlesEnum.Game);
         uiMgr.registerWindow(UIConfig.WinWnd.name, UIConfig.WinWnd.path, UIConfig.WinWnd.cache, BundlesEnum.Game);
         uiMgr.registerWindow(UIConfig.LoseWnd.name, UIConfig.LoseWnd.path, UIConfig.LoseWnd.cache, BundlesEnum.Game);
+        uiMgr.registerWindow(UIConfig.VideoWnd.name, UIConfig.VideoWnd.path, UIConfig.VideoWnd.cache, BundlesEnum.Game);
         uiMgr.openWindow(UIConfig.TopWnd.name);
         const events = EventManager.getInstance();
         events.on(GameEvent.SHOW_TIPS, this.onShowTips, this);
